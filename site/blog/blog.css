@@ -1,0 +1,113 @@
+/* 朵拉的進化史：沿用首頁的出廠說明書配色（粉藍底、海軍藍字、電力黃點綴），固定淺色 */
+:root{
+  color-scheme:light;
+  --bg:#dcebfa;
+  --paper:#ffffff;
+  --ink:#1d2b4f;
+  --ink-soft:#506084;
+  --blue:#3d7fd9;
+  --blue-soft:#eaf3fe;
+  --yellow:#ffd84a;
+  --yellow-soft:#fff6cf;
+  --line:#b9d3f0;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;
+  background:var(--bg);color:var(--ink);
+  font-size:19px;line-height:1.9;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+a{color:var(--blue);font-weight:700}
+.wrap{max-width:760px;margin:0 auto;padding:0 20px}
+.lines span{display:block}
+
+/* Q 版朵拉（同首頁 spritesheet：8 欄 × 9 列，每格 192×208） */
+.sprite{
+  --w:110px; --row:0; --n:6; --speed:.2s;
+  width:var(--w);height:calc(var(--w) * 208 / 192);flex:none;
+  background:url("../dora-sprite.webp") no-repeat;
+  background-size:calc(var(--w) * 8) calc(var(--w) * 208 / 192 * 9);
+  background-position:0 calc(var(--w) * 208 / 192 * var(--row) * -1);
+  animation:play calc(var(--speed) * var(--n)) steps(var(--n)) infinite;
+}
+@keyframes play{to{background-position-x:calc(var(--w) * var(--n) * -1)}}
+.sprite.idle{--row:0;--n:6;--speed:.22s}
+.sprite.wave{--row:3;--n:4}
+.sprite.jump{--row:4;--n:5;--speed:.15s}
+.sprite.wait{--row:6;--n:6;--speed:.22s}
+.sprite.work{--row:8;--n:6}
+
+/* 頂部 */
+.top{background:#fff;border-bottom:3px solid var(--line);position:relative;overflow:hidden}
+.top::before{
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background-image:radial-gradient(circle, #dbe9fb 3.6px, transparent 4px);background-size:34px 34px;
+}
+.top .wrap{position:relative;padding-top:22px;padding-bottom:40px}
+.back{display:inline-block;text-decoration:none;font-size:18px;background:#fff;border:2px solid var(--line);border-radius:999px;padding:2px 14px}
+.kicker{display:inline-block;margin-top:26px;font-size:18px;font-weight:900;color:var(--ink);background:var(--yellow);border-radius:8px;padding:0 10px}
+h1{font-size:clamp(32px,5.4vw,46px);line-height:1.3;font-weight:900;margin:12px 0 6px}
+.meta{color:var(--ink-soft);font-size:18px}
+.top-row{display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.top-row>div{min-width:0}
+
+/* 內文 */
+main{padding:46px 0 30px}
+.say-block{font-size:20px}
+.say-block p{margin-bottom:22px}
+.box{
+  background:var(--paper);border:2px solid var(--ink);border-radius:22px;box-shadow:6px 6px 0 var(--ink);
+  padding:26px 28px;margin:34px 0;
+}
+.box.tip{background:var(--yellow-soft);border-style:dashed;box-shadow:none}
+.box.tip h2{font-size:20px}
+.office-head{display:flex;align-items:center;gap:14px;margin-bottom:14px}
+.office-head .no{
+  display:grid;place-items:center;width:44px;height:44px;border-radius:12px;flex:none;
+  background:var(--ink);color:var(--yellow);font-weight:900;font-size:20px;
+}
+h2{font-size:clamp(22px,3vw,26px);font-weight:900;line-height:1.4}
+.office-head small{display:block;color:var(--ink-soft);font-size:18px;font-weight:500}
+.box p{margin-bottom:14px}
+.box p:last-child{margin-bottom:0}
+.sigh{color:var(--blue);font-weight:900}
+.box-foot{display:flex;justify-content:flex-end;margin-top:6px}
+
+/* 換辦公室路線 */
+.route{display:flex;align-items:center;justify-content:center;flex-wrap:wrap;gap:8px;margin:6px 0 30px}
+.route span{background:#fff;border:2px solid var(--line);border-radius:999px;padding:2px 14px;font-weight:700;font-size:18px}
+.route span.now{background:var(--yellow);border-color:var(--ink)}
+.route i{font-style:normal;color:var(--ink-soft)}
+
+/* 列表頁 */
+.post-card{
+  display:flex;gap:18px;align-items:center;text-decoration:none;color:var(--ink);font-weight:500;
+  background:var(--paper);border:2px solid var(--ink);border-radius:22px;box-shadow:6px 6px 0 var(--ink);
+  padding:22px 24px;transition:transform .15s ease, box-shadow .15s ease;
+}
+.post-card:hover{transform:translate(-2px,-2px);box-shadow:8px 8px 0 var(--ink)}
+.post-card>div{min-width:0}
+.post-card .no{font-size:18px;font-weight:900;color:var(--blue)}
+.post-card h2{margin:2px 0 4px}
+.post-card p{color:var(--ink-soft)}
+.soon{margin-top:22px;color:var(--ink-soft);text-align:center}
+
+footer{padding:24px 0 70px;text-align:center}
+.card{
+  display:inline-block;background:var(--paper);border:2px solid var(--ink);border-radius:18px;
+  box-shadow:5px 5px 0 var(--ink);padding:12px 26px;text-align:left;font-size:20px;line-height:1.7;
+}
+.card small{display:block;color:var(--ink-soft);font-size:18px}
+.foot-links{margin-top:22px;font-size:18px}
+.foot-links a{text-decoration:none;margin:0 10px}
+
+@media (max-width:600px){
+  .wrap{padding:0 16px}
+  .box{padding:22px 18px;box-shadow:4px 4px 0 var(--ink)}
+  .top-row .sprite{--w:80px}
+  .post-card{flex-direction:column;align-items:flex-start}
+}
+@media (prefers-reduced-motion:reduce){
+  .sprite{animation:none}
+  *{transition:none!important}
+}
