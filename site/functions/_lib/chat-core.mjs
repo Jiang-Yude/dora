@@ -98,13 +98,16 @@ function normDoc(d) {
   return { ...d, text, alias };
 }
 
+// 每篇都有、帶不出主題的詞不拿來打分（不然「朵拉會不會煮咖啡」也會命中全部，後台「站上找不到」永遠是空的）
+const STOP = new Set(["朵拉", "江江", "什麼", "怎麼", "可以", "會不", "不會", "是不", "不是", "有沒", "沒有", "哪個", "哪些", "一下", "請問", "你們", "我們", "這個", "那個", "嗎？", "好嗎", "在做", "做什", "的是"]);
+
 // 中文用二字詞、英數用整個字，簡單打分；別名庫等內容變多再加
 function terms(q) {
   const s = String(q).toLowerCase();
   const out = new Set(s.match(/[a-z0-9]{2,}/g) || []);
-  const cjk = s.replace(/[^一-鿿]/g, " ").split(/\s+/).filter(Boolean);
+  const cjk = s.replace(/朵拉|江江/g, " ").replace(/[^一-鿿]/g, " ").split(/\s+/).filter(Boolean);
   for (const run of cjk) for (let i = 0; i < run.length - 1; i++) out.add(run.slice(i, i + 2));
-  return [...out];
+  return [...out].filter((w) => !STOP.has(w));
 }
 function score(doc, ts) {
   const t = (doc.title || "").toLowerCase(), s = (doc.summary || "").toLowerCase(), x = (doc.text || "").toLowerCase();
@@ -125,9 +128,9 @@ function pickDocs(docs, question) {
   const ts = terms(question);
   const ds = dateHits(question);
   let picked = docs.map((d) => ({ d, n: score(d, ts) + (ds.some((x) => String(d.date || "").endsWith(x)) ? 20 : 0) }))
-    .filter((x) => x.n > 0).sort((a, b) => b.n - a.n || byDate(a.d, b.d)).slice(0, 4).map((x) => x.d);
+    .filter((x) => x.n >= 2).sort((a, b) => b.n - a.n || byDate(a.d, b.d)).slice(0, 4).map((x) => x.d);
   // 「最新／最近／今天」先放最新一篇
-  if (/最新|最近|今天|這期|這篇|新的/.test(question)) {
+  if (/最新|最近|這期|這篇|新的/.test(question)) {
     const pool = /日報|daily|新聞/i.test(question) ? docs.filter((d) => d.type === "daily") : /日記|blog/i.test(question) ? docs.filter((d) => d.type === "blog") : docs;
     const newest = [...pool].sort(byDate)[0];
     if (newest) picked = [newest, ...picked.filter((d) => d !== newest)];
