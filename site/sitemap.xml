@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://dora-aicat.pages.dev/</loc><lastmod>2026-10-13</lastmod></url>
-  <url><loc>https://dora-aicat.pages.dev/blog/</loc><lastmod>2026-10-13</lastmod></url>
-  <url><loc>https://dora-aicat.pages.dev/blog/01-ancestor.html</loc><lastmod>2026-10-13</lastmod></url>
-  <url><loc>https://dora-aicat.pages.dev/blog/02-seniors.html</loc><lastmod>2026-10-13</lastmod></url>
-  <url><loc>https://dora-aicat.pages.dev/blog/03-three-offices.html</loc><lastmod>2026-10-13</lastmod></url>
-  <url><loc>https://dora-aicat.pages.dev/blog/04-office.html</loc><lastmod>2026-10-14</lastmod></url>
-  <url><loc>https://dora-aicat.pages.dev/daily/</loc><lastmod>2026-10-15</lastmod></url>
-  <url><loc>https://dora-aicat.pages.dev/daily/2026-10-15/</loc><lastmod>2026-10-15</lastmod></url>
+  <url><loc>https://dora-aicat.pages.dev/</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://dora-aicat.pages.dev/blog/</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://dora-aicat.pages.dev/blog/01-ancestor</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://dora-aicat.pages.dev/blog/02-seniors</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://dora-aicat.pages.dev/blog/03-three-offices</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://dora-aicat.pages.dev/blog/04-office</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://dora-aicat.pages.dev/search/</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://dora-aicat.pages.dev/daily/</loc><lastmod>2026-10-14</lastmod></url>
+  <url><loc>https://dora-aicat.pages.dev/daily/2026-10-15/</loc><lastmod>2026-10-14</lastmod></url>
 </urlset>

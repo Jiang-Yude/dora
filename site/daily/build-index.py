@@ -14,7 +14,13 @@
 6. 全站分享預覽（og:/twitter: 標籤，標記 <!--dora-og-->）：圖用 /img/og/ 的 1200×630 JPG，日報每期標題帶日期與頭條
 7. 產出 site/search-index.json（給 /search/ 搜尋頁用，純前端）：blog/ 每篇日記（標題、網址、摘要、內文前 800 字）
    與每期日報（日期、標題、各則 title_zh 與摘要、網址）。搜尋頁 site/search/index.html 也會套導覽列
-不碰日報頁內文與配色。標題取自該期 <script id="daily"> JSON 第一則 title_zh。
+8. 4O（SEO／AIO／GEO／AXO）head 區塊（標記 <!--dora-seo-->）：canonical、JSON-LD（日記 BlogPosting、日報 Article、
+   目錄 CollectionPage）；每期日報另把 <title>／description 換成該期日期＋頭條，lang 統一 zh-Hant-TW
+9. 每期日報的卡片內容預先寫進靜態 HTML（<main id="cards">、日期、封面圖），內容與頁面 JS 渲染結果相同，
+   讓不跑 JS 的 AI 爬蟲也讀得到；頁面原本的 JS 照跑，會用同一份 JSON 再畫一次
+10. sitemap.xml 整檔重產（首頁、日記、搜尋、日報）；lastmod 用該檔 git 最後提交日，有未提交改動就用今天
+11. llms.txt 後段「網站結構」（標記 <!-- dora-site-map -->）列出全站頁面清單；前段人設接待指引不動
+不改日報頁的配色與版面。標題取自該期 <script id="daily"> JSON 第一則 title_zh。
 """
 import json, re, sys
 from html import unescape
@@ -128,7 +134,7 @@ def page_file(n):
 
 def render_index(page_items, n, total, newest):
     cards = "".join(
-        f'<a class="item pola" href="/daily/{it["date"]}/"><img src="/daily/{it["date"]}/{escape(it["cover"])}" alt="" loading="lazy">'
+        f'<a class="item pola" href="/daily/{it["date"]}/"><img src="/daily/{it["date"]}/{escape(it["cover"])}" width="96" height="96" alt="" loading="lazy" decoding="async">'
         f'<div><span class="d">{it["date"]}</span><h2>{escape(it["title"])}</h2></div></a>\n'
         for it in page_items) or '<p>還沒有日報。</p>'
     hero_btn = ""  # 江江 2026-10-14：首屏不放「看最新一期」，往下滑最新一期就在最上面
@@ -142,11 +148,10 @@ def render_index(page_items, n, total, newest):
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{title}</title>
 <meta name="description" content="朵拉日報：朵拉替江江整理的 AI 概念與產業趨勢報導，依日期列出每一期。">
-<link rel="canonical" href="{BASE}{page_url(n)}">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="/img/hero/daily-news.webp">
+<link rel="preload" as="image" href="/img/hero/daily-news.webp" fetchpriority="high">
 {HAND_FONT}
 <link rel="stylesheet" href="/suya.css?v={CSS_VER}">
 <link rel="stylesheet" href="/edit-overrides.css?v={CSS_VER}" data-ep="{'daily' if n == 1 else f'daily-page-{n}'}">
@@ -175,7 +180,7 @@ body{{font-family:var(--sy-sans);background:var(--sy-bg);color:var(--sy-text);fo
 <body>
 <header class="sy-hero short page">
   <div class="sy-hero-media">
-    <img class="sy-hero-art" src="/img/hero/daily-news.webp" width="1600" height="901" alt="朵拉翹著腳坐在窗邊，專心讀一份攤開的報紙">
+    <img class="sy-hero-art" src="/img/hero/daily-news.webp" width="1600" height="901" fetchpriority="high" alt="朵拉翹著腳坐在窗邊，專心讀一份攤開的報紙">
   </div>
   <div class="sy-hero-in">
     <div class="sy-hero-text">
@@ -191,7 +196,7 @@ body{{font-family:var(--sy-sans);background:var(--sy-bg);color:var(--sy-text);fo
 </header>
 <main class="wrap">
 <div class="list-head">
-<img class="sy-doodle" src="/img/doodle/doodle5.webp" alt="" aria-hidden="true" loading="lazy" onerror="this.remove()">
+<img class="sy-doodle" src="/img/doodle/doodle5.webp" width="360" height="238" alt="" aria-hidden="true" loading="lazy" onerror="this.remove()">
 <div class="sy-head doodle-spark"><h2>每一期</h2><small style="letter-spacing:.08em">{sub}</small></div>
 <span class="sy-hand u" aria-hidden="true">每則都附來源喔</span>
 </div>
@@ -316,30 +321,56 @@ def put_latest(items):
 <!--/dora-latest-->"""
     p.write_text(LATEST_RE.sub(lambda m: block, t, count=1), encoding="utf-8")
 
+import subprocess
+from datetime import date as _date
+
+def file_date(f):
+    """sitemap lastmod：該檔 git 最後提交日；有未提交改動（或不在 git）就用今天。"""
+    f = Path(f)
+    repo = SITE.parent
+    try:
+        dirty = subprocess.run(["git", "-C", str(repo), "status", "--porcelain", "--", str(f)],
+                               capture_output=True, text=True).stdout.strip()
+        if not dirty:
+            d = subprocess.run(["git", "-C", str(repo), "log", "-1", "--format=%cs", "--", str(f)],
+                               capture_output=True, text=True).stdout.strip()
+            if d:
+                return d
+    except Exception:
+        pass
+    return _date.today().isoformat()
+
+def blog_url(f):
+    """Cloudflare Pages 會把 .html 308 轉到去副檔名網址，canonical／sitemap 一律用去副檔名版。"""
+    return "/blog/" if f.name == "index.html" else f"/blog/{f.stem}"
+
+def blog_posts():
+    return [f for f in sorted((SITE / "blog").glob("*.html")) if f.name != "index.html"]
+
 def update_sitemap(items):
-    p = SITE / "sitemap.xml"
-    t = p.read_text(encoding="utf-8")
-    t = re.sub(r"[ \t]*<url><loc>%s/daily/[^<]*</loc>.*?</url>\n" % re.escape(BASE), "", t)
-    latest = items[0]["date"] if items else ""
-    rows = f'  <url><loc>{BASE}/daily/</loc><lastmod>{latest}</lastmod></url>\n' if items else ""
-    for n, chunk, _ in paginate(items)[1:]:
-        rows += f'  <url><loc>{BASE}{page_url(n)}</loc><lastmod>{chunk[0]["date"]}</lastmod></url>\n'
-    for it in items:
-        rows += f'  <url><loc>{BASE}/daily/{it["date"]}/</loc><lastmod>{it["date"]}</lastmod></url>\n'
-    t = t.replace("</urlset>", rows + "</urlset>")
-    p.write_text(t, encoding="utf-8")
+    """整檔重產 sitemap.xml（可重複執行）。/archive/ 舊版封存不列。"""
+    rows = [("/", SITE / "index.html"), ("/blog/", SITE / "blog" / "index.html")]
+    rows += [(blog_url(f), f) for f in blog_posts()]
+    if (SITE / "search" / "index.html").exists():
+        rows.append(("/search/", SITE / "search" / "index.html"))
+    for n, _, _ in paginate(items):
+        rows.append((page_url(n), page_file(n)))
+    rows += [(f'/daily/{it["date"]}/', it["file"]) for it in items]
+    body = "".join(f"  <url><loc>{BASE}{u}</loc><lastmod>{file_date(f)}</lastmod></url>\n" for u, f in rows)
+    (SITE / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n'
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + body + "</urlset>\n", encoding="utf-8")
 
 OG_RE = re.compile(r"\s*<!--dora-og-->.*?<!--/dora-og-->", re.S)
 OLD_OG_RE = re.compile(r'\s*<meta (?:property|name)="(?:og|twitter):[^"]*"[^>]*>')
 
-def put_og(path, title, desc, image, url):
+def put_og(path, title, desc, image, url, kind="website"):
     """分享預覽：拿掉舊的 og／twitter 標籤，在 </title> 後插入一組（可重複執行）。"""
     t = path.read_text(encoding="utf-8")
     t = OG_RE.sub("", t)
     t = OLD_OG_RE.sub("", t)
     e = lambda x: escape(x, quote=True)
     block = ("\n<!--dora-og-->\n"
-        f'<meta property="og:type" content="website">\n'
+        f'<meta property="og:type" content="{kind}">\n'
         f'<meta property="og:site_name" content="朵拉 Dora">\n'
         f'<meta property="og:title" content="{e(title)}">\n'
         f'<meta property="og:description" content="{e(desc)}">\n'
@@ -360,14 +391,164 @@ def page_title(path):
 def put_all_og(items):
     put_og(SITE / "index.html", "朵拉 Dora｜江江教練的 AI 實習生", "一隻剛出廠的 AI 機器貓，正在江江教練這裡實習。", "/img/og/home.jpg", "/")
     for f in sorted((SITE / "blog").glob("*.html")):
-        url = "/blog/" if f.name == "index.html" else f"/blog/{f.stem}"
-        put_og(f, page_title(f), "朵拉實習日記：記錄朵拉跟著江江教練學 AI 的每一天。", "/img/og/diary.jpg", url)
+        if f.name == "index.html":
+            put_og(f, page_title(f), "朵拉實習日記：記錄朵拉跟著江江教練學 AI 的每一天。", "/img/og/diary.jpg", "/blog/")
+        else:
+            put_og(f, page_title(f), meta_desc(f) or "朵拉實習日記：記錄朵拉跟著江江教練學 AI 的每一天。", "/img/og/diary.jpg", blog_url(f), "article")
     if (SITE / "search" / "index.html").exists():
         put_og(SITE / "search" / "index.html", "搜尋｜朵拉 Dora", "搜尋朵拉的實習日記與 AI 日報。", "/img/og/home.jpg", "/search/")
     for n, _, _ in paginate(items):
         put_og(page_file(n), page_title(page_file(n)), "朵拉每天早上整理 AI 概念與產業趨勢，每則附原始資料來源。", "/img/og/daily.jpg", page_url(n))
     for it in items:
-        put_og(it["file"], f'朵拉日報 {it["date"]}｜{it["title"]}', "朵拉每天早上整理 AI 概念與產業趨勢，每則附原始資料來源。", "/img/og/daily.jpg", f'/daily/{it["date"]}/')
+        put_og(it["file"], f'朵拉日報 {it["date"]}｜{it["title"]}', issue_desc(it, issue_data(it)), "/img/og/daily.jpg", f'/daily/{it["date"]}/', "article")
+
+
+# ---------- 4O：canonical、JSON-LD、日報靜態化、llms.txt 網站結構 ----------
+SEO_RE = re.compile(r"\s*<!--dora-seo-->.*?<!--/dora-seo-->", re.S)
+CANON_RE = re.compile(r'\s*<link rel="canonical"[^>]*>')
+DORA = {"@type": "Thing", "@id": f"{BASE}/#dora", "name": "朵拉（AI）", "alternateName": ["朵拉 Dora", "dora_aicat"], "url": f"{BASE}/"}
+JIANG = {"@type": "Person", "@id": f"{BASE}/#jiang", "name": "江昱德", "alternateName": ["江江教練"], "url": "https://jiangyude.com/"}
+SITE_REF = {"@id": f"{BASE}/#website"}
+
+def meta_desc(path):
+    m = re.search(r'<meta name="description" content="([^"]*)"', path.read_text(encoding="utf-8"))
+    return unescape(m.group(1)) if m else ""
+
+def put_seo(path, url, jsonld=None):
+    """在 <!--/dora-og--> 後插入 canonical＋JSON-LD（標記 <!--dora-seo-->，可重複執行）；頁面原有的 canonical 會被拿掉。"""
+    t = path.read_text(encoding="utf-8")
+    t = SEO_RE.sub("", t)
+    t = CANON_RE.sub("", t)
+    block = f'\n<!--dora-seo-->\n<link rel="canonical" href="{BASE}{url}">\n'
+    if jsonld:
+        ld = json.dumps(jsonld, ensure_ascii=False, indent=1).replace("</", "<\\/")
+        block += f'<script type="application/ld+json">\n{ld}\n</script>\n'
+    block += "<!--/dora-seo-->"
+    t, n = re.subn(r"(<!--/dora-og-->)", lambda m: m.group(1) + block, t, count=1)
+    if n == 0:
+        sys.exit(f"找不到 <!--/dora-og-->：{path}")
+    path.write_text(t, encoding="utf-8")
+
+def blog_meta(f):
+    t = f.read_text(encoding="utf-8")
+    h1 = re.search(r"<h1[^>]*>(.*?)</h1>", t, re.S)
+    d = re.search(r'class="meta"[^>]*>\s*(\d{4}-\d{2}-\d{2})', t)
+    return dict(headline=_plain(h1.group(1)) if h1 else page_title(f), date=d.group(1) if d else "",
+                url=blog_url(f), desc=meta_desc(f))
+
+def issue_data(it):
+    m = re.search(r'<script id="daily"[^>]*>\s*(\{.*?)</script>', it["file"].read_text(encoding="utf-8"), re.S)
+    try:
+        return json.loads(m.group(1)) if m else {}
+    except Exception:
+        return {}
+
+def issue_desc(it, d):
+    items = d.get("items") or []
+    if items:
+        body = items[0].get("body") or []
+        first = body[0] if isinstance(body, list) and body else (body if isinstance(body, str) else "")
+        s = _plain(first)
+        if s:
+            return s[:110] + ("…" if len(s) > 110 else "")
+    return "朵拉日報：朵拉替江江整理的 AI 概念與產業趨勢報導，每則附原始資料來源。"
+
+def issue_card(i, x):
+    """單則卡片，結構與日報頁 JS 模板相同。"""
+    e = lambda s: escape(s or "", quote=True)
+    paras = "".join('<p class="body">' + e(p) + "</p>" for p in (x.get("body") or []))
+    links = "".join('<a href="' + e(u.get("url")) + '" target="_blank" rel="noopener">' + e(u.get("title") or u.get("url")) + "</a>"
+                    for u in (x.get("sources") or []))
+    return ('\n<article class="taped card">\n <div><span class="num">' + str(i + 1) + '</span><span class="kind">' + e(x.get("kind")) + "</span></div>\n"
+            " <h2>" + e(x.get("title_zh")) + "</h2>\n " + paras + '\n <div class="srcs">原始資料來源：' + links + "</div>\n</article>")
+
+def prerender_issue(it, d):
+    """把 JS 會畫出來的卡片先寫進靜態 HTML，並換掉該期 title／description／lang（可重複執行）。"""
+    f = it["file"]
+    t = f.read_text(encoding="utf-8")
+    e = lambda s: escape(s or "", quote=True)
+    cards = "".join(issue_card(i, x) for i, x in enumerate(d.get("items") or []))
+    t = re.sub(r'(<main class="cards" id="cards">).*?(</main>)', lambda m: m.group(1) + cards + m.group(2), t, count=1, flags=re.S)
+    if d.get("date_label"):
+        t = re.sub(r'(<span class="date" id="date">).*?(</span>)', lambda m: m.group(1) + e(d["date_label"]) + m.group(2), t, count=1)
+    cover = d.get("cover") or it["cover"]
+    img = '<img id="cover" src="' + e(cover) + '" width="1080" height="1350" alt="朵拉日報 ' + it["date"] + ' 當天圖卡" fetchpriority="high">'
+    t = re.sub(r'<img id="cover"[^>]*>', lambda m: img, t, count=1)
+    title = "<title>" + escape("朵拉日報 " + it["date"] + "｜" + it["title"]) + "</title>"
+    t = re.sub(r"<title>.*?</title>", lambda m: title, t, count=1, flags=re.S)
+    desc = '<meta name="description" content="' + e(issue_desc(it, d)) + '">'
+    t = re.sub(r'<meta name="description" content="[^"]*">', lambda m: desc, t, count=1)
+    t = t.replace('<html lang="zh-Hant">', '<html lang="zh-Hant-TW">', 1)
+    f.write_text(t, encoding="utf-8")
+
+def put_all_seo(items):
+    put_seo(SITE / "index.html", "/")  # 首頁 JSON-LD 手寫在頁面裡（ProfilePage），這裡只管 canonical
+    posts = [blog_meta(f) for f in blog_posts()]
+    put_seo(SITE / "blog" / "index.html", "/blog/", {
+        "@context": "https://schema.org", "@type": "Blog", "@id": f"{BASE}/blog/#blog",
+        "name": "朵拉實習日記", "url": f"{BASE}/blog/", "inLanguage": "zh-Hant-TW", "isPartOf": SITE_REF,
+        "description": meta_desc(SITE / "blog" / "index.html"), "author": DORA, "publisher": JIANG,
+        "blogPost": [{"@type": "BlogPosting", "headline": b["headline"], "url": f"{BASE}{b['url']}", "datePublished": b["date"]} for b in posts]})
+    for f, b in zip(blog_posts(), posts):
+        put_seo(f, b["url"], {
+            "@context": "https://schema.org", "@type": "BlogPosting",
+            "headline": b["headline"], "description": b["desc"], "datePublished": b["date"],
+            "dateModified": max(b["date"], file_date(f)), "inLanguage": "zh-Hant-TW",
+            "url": f"{BASE}{b['url']}", "mainEntityOfPage": f"{BASE}{b['url']}",
+            "image": f"{BASE}/img/og/diary.jpg", "author": DORA, "publisher": JIANG,
+            "isPartOf": {"@id": f"{BASE}/blog/#blog"}})
+    if (SITE / "search" / "index.html").exists():
+        put_seo(SITE / "search" / "index.html", "/search/")
+    for n, chunk, _ in paginate(items):
+        put_seo(page_file(n), page_url(n), {
+            "@context": "https://schema.org", "@type": "CollectionPage",
+            "name": page_title(page_file(n)), "url": f"{BASE}{page_url(n)}", "inLanguage": "zh-Hant-TW",
+            "isPartOf": SITE_REF, "publisher": JIANG,
+            "mainEntity": {"@type": "ItemList", "itemListElement": [
+                {"@type": "ListItem", "position": i + 1, "url": f'{BASE}/daily/{it["date"]}/', "name": f'朵拉日報 {it["date"]}｜{it["title"]}'}
+                for i, it in enumerate(chunk)]}})
+    for it in items:
+        d = issue_data(it)
+        prerender_issue(it, d)
+        url = f'/daily/{it["date"]}/'
+        cites = [{"@type": "CreativeWork", "name": s.get("title") or s.get("url"), "url": s.get("url")}
+                 for x in d.get("items") or [] for s in (x.get("sources") or []) if s.get("url")]
+        ld = {"@context": "https://schema.org", "@type": "Article",
+              "headline": f'朵拉日報 {it["date"]}｜{it["title"]}'[:110], "description": issue_desc(it, d),
+              "datePublished": it["date"], "dateModified": max(it["date"], file_date(it["file"])), "inLanguage": "zh-Hant-TW",
+              "url": f"{BASE}{url}", "mainEntityOfPage": f"{BASE}{url}",
+              "image": f'{BASE}/daily/{it["date"]}/{d.get("cover") or it["cover"]}',
+              "articleSection": "朵拉日報", "author": DORA, "publisher": JIANG, "isPartOf": SITE_REF}
+        if cites:
+            ld["citation"] = cites
+        put_seo(it["file"], url, ld)
+
+LLMS_RE = re.compile(r"\n*<!-- dora-site-map -->.*?<!-- /dora-site-map -->\n?", re.S)
+
+def put_llms(items):
+    """llms.txt 後段「網站結構」整段重產（標記 <!-- dora-site-map -->）；前段人設接待指引不碰。"""
+    p = SITE / "llms.txt"
+    if not p.exists():
+        return
+    t = LLMS_RE.sub("", p.read_text(encoding="utf-8")).rstrip("\n")
+    lines = ["<!-- dora-site-map -->", "## 網站結構（自動產生，全站頁面清單）", "",
+             "本站是靜態網頁，日記與日報的內容都直接寫在 HTML 裡，不需要執行 JavaScript 就讀得到（只有站內搜尋頁要跑 JavaScript）。", "",
+             "### 實習日記（朵拉用第一人稱寫的實習紀錄）", ""]
+    for f in blog_posts():
+        b = blog_meta(f)
+        lines.append(f'- [{b["headline"]}]({BASE}{b["url"]})（{b["date"]}）: {b["desc"]}')
+    lines += ["", "### 朵拉日報（每期一頁，新到舊；每則附原始資料來源）", ""]
+    for it in items:
+        lines.append(f'- [朵拉日報 {it["date"]}]({BASE}/daily/{it["date"]}/): {it["title"]}')
+    npages = len(paginate(items))
+    if npages > 1:
+        lines += ["", "日報目錄分頁：" + "、".join(f"{BASE}{page_url(n)}" for n in range(1, npages + 1))]
+    lines += ["", "### 其他", "",
+              f"- [站內搜尋]({BASE}/search/): 搜尋日記與日報，可用 {BASE}/search/?q=關鍵字",
+              f"- [搜尋索引 JSON]({BASE}/search-index.json): 全站日記與日報的標題、網址、摘要，要一次掃全站讀這份最省",
+              f"- [sitemap]({BASE}/sitemap.xml)",
+              "<!-- /dora-site-map -->"]
+    p.write_text(t + "\n\n" + "\n".join(lines) + "\n", encoding="utf-8")
 
 def main():
     items = issues()
@@ -383,9 +564,11 @@ def main():
         put_nav(SITE / "search" / "index.html", "search")
     for it in items:
         put_nav(it["file"], "daily")
-    update_sitemap(items)
     put_all_og(items)
+    put_all_seo(items)
+    put_llms(items)
     n = write_search_index(items)
+    update_sitemap(items)  # 最後跑：lastmod 看檔案有沒有被改過
     print(f"完成：{len(items)} 期日報、目錄 {npages} 頁；搜尋索引 {n} 筆")
 
 if __name__ == "__main__":
