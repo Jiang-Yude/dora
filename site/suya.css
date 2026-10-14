@@ -3,8 +3,8 @@
    首頁、實習日記目錄、AI 日報目錄共用：Hero 滿版插畫＋左側標題＋右下角 Q 版小動畫。 */
 :root{
   color-scheme:light;
-  --sy-bg:#f8f6f0;
-  --sy-paper:#fffefa;
+  --sy-bg:#ffffff;
+  --sy-paper:#ffffff;
   --sy-mist:#dce7ed;
   --sy-mist-soft:#eaf1f4;
   --sy-ink:#2f3c45;        /* 標題：比石板灰再深一階，確保對比 */
@@ -57,7 +57,7 @@
 }
 .sy-hero::after{ /* 左側米白淡出，讓標題清楚、不壓到朵拉 */
   content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(90deg,rgba(248,246,240,.92) 0%,rgba(248,246,240,.75) 32%,rgba(248,246,240,0) 52%);
+  background:linear-gradient(90deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.75) 32%,rgba(255,255,255,0) 52%);
 }
 .sy-hero-in{
   position:relative;z-index:2;height:100%;max-width:1180px;margin:0 auto;padding:0 32px;
@@ -133,8 +133,8 @@
 /* 底紋：非常淡的淡藍圓點（固定在最底層） */
 body::before{
   content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
-  background-image:radial-gradient(rgba(111,148,194,.16) 1.1px,transparent 1.6px);
-  background-size:24px 24px;
+  background-image:url(/img/doodle/pencil-dots.png);  /* 藍色色鉛筆手繪圓點（江江 2026-10-14） */
+  background-size:192px 192px;
 }
 
 /* 寬螢幕 Hero：文字區貼齊視窗左側，固定比例邊距，不跟 1180 容器置中 */
@@ -334,7 +334,7 @@ body::before{
 
 /* 首頁實習日記：一大三小散落拼貼（江江 2026-10-14），示意用、不連各篇 */
 #diary .collage{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:clamp(18px,3vw,44px);align-items:center;margin-top:30px}
-#diary .clip{margin:0;background:#fffefa;padding:10px 10px 14px;box-shadow:0 6px 18px rgba(70,84,93,.12);position:relative}
+#diary .clip{margin:0;background:#ffffff;padding:10px 10px 14px;box-shadow:0 6px 18px rgba(70,84,93,.12);position:relative}
 #diary .clip::before{content:"";position:absolute;top:-12px;left:50%;width:84px;height:24px;transform:translateX(-50%) rotate(-3deg);background:rgba(169,194,223,.55)}
 #diary .clip .pola-photo{display:block;aspect-ratio:16/10;overflow:hidden;background:#eef3f8}
 #diary .clip img{width:100%;height:100%;object-fit:cover;display:block}
@@ -403,14 +403,14 @@ body::before{
 @media (prefers-reduced-motion:reduce){.sy-pages .pg-num{transition:none}}
 
 /* 拍立得放大（pola-zoom.js）：整張卡歪歪地放大，保留膠帶便條感 */
-.pz{position:fixed;inset:0;z-index:200;background:rgba(244,242,236,.82);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .2s;cursor:zoom-out}
+.pz{position:fixed;inset:0;z-index:200;background:rgba(255,255,255,.82);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .2s;cursor:zoom-out}
 .pz.on{opacity:1}
-.pz .pz-card{width:min(1500px,92vw,calc((88vh - 90px) * 1.6));margin:0;transform:rotate(var(--pz-r,-2deg)) scale(.92);transition:transform .25s;box-shadow:0 18px 40px rgba(70,84,93,.22)!important;background:#fffefa;padding:14px 14px 18px;position:relative}
+.pz .pz-card{width:min(1500px,92vw,calc((88vh - 90px) * 1.6));margin:0;transform:rotate(var(--pz-r,-2deg)) scale(.92);transition:transform .25s;box-shadow:0 18px 40px rgba(70,84,93,.22)!important;background:#ffffff;padding:14px 14px 18px;position:relative}
 .pz.on .pz-card{transform:rotate(var(--pz-r,-2deg)) scale(1)}
 .pz .pz-card::before{content:"";position:absolute;top:-16px;left:50%;width:120px;height:32px;transform:translateX(-50%) rotate(-3deg);background:rgba(169,194,223,.6)}
 .pz .pz-card figcaption,.pz .pz-card h3,.pz .pz-card h4{font-size:clamp(20px,2.2vw,26px)}
 .pz .pz-card p{font-size:19px}
-.pz-x{position:fixed;top:18px;right:20px;width:44px;height:44px;border-radius:50%;border:1.5px solid #6f94c2;background:#fffefa;color:#3a5a88;font-size:28px;line-height:1;cursor:pointer}
+.pz-x{position:fixed;top:18px;right:20px;width:44px;height:44px;border-radius:50%;border:1.5px solid #6f94c2;background:#ffffff;color:#3a5a88;font-size:28px;line-height:1;cursor:pointer}
 @media (prefers-reduced-motion:reduce){.pz,.pz .pz-card{transition:none}}
 .pz .pz-card .pola-photo{display:block;aspect-ratio:16/10;overflow:hidden}
 .pz .pz-card .pola-photo img{width:100%;height:100%;object-fit:cover;display:block}
@@ -419,11 +419,11 @@ body::before{
 
 /* 日報目錄「每一期」旁邊放 Q 版朵拉讀報插圖（江江 2026-10-14） */
 .list-head{position:relative}
-.list-head .list-dora{width:clamp(84px,8vw,130px);height:auto;margin:-40px 0 -40px 18px;align-self:center;transform:rotate(-3deg);background:#fffefa;padding:6px 6px 14px;box-shadow:0 4px 12px rgba(70,84,93,.12);flex:none}
+.list-head .list-dora{width:clamp(84px,8vw,130px);height:auto;margin:-40px 0 -40px 18px;align-self:center;transform:rotate(-3deg);background:#ffffff;padding:6px 6px 14px;box-shadow:0 4px 12px rgba(70,84,93,.12);flex:none}
 @media (max-width:560px){.list-head .list-dora{width:72px;margin:-24px 0 -24px 10px}}
 
 /* 朵拉 LOGO＝社群大頭貼（江江 2026-10-14：品牌標記一律用這張） */
-footer .foot-logo{display:block;width:72px;height:72px;border-radius:50%;object-fit:cover;margin:0 auto 10px;border:3px solid #fffefa;box-shadow:0 0 0 1px #c9d8ea,0 4px 12px rgba(70,84,93,.12)}
+footer .foot-logo{display:block;width:72px;height:72px;border-radius:50%;object-fit:cover;margin:0 auto 10px;border:3px solid #ffffff;box-shadow:0 0 0 1px #c9d8ea,0 4px 12px rgba(70,84,93,.12)}
 
 /* 日記目錄：最新一篇大張放最上面，其餘由新到舊兩～三欄並排（江江 2026-10-14） */
 .posts-newest{margin:22px 0 34px}

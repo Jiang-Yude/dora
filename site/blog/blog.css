@@ -4,7 +4,7 @@
 *{box-sizing:border-box;margin:0;padding:0}
 body{
   font-family:var(--sy-sans,"Noto Sans TC",system-ui,sans-serif);
-  background:var(--sy-bg,#f8f6f0);color:var(--sy-text,#46545d);
+  background:var(--sy-bg,#ffffff);color:var(--sy-text,#46545d);
   font-size:20px;line-height:1.9;-webkit-font-smoothing:antialiased;overflow-x:hidden;
 }
 a{color:var(--sy-blue-deep,#3b5a7d);font-weight:500}

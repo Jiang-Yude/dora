@@ -52,8 +52,8 @@ def alias_keywords(url):
     a = load_aliases().get(_akey(url)) or {}
     return list(dict.fromkeys((a.get("tags") or []) + (a.get("keywords") or [])))
 BASE = "https://dora-aicat.pages.dev"
-CSS_VER = "20261015h"  # 改 suya.css 後換新，全站一起換
-PAGE_CSS_VER = "20261014b"  # 改 blog/blog.css 或 daily/issue.css 後換新（put_style 會同步到各篇日記與每期日報）
+CSS_VER = "20261015j"  # 改 suya.css 後換新，全站一起換
+PAGE_CSS_VER = "20261014c"  # 改 blog/blog.css 或 daily/issue.css 後換新（put_style 會同步到各篇日記與每期日報）
 NAV = (SITE / "_partials" / "nav.html").read_text(encoding="utf-8").strip()
 NAV_RE = re.compile(r"<!--dora-nav-->.*?<!--/dora-nav-->\s*", re.S)
 PAGER_RE = re.compile(r"\s*<!--dora-pager-->.*?<!--/dora-pager-->", re.S)
@@ -88,7 +88,7 @@ def issues():
 
 PAGER_CSS = """<style>
 .dpager{max-width:880px;margin:0 auto;padding:0 24px 56px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;font-family:"Noto Sans TC",system-ui,sans-serif;font-size:18px;line-height:1.5}
-.dpager a{text-decoration:none;color:#3b5a7d;font-weight:500;background:#fffefa;border:1.5px solid #a9c2df;border-radius:999px;padding:7px 18px;box-shadow:0 4px 10px rgba(70,84,93,.06)}
+.dpager a{text-decoration:none;color:#3b5a7d;font-weight:500;background:#ffffff;border:1.5px solid #a9c2df;border-radius:999px;padding:7px 18px;box-shadow:0 4px 10px rgba(70,84,93,.06)}
 .dpager a:hover{background:#fff;border-color:#4a6f98}
 .dpager .sp{flex:1}
 @media (max-width:480px){.dpager{justify-content:center}}
