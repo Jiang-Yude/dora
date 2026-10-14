@@ -217,11 +217,18 @@ function splitSources(text, docs, picked = []) {
     urls.push(known.has(path) ? path : known.has(path + ".html") ? path + ".html" : path.replace(/\.html$/, ""));
     return "";
   })
-    .replace(/<<[^>]*$/, "");
+    .replace(/<<[^>]*$/, "")
+    // 只寫站內路徑（例：來源 /daily/2026-10-15/）也轉成來源卡
+    .replace(/(?:來源|出處|網址)?\s*[:：]?\s*(\/(?:blog|daily)\/[A-Za-z0-9\-._~\/%]*)/g, (m, path) => {
+      const k = known.has(path) ? path : known.has(path + ".html") ? path + ".html" : known.has(path.replace(/\.html$/, "")) ? path.replace(/\.html$/, "") : "";
+      if (!k) return m;
+      urls.push(k);
+      return "";
+    });
   const reply = text.replace(/<<\s*來源\s*[:：]([^>]*)>>/g, (_, list) => {
     list.split(/[,，\s]+/).forEach((u) => { if (u) urls.push(u.trim()); });
     return "";
-  }).replace(/[ \t]+\n/g, "\n").replace(/\n{2,}/g, "\n").replace(/[:：]\s*$/gm, "").trim()
+  }).replace(/ {2,}/g, " ").replace(/[ \t]+\n/g, "\n").replace(/\n{2,}/g, "\n").replace(/[:：]\s*$/gm, "").trim()
     .split("\n").filter((l) => !/^(-{3,}|我是朵拉\s*AI|江江教練的實習生|朵拉\s*AI\s*實習生)\s*$/.test(l.trim()))
     .slice(0, 5).join("\n");
   const sources = [...new Set(urls)].map((u) => known.get(u)).filter(Boolean).slice(0, 3)
