@@ -3,7 +3,7 @@
    首頁、實習日記目錄、AI 日報目錄共用：Hero 滿版插畫＋左側標題＋右下角 Q 版小動畫。 */
 :root{
   color-scheme:light;
-  --sy-bg:#ffffff;
+  --sy-bg:#f4f5f5;
   --sy-paper:#ffffff;
   --sy-mist:#dce7ed;
   --sy-mist-soft:#eaf1f4;
@@ -57,7 +57,7 @@
 }
 .sy-hero::after{ /* 左側米白淡出，讓標題清楚、不壓到朵拉 */
   content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(90deg,rgba(255,255,255,.92) 0%,rgba(255,255,255,.75) 32%,rgba(255,255,255,0) 52%);
+  background:linear-gradient(90deg,rgba(244,245,245,.92) 0%,rgba(244,245,245,.75) 32%,rgba(244,245,245,0) 52%);
 }
 .sy-hero-in{
   position:relative;z-index:2;height:100%;max-width:1180px;margin:0 auto;padding:0 32px;
@@ -134,7 +134,7 @@
 body::before{
   content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
   background-image:url(/img/doodle/pencil-dots.png);  /* 藍色色鉛筆手繪圓點（江江 2026-10-14） */
-  background-size:192px 192px;
+  background-size:240px 240px;
 }
 
 /* 寬螢幕 Hero：文字區貼齊視窗左側，固定比例邊距，不跟 1180 容器置中 */
