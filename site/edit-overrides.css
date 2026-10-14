@@ -19,7 +19,8 @@
 @media (min-width:1367px){html:has(link[data-ep="home"]) div.find.sy-sticky{transform:translate(19.3px,11.9px) rotate(-0.5deg) scale(1)!important}}
 /* @anchor home | div.find.sy-sticky > img.sy-doodle | 761 1366 1367 1920 */
 @media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.find.sy-sticky > img.sy-doodle{transform:translate(-43.5px,19.7px) rotate(8deg) scale(1)!important}}
-@media (min-width:1367px){html:has(link[data-ep="home"]) div.find.sy-sticky > img.sy-doodle{transform:translate(4.2px,-10px) rotate(8deg) scale(1)!important}}
+@media (min-width:1367px) and (max-width:1920px){html:has(link[data-ep="home"]) div.find.sy-sticky > img.sy-doodle{transform:translate(calc(4.2px + -27 * (100vw - 1367px) / 553),calc(-10px + 39.1 * (100vw - 1367px) / 553)) rotate(8deg) scale(1)!important}}
+@media (min-width:1920px){html:has(link[data-ep="home"]) div.find.sy-sticky > img.sy-doodle{transform:translate(-22.8px,29.1px) rotate(8deg) scale(1)!important}}
 /* @anchor home | div.about-art > img | 761 1366 1367 1920 */
 @media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.about-art > img{transform:translate(calc(29.6px + 23.6 * (100vw - 761px) / 605),calc(-42.6px + -33.8 * (100vw - 761px) / 605)) rotate(0deg) scale(1.07)!important}}
 @media (min-width:1367px){html:has(link[data-ep="home"]) div.about-art > img{transform:translate(53.2px,-76.4px) rotate(0deg) scale(1.07)!important}}
