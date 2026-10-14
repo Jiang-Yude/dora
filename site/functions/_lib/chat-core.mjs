@@ -5,8 +5,8 @@
 // 環境變數（key 只放伺服器端，前端拿不到）：
 //   DORA_LLM_PROVIDER   anthropic（預設，正式）｜openai（OpenAI 相容格式，只給本機 codex 轉接器測試用）
 //   ANTHROPIC_API_KEY   正式 Claude API key（Pages secret）
-//   DORA_LLM_MODEL      預設 claude-opus-5-5
-//   DORA_LLM_EFFORT     預設 low（客服閒聊用低 effort 就夠，可調 medium）
+//   DORA_LLM_MODEL      預設 claude-haiku-5-5（江江 2026-10-14 定：跟咪卡同概念，最簡單的模型＋檢索做好）
+//   DORA_LLM_EFFORT     預設不送；有設才帶 output_config.effort（換成支援的型號時再開）
 //   DORA_LLM_BASE_URL   provider=openai 時的端點，例 http://127.0.0.1:18902/v1
 //   DORA_UPSTASH_URL / DORA_UPSTASH_TOKEN   問句匿名記錄（沒設就不記）
 import { PERSONA, PERSONA_VERSION } from "./persona.mjs";
@@ -89,14 +89,29 @@ function score(doc, ts) {
   for (const w of ts) n += (t.includes(w) ? 3 : 0) + (s.includes(w) ? 2 : 0) + (x.includes(w) ? 1 : 0);
   return n;
 }
+// 問句裡的日期（10/15、10月15日、2026-10-15）→ 對到 doc.date 的月日
+function dateHits(question) {
+  const out = [];
+  for (const m of String(question).matchAll(/(?:(\d{4})[-/.年])?(\d{1,2})\s*[/.月-]\s*(\d{1,2})/g))
+    out.push(`-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}`);
+  return out;
+}
+function byDate(a, b) { return String(b.date).localeCompare(String(a.date)); }
 function pickDocs(docs, question) {
   const ts = terms(question);
-  let picked = docs.map((d) => ({ d, n: score(d, ts) })).filter((x) => x.n > 0)
-    .sort((a, b) => b.n - a.n).slice(0, 4).map((x) => x.d);
+  const ds = dateHits(question);
+  let picked = docs.map((d) => ({ d, n: score(d, ts) + (ds.some((x) => String(d.date || "").endsWith(x)) ? 20 : 0) }))
+    .filter((x) => x.n > 0).sort((a, b) => b.n - a.n || byDate(a.d, b.d)).slice(0, 4).map((x) => x.d);
+  // 「最新／最近／今天」先放最新一篇
+  if (/最新|最近|今天|這期|這篇|新的/.test(question)) {
+    const pool = /日報|daily|新聞/i.test(question) ? docs.filter((d) => d.type === "daily") : /日記|blog/i.test(question) ? docs.filter((d) => d.type === "blog") : docs;
+    const newest = [...pool].sort(byDate)[0];
+    if (newest) picked = [newest, ...picked.filter((d) => d !== newest)];
+  }
   // 類別型問句整類帶入（只給命中兩三筆，會只答得出一篇）
   const want = /日報|daily|新聞|趨勢/i.test(question) ? "daily" : /日記|實習日記|blog|文章/i.test(question) ? "blog" : "";
   if (want) {
-    const all = docs.filter((d) => d.type === want).sort((a, b) => String(b.date).localeCompare(String(a.date))).slice(0, 6);
+    const all = docs.filter((d) => d.type === want).sort(byDate).slice(0, 6);
     picked = [...new Set([...picked, ...all])];
   }
   return picked;
@@ -139,14 +154,14 @@ async function callAnthropic(env, system, turns) {
       "anthropic-beta": "server-side-fallback-2026-07-01",
     },
     body: JSON.stringify({
-      model: env.DORA_LLM_MODEL || "claude-opus-5-5",
-      max_tokens: 4000,
+      model: env.DORA_LLM_MODEL || "claude-haiku-5-5",
+      max_tokens: 600,
       system: [
         { type: "text", text: PERSONA, cache_control: { type: "ephemeral" } },  // 人設固定在前面吃快取
         { type: "text", text: system },
       ],
       messages: turns,
-      output_config: { effort: env.DORA_LLM_EFFORT || "low" },
+      ...(env.DORA_LLM_EFFORT ? { output_config: { effort: env.DORA_LLM_EFFORT } } : {}),
       fallbacks: "default",
     }),
   });
@@ -172,7 +187,7 @@ async function callOpenAICompat(env, system, turns) {
 }
 
 /* ── 回覆後處理：抽出來源標記、轉成來源卡；只收站內存在的網址 ── */
-function splitSources(text, docs) {
+function splitSources(text, docs, picked = []) {
   const known = new Map([...SITE_PAGES, ...docs].map((d) => [d.url, d]));
   const urls = [];
   const reply = text.replace(/<<\s*來源\s*[:：]([^>]*)>>/g, (_, list) => {
@@ -181,6 +196,11 @@ function splitSources(text, docs) {
   }).replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
   const sources = [...new Set(urls)].map((u) => known.get(u)).filter(Boolean).slice(0, 3)
     .map((d) => ({ title: d.title, url: d.url, type: d.type || "page", date: d.date || undefined }));
+  // 江江要的是「推薦他看文章」：模型漏寫來源標記時，用檢索第一名補一張文章卡
+  if (!sources.length && picked.length && !/https?:\/\//.test(reply)) {  // 已給外部網址（找江江、官網）就不硬塞文章
+    const d = picked[0];
+    sources.push({ title: d.title, url: d.url, type: d.type || "page", date: d.date || undefined });
+  }
   return { reply, sources };
 }
 
@@ -244,7 +264,7 @@ export async function handleChat(context) {
     const provider = env.DORA_LLM_PROVIDER || "anthropic";
     const raw = provider === "openai" ? await callOpenAICompat(env, system, turns) : await callAnthropic(env, system, turns);
     if (!raw) throw new Error("empty reply");
-    return json(splitSources(raw, docs));
+    return json(splitSources(raw, docs, picked.filter((d) => d.text)));
   } catch (e) {
     console.error("[dora-chat]", e.message);
     return json({ reply: "朵拉這邊好像當機了一下\n耳朵垂下來了\n等一下再問我一次好嗎", sources: [], error: "upstream" }, 502);
