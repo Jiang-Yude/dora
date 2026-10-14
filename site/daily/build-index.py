@@ -53,7 +53,7 @@ def alias_keywords(url):
     return list(dict.fromkeys((a.get("tags") or []) + (a.get("keywords") or [])))
 BASE = "https://dora-aicat.pages.dev"
 CSS_VER = "20261015k"  # 改 suya.css 後換新，全站一起換
-PAGE_CSS_VER = "20261014c"  # 改 blog/blog.css 或 daily/issue.css 後換新（put_style 會同步到各篇日記與每期日報）
+PAGE_CSS_VER = "20261014cx"  # 改 blog/blog.css 或 daily/issue.css 後換新（put_style 會同步到各篇日記與每期日報）
 NAV = (SITE / "_partials" / "nav.html").read_text(encoding="utf-8").strip()
 NAV_RE = re.compile(r"<!--dora-nav-->.*?<!--/dora-nav-->\s*", re.S)
 PAGER_RE = re.compile(r"\s*<!--dora-pager-->.*?<!--/dora-pager-->", re.S)
