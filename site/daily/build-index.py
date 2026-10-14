@@ -20,6 +20,8 @@
    讓不跑 JS 的 AI 爬蟲也讀得到；頁面原本的 JS 照跑，會用同一份 JSON 再畫一次
 10. sitemap.xml 整檔重產（首頁、日記、搜尋、日報）；lastmod 用該檔 git 最後提交日，有未提交改動就用今天
 11. llms.txt 後段「網站結構」（標記 <!-- dora-site-map -->）列出全站頁面清單；前段人設接待指引不動
+12. 別名庫 data/search-aliases.json（4O 第八節）：各頁 tags／keywords／aliases 併進 search-index.json，tags＋keywords 寫進 JSON-LD keywords；
+    沒有別名的頁面會印警告，新文章發布跑本檔時就會提醒補別名
 不改日報頁的配色與版面。標題取自該期 <script id="daily"> JSON 第一則 title_zh。
 """
 import json, re, sys
@@ -30,6 +32,23 @@ from html import escape
 
 SITE = Path(__file__).resolve().parent.parent
 DAILY = SITE / "daily"
+ALIASES_FILE = SITE.parent / "data" / "search-aliases.json"  # 別名庫（4O 第八節）：不在 site/ 內，不會被部署成靜態檔
+
+
+def _akey(url):  # /blog/01-ancestor.html 與 canonical 的 /blog/01-ancestor 視為同一頁
+    return re.sub(r"\.html$", "", url)
+
+
+def load_aliases():
+    try:
+        return {_akey(k): v for k, v in json.loads(ALIASES_FILE.read_text(encoding="utf-8")).items() if k.startswith("/")}
+    except FileNotFoundError:
+        return {}
+
+
+def alias_keywords(url):
+    a = load_aliases().get(_akey(url)) or {}
+    return list(dict.fromkeys((a.get("tags") or []) + (a.get("keywords") or [])))
 BASE = "https://dora-aicat.pages.dev"
 CSS_VER = "20261015g"  # 改 suya.css 後換新，全站一起換
 NAV = (SITE / "_partials" / "nav.html").read_text(encoding="utf-8").strip()
@@ -284,6 +303,18 @@ def write_search_index(items):
             "summary": it["title"],
             "items": rows,
         })
+    aliases = load_aliases()
+    missing = []
+    for d in docs:  # 併入別名庫：tags／keywords／aliases（搜尋頁與朵拉小客服都拿來比對）
+        a = aliases.get(_akey(d["url"]))
+        if a:
+            for k in ("tags", "keywords", "aliases"):
+                if a.get(k):
+                    d[k] = a[k]
+        else:
+            missing.append(d["url"])
+    if missing:
+        print("⚠️ 別名庫還沒有這些頁面（補進 data/search-aliases.json）：" + "、".join(missing))
     (SITE / "search-index.json").write_text(json.dumps({"docs": docs}, ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
     return len(docs)
 
@@ -496,7 +527,7 @@ def put_all_seo(items):
             "dateModified": max(b["date"], file_date(f)), "inLanguage": "zh-Hant-TW",
             "url": f"{BASE}{b['url']}", "mainEntityOfPage": f"{BASE}{b['url']}",
             "image": f"{BASE}/img/og/diary.jpg", "author": DORA, "publisher": JIANG,
-            "isPartOf": {"@id": f"{BASE}/blog/#blog"}})
+            "isPartOf": {"@id": f"{BASE}/blog/#blog"}, **({"keywords": kw} if (kw := alias_keywords(b["url"])) else {})})
     if (SITE / "search" / "index.html").exists():
         put_seo(SITE / "search" / "index.html", "/search/")
     for n, chunk, _ in paginate(items):
@@ -521,6 +552,8 @@ def put_all_seo(items):
               "articleSection": "朵拉日報", "author": DORA, "publisher": JIANG, "isPartOf": SITE_REF}
         if cites:
             ld["citation"] = cites
+        if kw := alias_keywords(url):
+            ld["keywords"] = kw
         put_seo(it["file"], url, ld)
 
 LLMS_RE = re.compile(r"\n*<!-- dora-site-map -->.*?<!-- /dora-site-map -->\n?", re.S)

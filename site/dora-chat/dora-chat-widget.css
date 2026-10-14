@@ -13,10 +13,11 @@
   --dcw-accent: #4a6f98;
   --dcw-accent-deep: #3b5a7d;
   --dcw-pencil: #6f94c2;
+  --dcw-pencil-soft: #a9c2df;
   --dcw-shadow: 0 18px 44px rgba(47, 60, 69, 0.18);
   --dcw-radius: 22px;
-  font-family: -apple-system, "PingFang TC", "Noto Sans TC", sans-serif;
-  font-size: 18px;
+  font-family: "Noto Sans TC", system-ui, -apple-system, "PingFang TC", sans-serif;  /* 同 suya.css --sy-sans；字級比照全站加大 2px */
+  font-size: 20px;
   line-height: 1.65;
   color: var(--dcw-ink);
   position: fixed;
@@ -35,7 +36,7 @@
   align-items: center;
   gap: 10px;
   background: var(--dcw-paper);
-  border: 1px solid var(--dcw-line);
+  border: 1.5px solid var(--dcw-pencil-soft);
   border-radius: 999px;
   padding: 5px 16px 5px 82px;
   min-height: 48px;
@@ -52,7 +53,7 @@
 }
 /* 頭像比膠囊大、往左上凸出（江江 2026-10-14：臉要特寫、圓圈要大過膠囊） */
 #dcw-root .dcw-launcher-avatar { position: absolute; left: -10px; top: 50%; transform: translateY(-50%); width: 80px; height: 80px; border: 3px solid #fff; box-shadow: 0 4px 14px rgba(47, 60, 69, 0.22); }
-#dcw-root .dcw-launcher-text { font-size: 17px; font-weight: 600; color: var(--dcw-ink-soft); white-space: nowrap; }
+#dcw-root .dcw-launcher-text { font-size: 19px; font-weight: 600; color: var(--dcw-ink-soft); white-space: nowrap; }
 #dcw-root .dcw-launcher-dot {
   position: absolute;
   top: -12px;
@@ -104,9 +105,9 @@
   flex: none;
 }
 #dcw-root .dcw-head-avatar { width: 44px; height: 44px; border: 2px solid #fff; box-shadow: 0 2px 8px rgba(47, 60, 69, 0.15); }
-#dcw-root .dcw-head-title { font-size: 19px; font-weight: 700; line-height: 1.3; }
+#dcw-root .dcw-head-title { font-size: 21px; font-weight: 700; line-height: 1.3; }
 #dcw-root .dcw-head-sub {
-  font-size: 16px;
+  font-size: 18px;
   color: var(--dcw-ink-faint);
   line-height: 1.35;
   white-space: nowrap;
@@ -122,7 +123,7 @@
   display: grid;
   place-items: center;
   color: var(--dcw-ink-faint);
-  font-size: 20px;
+  font-size: 22px;
   transition: background .15s ease;
 }
 #dcw-root .dcw-icon-btn:hover { background: rgba(74, 111, 152, 0.12); color: var(--dcw-ink); }
@@ -164,7 +165,7 @@
 #dcw-root.dcw-restore .dcw-msg { animation: none; }
 @keyframes dcw-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 #dcw-root .dcw-msg-avatar { width: 32px; height: 32px; border: 1.5px solid var(--dcw-line); align-self: flex-end; }
-#dcw-root .dcw-bubble { padding: 10px 15px; border-radius: 18px; font-size: 18px; white-space: pre-wrap; word-break: break-word; }
+#dcw-root .dcw-bubble { padding: 10px 15px; border-radius: 18px; font-size: 20px; white-space: pre-wrap; word-break: break-word; }
 #dcw-root .dcw-msg.dcw-bot .dcw-bubble {
   background: var(--dcw-paper);
   border: 1px solid var(--dcw-line);
@@ -188,7 +189,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 16px;
+  font-size: 18px;
   color: var(--dcw-accent-deep);
   text-decoration: none;
   line-height: 1.45;
@@ -199,7 +200,7 @@
 }
 #dcw-root .dcw-source-link:hover { border-color: var(--dcw-pencil); background: #f1f6fb; }
 #dcw-root .dcw-source-icon { flex: none; width: 18px; height: 18px; color: var(--dcw-pencil); }
-#dcw-root .dcw-source-date { margin-left: auto; font-size: 14px; color: var(--dcw-ink-faint); white-space: nowrap; }
+#dcw-root .dcw-source-date { margin-left: auto; font-size: 16px; color: var(--dcw-ink-faint); white-space: nowrap; }
 
 #dcw-root .dcw-typing .dcw-bubble { color: var(--dcw-ink-faint); }
 #dcw-root .dcw-typing .dcw-bubble span { animation: dcw-blink 1.2s infinite; }
@@ -210,7 +211,7 @@
 /* 快捷提問 */
 #dcw-root .dcw-chips { display: flex; flex-wrap: wrap; gap: 8px; padding: 4px 16px 10px; flex: none; }
 #dcw-root .dcw-chip {
-  font-size: 18px;
+  font-size: 20px;
   padding: 6px 14px;
   border-radius: 999px;
   border: 1px solid var(--dcw-line);
@@ -239,7 +240,7 @@
   outline: none;
   background: transparent;
   font: inherit;
-  font-size: 18px;
+  font-size: 20px;
   color: var(--dcw-ink);
   min-width: 0;
 }
@@ -257,10 +258,10 @@
 }
 #dcw-root .dcw-send:hover { background: var(--dcw-accent-deep); transform: scale(1.06); }
 #dcw-root .dcw-send svg { width: 20px; height: 20px; }
-#dcw-root .dcw-limit { text-align: right; font-size: 16px; color: var(--dcw-ink-faint); padding: 4px 12px 0; line-height: 1.5; }
+#dcw-root .dcw-limit { text-align: right; font-size: 18px; color: var(--dcw-ink-faint); padding: 4px 12px 0; line-height: 1.5; }
 #dcw-root .dcw-limit:empty { display: none; }
 #dcw-root .dcw-limit-over { color: #a5483f; font-weight: 600; }
-#dcw-root .dcw-note { font-size: 14px; color: var(--dcw-ink-faint); padding: 6px 8px 0; line-height: 1.5; text-align: center; }
+#dcw-root .dcw-note { font-size: 16px; color: var(--dcw-ink-faint); padding: 6px 8px 0; line-height: 1.5; text-align: center; }
 
 /* ─── 手機：預設貼底，放大＝整個螢幕 ─── */
 @media (max-width: 520px) {

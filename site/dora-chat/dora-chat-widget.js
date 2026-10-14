@@ -1,5 +1,6 @@
 /* ─── 朵拉小客服 Widget ───
-   用法：頁面加一行 <script src="/dora-chat/dora-chat-widget.js" defer></script>
+   用法：頁面只放延遲載入器 dora-chat-loader.js（由 functions/_middleware.js 插入），按下按鈕才載入本檔；
+   直接放本檔也能單獨運作。
    會自動注入 CSS 與 HTML。對話、開合、視窗大小都存 localStorage，跨頁延續。
 
    版型＝官方客服版型（webpage-builder 21-mode，正本＝官網咪卡 mika-chat-widget.js），
@@ -112,7 +113,12 @@
   root.style.visibility = 'hidden';
   root.classList.add('dcw-restore');
   document.body.appendChild(root);
-  pendingShow = function () { root.style.visibility = ''; setTimeout(function () { root.classList.remove('dcw-restore'); }, 120); };
+  pendingShow = function () {
+    root.style.visibility = '';
+    setTimeout(function () { root.classList.remove('dcw-restore'); }, 120);
+    // 延遲載入器的小按鈕功成身退
+    ['dcw-lite', 'dcw-lite-style'].forEach(function (id) { var el = document.getElementById(id); if (el) el.remove(); });
+  };
   if (cssReady) pendingShow();
 
   var launcher = root.querySelector('.dcw-launcher');
@@ -328,7 +334,10 @@
   panelEl.setAttribute('aria-hidden', 'true');
   var wasOpen = false;
   try { wasOpen = localStorage.getItem(OPEN_KEY) === '1'; } catch (e) {}
-  if (wasOpen) {
+  if (window.__dcwOpenOnLoad) {  // 從延遲載入器的按鈕進來：直接打開
+    setOpen(true);
+    input.focus();
+  } else if (wasOpen) {
     var panel = root.querySelector('.dcw-panel');
     panel.style.transition = 'none';
     setOpen(true);

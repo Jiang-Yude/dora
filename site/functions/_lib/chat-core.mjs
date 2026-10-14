@@ -69,10 +69,18 @@ async function loadIndex(env, request) {
   try {
     const url = new URL("/search-index.json", request.url);
     const r = env.ASSETS ? await env.ASSETS.fetch(url) : await fetch(url);
-    if (r.ok) docs = ((await r.json()).docs || []).filter((d) => d && d.url && d.title);
+    if (r.ok) docs = ((await r.json()).docs || []).filter((d) => d && d.url && d.title).map(normDoc);
   } catch (e) { /* 索引讀不到就只靠人設回答，不讓整支掛掉 */ }
   indexCache = { at: Date.now(), docs };
   return docs;
+}
+
+// 4O 改版後日報改存逐則 items（沒有 text）：把各則標題＋摘要接成 text；別名庫欄位接成 alias 字串供打分
+function normDoc(d) {
+  const items = Array.isArray(d.items) ? d.items : [];
+  const text = d.text || items.map((x) => `${x.title || ""}：${x.summary || ""}`).join("\n");
+  const alias = [].concat(d.tags || [], d.keywords || [], d.aliases || []).join(" ").toLowerCase();
+  return { ...d, text, alias };
 }
 
 // 中文用二字詞、英數用整個字，簡單打分；別名庫等內容變多再加
@@ -86,7 +94,8 @@ function terms(q) {
 function score(doc, ts) {
   const t = (doc.title || "").toLowerCase(), s = (doc.summary || "").toLowerCase(), x = (doc.text || "").toLowerCase();
   let n = 0;
-  for (const w of ts) n += (t.includes(w) ? 3 : 0) + (s.includes(w) ? 2 : 0) + (x.includes(w) ? 1 : 0);
+  const a = doc.alias || "";
+  for (const w of ts) n += (t.includes(w) ? 3 : 0) + (a.includes(w) ? 3 : 0) + (s.includes(w) ? 2 : 0) + (x.includes(w) ? 1 : 0);
   return n;
 }
 // 問句裡的日期（10/15、10月15日、2026-10-15）→ 對到 doc.date 的月日
@@ -116,8 +125,16 @@ function pickDocs(docs, question) {
   }
   return picked;
 }
+// 放在 system 最後面：Haiku 關掉思考後最會照「最後讀到的規則」走（2026-10-14 實測：放前面會寫太長、加簽名）
+const FINAL_RULES = `===== 回覆前最後確認（最優先，蓋過上面所有格式說明）=====
+1. 最多三行，每行一句短句，用斷行代替逗號句號。不要列出整篇內容。
+2. 先用一兩行回答，最後一行請他點下面的文章看。站內文章不要寫網址，寫在來源標記裡。
+3. 不加簽名檔，不寫「我是朵拉 AI」「江江教練的實習生」，不用分隔線。
+4. 不說「幫你轉告」「交給江江」「記住了」。想找江江就給知識官網和 Threads 兩個網址。
+5. 站內資料沒有的就說朵拉不知道，不要編。`;
+
 function buildContext(docs, picked, page) {
-  const dir = docs.map((d) => `- [${d.type}] ${d.title}（${d.date || "無日期"}）${d.url}：${d.summary || ""}`).join("\n");
+  const dir = docs.map((d) => `- [${d.type}] ${d.title}（${d.date || "無日期"}）${d.url}：${d.summary || ""}${d.keywords ? "｜關鍵字：" + d.keywords.join("、") : ""}`).join("\n");
   const pages = SITE_PAGES.map((p) => `- ${p.title} ${p.url}`).join("\n");
   const detail = picked.map((d) => `### ${d.title}（${d.url}，${d.date || ""}）\n${String(d.text || d.summary || "").slice(0, 3000)}`).join("\n\n");
   return [
@@ -126,6 +143,7 @@ function buildContext(docs, picked, page) {
     "全站目錄：\n" + (dir || "（目前讀不到目錄）"),
     "跟這次問題有關的頁面全文：\n" + (detail || "（沒有找到相關頁面）"),
     page ? `訪客目前所在頁面：${page}` : "",
+    FINAL_RULES,
   ].filter(Boolean).join("\n\n");
 }
 
@@ -155,7 +173,9 @@ async function callAnthropic(env, system, turns) {
     },
     body: JSON.stringify({
       model: env.DORA_LLM_MODEL || "claude-haiku-5-5",
-      max_tokens: 600,
+      max_tokens: 800,
+      // Haiku 5.5 預設會先思考，客服短答用不到，還會吃掉回答額度造成截斷（2026-10-14 實測）；要開設 DORA_LLM_THINKING=adaptive
+      thinking: { type: env.DORA_LLM_THINKING || "disabled" },
       system: [
         { type: "text", text: PERSONA, cache_control: { type: "ephemeral" } },  // 人設固定在前面吃快取
         { type: "text", text: system },
@@ -190,10 +210,15 @@ async function callOpenAICompat(env, system, turns) {
 function splitSources(text, docs, picked = []) {
   const known = new Map([...SITE_PAGES, ...docs].map((d) => [d.url, d]));
   const urls = [];
+  // 模型把站內網址寫進內文：轉成來源卡，內文拿掉；結尾被截斷的半截標記也清掉
+  text = text.replace(/https?:\/\/dora-aicat\.pages\.dev(\/[^\s<>）)，。]*)/g, (_, path) => { urls.push(path); return ""; })
+    .replace(/<<[^>]*$/, "");
   const reply = text.replace(/<<\s*來源\s*[:：]([^>]*)>>/g, (_, list) => {
     list.split(/[,，\s]+/).forEach((u) => { if (u) urls.push(u.trim()); });
     return "";
-  }).replace(/[ \t]+\n/g, "\n").replace(/\n{3,}/g, "\n\n").trim();
+  }).replace(/[ \t]+\n/g, "\n").replace(/\n{2,}/g, "\n").replace(/[:：]\s*$/gm, "").trim()
+    .split("\n").filter((l) => !/^(-{3,}|我是朵拉\s*AI|江江教練的實習生|朵拉\s*AI\s*實習生)\s*$/.test(l.trim()))
+    .slice(0, 5).join("\n");
   const sources = [...new Set(urls)].map((u) => known.get(u)).filter(Boolean).slice(0, 3)
     .map((d) => ({ title: d.title, url: d.url, type: d.type || "page", date: d.date || undefined }));
   // 江江要的是「推薦他看文章」：模型漏寫來源標記時，用檢索第一名補一張文章卡
@@ -202,6 +227,10 @@ function splitSources(text, docs, picked = []) {
     sources.push({ title: d.title, url: d.url, type: d.type || "page", date: d.date || undefined });
   }
   return { reply, sources };
+}
+
+function cards(list) {
+  return list.map((d) => ({ title: d.title, url: d.url, type: d.type || "page", date: d.date || undefined }));
 }
 
 /* ── 匿名記錄：只記問句、時間、所在頁、命中幾筆；不記 IP、不記答覆 ── */
@@ -260,14 +289,23 @@ export async function handleChat(context) {
   const logRow = { t: taipeiNow(), q: maskPII(question), page, hits: picked.length, v: PERSONA_VERSION };
   if (context.waitUntil) context.waitUntil(logQuestion(env, logRow)); else logQuestion(env, logRow);
 
+  const provider = env.DORA_LLM_PROVIDER || "anthropic";
+  // 還沒設 key（或 key 被拿掉）：不報錯，回「準備中」，照樣用檢索推最相關的文章
+  const notReady = provider === "anthropic" ? !env.ANTHROPIC_API_KEY : !env.DORA_LLM_BASE_URL;
+  if (notReady) {
+    return json({
+      reply: "朵拉小客服還在準備中\n先幫你找了可能相關的文章 點下面看看",
+      sources: cards(picked.filter((d) => d.text).slice(0, 2)),
+      ready: false,
+    });
+  }
   try {
-    const provider = env.DORA_LLM_PROVIDER || "anthropic";
     const raw = provider === "openai" ? await callOpenAICompat(env, system, turns) : await callAnthropic(env, system, turns);
     if (!raw) throw new Error("empty reply");
     return json(splitSources(raw, docs, picked.filter((d) => d.text)));
   } catch (e) {
     console.error("[dora-chat]", e.message);
-    return json({ reply: "朵拉這邊好像當機了一下\n耳朵垂下來了\n等一下再問我一次好嗎", sources: [], error: "upstream" }, 502);
+    return json({ reply: "朵拉這邊好像當機了一下\n耳朵垂下來了\n先看看下面的文章 等一下再問我一次好嗎", sources: cards(picked.filter((d) => d.text).slice(0, 2)), error: "upstream" }, 200);
   }
 }
 

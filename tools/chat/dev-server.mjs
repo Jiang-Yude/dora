@@ -26,7 +26,7 @@ const env = {
 };
 const TYPES = { '.html': 'text/html; charset=utf-8', '.js': 'text/javascript', '.mjs': 'text/javascript', '.css': 'text/css',
   '.json': 'application/json', '.webp': 'image/webp', '.png': 'image/png', '.jpg': 'image/jpeg', '.svg': 'image/svg+xml', '.txt': 'text/plain; charset=utf-8', '.xml': 'application/xml' };
-const INJECT = '<script src="/dora-chat/dora-chat-widget.js" defer></script>';
+const INJECT = '<script src="/dora-chat/dora-chat-loader.js" defer></script>';
 
 async function serveFile(p) {
   let rel = decodeURIComponent(p);

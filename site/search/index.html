@@ -147,6 +147,7 @@ mark{background:linear-gradient(transparent 52%,rgba(169,194,223,.75) 52%,rgba(1
   function haystack(d){
     var s=[d.title,d.summary,d.text||'',d.date||''];
     (d.items||[]).forEach(function(x){s.push(x.title,x.summary)});
+    s=s.concat(d.tags||[],d.keywords||[],d.aliases||[]);  // 別名庫（data/search-aliases.json）
     return s.join(' ').toLowerCase();
   }
   function render(){
@@ -158,7 +159,8 @@ mark{background:linear-gradient(transparent 52%,rgba(169,194,223,.75) 52%,rgba(1
       var h=d._h||(d._h=haystack(d));
       if(!ts.every(function(t){return h.indexOf(t)>-1})) return;
       var score=0; ts.forEach(function(t){ if(has(d.title,t)) score+=5; if(has(d.summary,t)) score+=3;
-        (d.items||[]).forEach(function(x){ if(has(x.title,t)) score+=2 }) });
+        (d.items||[]).forEach(function(x){ if(has(x.title,t)) score+=2 });
+        if((d.tags||[]).concat(d.keywords||[],d.aliases||[]).some(function(w){return has(w,t)})) score+=4 });
       hits.push({d:d,score:score});
     });
     hits.sort(function(a,b){return b.score-a.score||String(b.d.date).localeCompare(String(a.d.date))});
