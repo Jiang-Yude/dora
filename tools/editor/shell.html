@@ -54,6 +54,7 @@ button,select,input{font:inherit;color:inherit}
     <button data-dev="desktop" title="桌機 1920 寬">桌機</button>
     <button data-dev="laptop" title="筆電 1366 寬">筆電</button>
     <button data-dev="mobile" title="手機 390 寬">手機</button>
+    <select id="wsel" title="預覽寬度（同一段裝置內換寬度看看）"></select>
   </div>
   <div class="grp">
     <button id="undo" title="復原（⌘Z）">↶ 復原</button>
@@ -77,6 +78,11 @@ button,select,input{font:inherit;color:inherit}
 (function(){
   var START = __START__;
   var W = {desktop:1920, laptop:1366, mobile:390};
+  var WOPT = {desktop:[1920,1600,1440,1367], laptop:[1366,1280,1180,1024,980,900,800,761], mobile:[760,430,390,360]};
+  try { var sw0 = JSON.parse(sessionStorage.getItem('de-w')||'null'); if (sw0) W = sw0; } catch(e){}
+  var wsel = document.getElementById('wsel');
+  function fillW(){ wsel.innerHTML=''; WOPT[device].forEach(function(w){ wsel.appendChild(new Option(w+' 寬', w)); }); wsel.value = W[device]; }
+  wsel.addEventListener('change', function(){ W[device] = +wsel.value; try{ sessionStorage.setItem('de-w', JSON.stringify(W)); }catch(e){} layout(); });
   var NAME = {desktop:'桌機', laptop:'筆電', mobile:'手機'};
   var MAIN = [['/', '首頁'], ['/blog/', '實習日記'], ['/daily/', 'AI 日報'], ['/search/', '搜尋']];
   var page = START || '/';
@@ -121,6 +127,7 @@ button,select,input{font:inherit;color:inherit}
     frame.src = page + (page.indexOf('?') >= 0 ? '&' : '?') + 'edit=1&frame=1&dev=' + device;
     history.replaceState(null, '', page + '?edit=1');
     document.querySelectorAll('[data-dev]').forEach(function(b){ b.classList.toggle('on', b.dataset.dev === device); });
+    fillW();
     layout();
   }
   function layout(){

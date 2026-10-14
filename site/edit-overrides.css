@@ -5,7 +5,7 @@
 @media (min-width:1367px){
 html:has(link[data-ep="blog"]) span.sprite.think{transform:translate(-26.9px,-25.1px) rotate(0deg) scale(1)!important}
 html:has(link[data-ep="home"]) span.sprite.wave{transform:translate(-6.4px,-17.1px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.sprite.think{transform:translate(-941px,1009px) rotate(-5deg) scale(1.53)!important}
+html:has(link[data-ep="home"]) div.sprite.think{transform:translate(0px,0px) rotate(-5deg) scale(1.2)!important}
 html:has(link[data-ep="home"]) p.real-note{transform:translate(135px,21.6px) rotate(-4.1deg) scale(1.31)!important}
 html:has(link[data-ep="home"]) div.find.sy-sticky{transform:translate(19.3px,11.9px) rotate(-0.5deg) scale(1)!important}
 html:has(link[data-ep="home"]) div.find.sy-sticky > img.sy-doodle{transform:translate(4.2px,-10px) rotate(8deg) scale(1)!important}
@@ -43,7 +43,7 @@ html:has(link[data-ep="home"]) div.more > img.sy-doodle{transform:translate(322p
 @media (min-width:761px) and (max-width:1366px){
 html:has(link[data-ep="blog"]) span.sprite.think{transform:translate(calc(-26.9 * 100vw / 1366),calc(-25.1 * 100vw / 1366)) rotate(0deg) scale(1)!important}
 html:has(link[data-ep="home"]) span.sprite.wave{transform:translate(calc(-6.4 * 100vw / 1366),calc(-17.1 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.sprite.think{transform:translate(calc(-941 * 100vw / 1366),calc(1009 * 100vw / 1366)) rotate(-5deg) scale(1.53)!important}
+html:has(link[data-ep="home"]) div.sprite.think{transform:translate(calc(0 * 100vw / 1366),calc(0 * 100vw / 1366)) rotate(-5deg) scale(1.2)!important}
 html:has(link[data-ep="home"]) p.real-note{transform:translate(calc(135 * 100vw / 1366),calc(21.6 * 100vw / 1366)) rotate(-4.1deg) scale(1.31)!important}
 html:has(link[data-ep="home"]) div.find.sy-sticky{transform:translate(calc(19.3 * 100vw / 1366),calc(11.9 * 100vw / 1366)) rotate(-0.5deg) scale(1)!important}
 html:has(link[data-ep="home"]) div.find.sy-sticky > img.sy-doodle{transform:translate(calc(4.2 * 100vw / 1366),calc(-10 * 100vw / 1366)) rotate(8deg) scale(1)!important}

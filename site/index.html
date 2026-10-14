@@ -41,6 +41,10 @@ a{color:inherit}
 section{padding:76px 0 0}
 
 /* 朵拉簡介 */
+.find{position:relative}
+.find .find-pet{position:absolute;right:100%;margin-right:clamp(10px,2vw,36px);top:50%;transform:translateY(-50%);z-index:3}
+@media (max-width:1180px){#find .find{margin-top:130px!important}.find .find-pet{right:auto;left:10px;top:0;margin-right:0;transform:translateY(-88%)}}
+@media (max-width:760px){.find .find-pet{display:none}}
 .about{display:grid;grid-template-columns:1fr 1.08fr;gap:40px;align-items:center}
 .about>*{min-width:0}
 .about h3{font-family:var(--sy-serif);font-weight:700;color:var(--sy-ink);font-size:clamp(26px,2.6vw,32px);line-height:1.4;letter-spacing:.06em}
@@ -353,7 +357,6 @@ footer .sign-hand{display:block;margin:6px auto 0;--r:-2deg;font-size:20px}
           <svg class="leaf" viewBox="0 0 40 40" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 11c5-2 10-2 14 1v21c-4-3-9-3-14-1zM34 11c-5-2-10-2-14 1v21c4-3 9-3 14-1z"/></svg>
           <small>My Diary</small>
         </div>
-        <div class="sprite-box"><span class="say r">朵拉在寫日記</span><div class="sprite think" role="img" aria-label="Q版朵拉歪頭想事情"></div></div>
       </div>
       <!-- 首頁精選：一大三小的示意拼貼，手動維護；不連到各篇，完整列表在 /blog/ -->
       <div class="collage">
@@ -390,6 +393,7 @@ footer .sign-hand{display:block;margin:6px auto 0;--r:-2deg;font-size:20px}
   <section id="find">
     <div class="wrap">
       <div class="find sy-sticky">
+        <div class="sprite-box find-pet"><div class="sprite think" role="img" aria-label="Q版朵拉歪頭想事情"></div></div>
         <span class="sy-hand" aria-hidden="true">找找看</span>
         <img class="sy-doodle" src="/img/doodle/doodle3.webp" width="360" height="315" alt="" aria-hidden="true" loading="lazy" onerror="this.remove()">
         <div><h3>找朵拉寫過的東西</h3><p>實習日記和 AI 日報都找得到</p></div>
