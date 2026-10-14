@@ -228,7 +228,7 @@ function splitSources(text, docs, picked = []) {
   const reply = text.replace(/<<\s*來源\s*[:：]([^>]*)>>/g, (_, list) => {
     list.split(/[,，\s]+/).forEach((u) => { if (u) urls.push(u.trim()); });
     return "";
-  }).replace(/ {2,}/g, " ").replace(/[ \t]+\n/g, "\n").replace(/\n{2,}/g, "\n").replace(/[:：]\s*$/gm, "").trim()
+  }).replace(/<<[^<>]*>>/g, "").replace(/ {2,}/g, " ").replace(/[ \t]+\n/g, "\n").replace(/\n{2,}/g, "\n").replace(/[:：]\s*$/gm, "").trim()
     .split("\n").filter((l) => !/^(-{3,}|我是朵拉\s*AI|江江教練的實習生|朵拉\s*AI\s*實習生)\s*$/.test(l.trim()))
     .slice(0, 5).join("\n");
   const sources = [...new Set(urls)].map((u) => known.get(u)).filter(Boolean).slice(0, 3)
