@@ -49,7 +49,7 @@ section{padding:76px 0 0}
 .note b{flex:none;font-family:var(--sy-serif);color:var(--sy-blue-deep);font-weight:700}
 .about-art{position:relative;display:flex;justify-content:center;align-items:flex-end}
 .about-art img{display:block;width:auto;height:auto;max-height:520px;max-width:100%;filter:drop-shadow(0 14px 18px rgba(70,84,93,.14))}
-@media (max-width:760px){.about-art img{max-height:380px}}
+@media (max-width:760px){.about{grid-template-columns:1fr}.about-art img{max-height:380px}.about-art .sy-hand{left:0;top:4%}}  /* 簡介兩欄撐到筆電最窄 761，中間寬度維持桌機比例（江江 2026-10-14） */
 
 .jobs{display:grid;grid-template-columns:repeat(3,1fr);gap:30px 26px;margin-top:52px;align-items:start}
 .job{min-width:0;padding:12px 12px 24px}
@@ -148,9 +148,7 @@ footer .sign-hand{display:block;margin:6px auto 0;--r:-2deg;font-size:20px}
   .promise-row .sy-doodle{display:none}
 }
 @media (max-width:920px){
-  .about{grid-template-columns:1fr}
   .jobs{grid-template-columns:1fr}
-  .about-art .sy-hand{left:0;top:4%}
   .daily-note{height:auto;margin-top:22px;text-align:right}
   .daily-note .sy-hand{position:static}
   .daily-head .sy-doodle{right:0}

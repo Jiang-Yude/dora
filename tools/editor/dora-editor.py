@@ -257,6 +257,19 @@ def write_overrides(data):
                 body += ";display:inline-block!important"
             out.append('html:has(link[data-ep="%s"]) %s{%s}' % (ep, sel, body))
         out.append("}")
+    # 筆電段自動等比例：桌機調好的位置，筆電沒另外調的，照視窗寬度等比例縮放（以 1366 寬為 1 倍）。
+    # 這段讀檔時會略過（@device auto 不在 DEVICES 裡），每次存檔重新產生。
+    out.append("/* @device auto：筆電沒另外調的元素，自動照桌機位置等比例縮放（編輯器自動產生，不要手改） */")
+    out.append(DEVICES["laptop"] + "{")
+    for (ep, sel), v in data["desktop"].items():
+        if (ep, sel) in data["laptop"]:
+            continue
+        body = "transform:translate(calc(%s * 100vw / 1366),calc(%s * 100vw / 1366)) rotate(%sdeg) scale(%s)!important" % (
+            num(v["x"], 1), num(v["y"], 1), num(v["r"], 2), num(v["s"], 3))
+        if v.get("ib"):
+            body += ";display:inline-block!important"
+        out.append('html:has(link[data-ep="%s"]) %s{%s}' % (ep, sel, body))
+    out.append("}")
     OVR.write_text("\n".join(out) + "\n", encoding="utf-8")
 
 
