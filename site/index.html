@@ -284,6 +284,22 @@ footer{padding:40px 0 72px;text-align:center}
 </script>
 </head>
 <body>
+<!--dora-nav-->
+<style>
+.dnav{position:sticky;top:0;z-index:50;background:#fff;border-bottom:3px solid #b9d3f0;font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;line-height:1.4;-webkit-font-smoothing:antialiased}
+.dnav ul{list-style:none;margin:0 auto;padding:8px 12px;max-width:860px;display:flex;gap:8px;justify-content:center}
+.dnav li{flex:0 1 auto;margin:0;padding:0}
+.dnav a{display:block;text-decoration:none;color:#1d2b4f;font-weight:700;font-size:16px;padding:6px 16px;border:2px solid #b9d3f0;border-radius:999px;background:#fff;white-space:nowrap}
+.dnav a:hover{background:#eaf3fe}
+.dnav a[aria-current="page"]{background:#ffd84a;border-color:#1d2b4f}
+@media (max-width:480px){.dnav ul{gap:6px;padding:8px}.dnav li{flex:1 1 0}.dnav a{padding:6px 4px;font-size:15px;text-align:center}}
+</style>
+<nav class="dnav" aria-label="朵拉網站導覽"><ul>
+<li><a href="/" data-nav="home" aria-current="page">朵拉首頁</a></li>
+<li><a href="/blog/" data-nav="blog">朵拉日記</a></li>
+<li><a href="/daily/" data-nav="daily">朵拉日報</a></li>
+</ul></nav>
+<!--/dora-nav-->
 
 <header class="hero">
   <div class="wrap">
@@ -417,6 +433,21 @@ footer{padding:40px 0 72px;text-align:center}
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M16 12v1.5a2.5 2.5 0 0 0 5 0V12a9 9 0 1 0-3.5 7.1"/></svg>
             江江的 Threads
           </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section style="padding-top:0">
+    <div class="wrap">
+      <div class="intern">
+        <div>
+          <h2>朵拉日報</h2>
+          <p class="lines"><span>朵拉替江江讀網路</span><span>只整理 AI 概念與產業趨勢的報導 每則都附原始資料來源</span></p>
+        </div>
+        <div class="btns">
+          <a class="btn btn-main" href="/daily/">看朵拉日報</a>
+          <a class="btn btn-sub" href="/blog/">朵拉實習日記</a>
         </div>
       </div>
     </div>

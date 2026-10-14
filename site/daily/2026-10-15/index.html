@@ -48,7 +48,25 @@ footer{margin-top:54px;text-align:center;color:var(--ink-soft);font-size:15px}
 .sign{display:inline-block;text-align:left;white-space:pre-line;color:var(--ink);background:#fff;border:2px dashed var(--line);border-radius:14px;padding:10px 18px;margin-top:10px}
 @media (max-width:640px){.cards{grid-template-columns:1fr}.card,.cover{transform:none!important}}
 </style></head>
-<body><div class="wrap">
+<body>
+<!--dora-nav-->
+<style>
+.dnav{position:sticky;top:0;z-index:50;background:#fff;border-bottom:3px solid #b9d3f0;font-family:"Noto Sans TC",system-ui,-apple-system,sans-serif;line-height:1.4;-webkit-font-smoothing:antialiased}
+.dnav ul{list-style:none;margin:0 auto;padding:8px 12px;max-width:860px;display:flex;gap:8px;justify-content:center}
+.dnav li{flex:0 1 auto;margin:0;padding:0}
+.dnav a{display:block;text-decoration:none;color:#1d2b4f;font-weight:700;font-size:16px;padding:6px 16px;border:2px solid #b9d3f0;border-radius:999px;background:#fff;white-space:nowrap}
+.dnav a:hover{background:#eaf3fe}
+.dnav a[aria-current="page"]{background:#ffd84a;border-color:#1d2b4f}
+@media (max-width:480px){.dnav ul{gap:6px;padding:8px}.dnav li{flex:1 1 0}.dnav a{padding:6px 4px;font-size:15px;text-align:center}}
+</style>
+<nav class="dnav" aria-label="朵拉網站導覽"><ul>
+<li><a href="/" data-nav="home">朵拉首頁</a></li>
+<li><a href="/blog/" data-nav="blog">朵拉日記</a></li>
+<li><a href="/daily/" data-nav="daily" aria-current="page">朵拉日報</a></li>
+</ul></nav>
+<!--/dora-nav-->
+
+<div class="wrap">
 <header><span class="date" id="date"></span><h1>朵拉日報</h1><p class="sub">朵拉替江江讀網路｜只整理概念與產業趨勢的報導</p></header>
 <figure class="taped cover"><img id="cover" alt="朵拉日報當天圖卡"></figure>
 <main class="cards" id="cards"></main>
@@ -72,4 +90,14 @@ document.getElementById('cards').innerHTML=d.items.map((x,i)=>`
  <div class="srcs">原始資料來源：${(x.sources||[]).map(u=>`<a href="${esc(u.url)}" target="_blank" rel="noopener">${esc(u.title||u.url)}</a>`).join('')}</div>
 </article>`).join('');
 </script>
+<!--dora-pager-->
+<style>
+.dpager{max-width:860px;margin:0 auto;padding:0 16px 56px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;font-family:"Noto Sans TC",system-ui,sans-serif;font-size:16px;line-height:1.5}
+.dpager a{text-decoration:none;color:#1d2b4f;font-weight:700;background:#fff;border:2px solid #b9d3f0;border-radius:999px;padding:6px 16px}
+.dpager a:hover{background:#eaf3fe}
+.dpager .sp{flex:1}
+@media (max-width:480px){.dpager{justify-content:center}}
+</style>
+<nav class="dpager" aria-label="日報翻頁"><a href="/daily/">回日報目錄</a></nav>
+<!--/dora-pager-->
 </body></html>

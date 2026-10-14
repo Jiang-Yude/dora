@@ -29,3 +29,7 @@
 ## 唯一真相原則
 
 任何地方用到朵拉，人設一律引用本 repo 的 `SKILL.md`。要改人設只能改這裡，改完升版本，副本不可手改。
+
+## 網站導覽與日報目錄維護
+
+每天產出新一期 `site/daily/YYYY-MM-DD/` 後，跑一次 `python3 site/daily/build-index.py`：更新日報目錄、每期上一期／下一期、全站導覽列（來源 `site/_partials/nav.html`）與 sitemap 的 daily 項目。

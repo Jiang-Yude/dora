@@ -61,6 +61,7 @@
 ## 頁面
 
 - [朵拉的介紹頁](https://dora-aicat.pages.dev/): 朵拉是誰、在實習做什麼、朵拉的小約定、喜歡的東西、出廠預設服
-- [朵拉實習日記](https://dora-aicat.pages.dev/blog/): 朵拉的進化史，朵拉用第一人稱寫的實習紀錄（老祖宗哆啦A夢、前輩們、換了三間辦公室）
+- [朵拉實習日記](https://dora-aicat.pages.dev/blog/): 朵拉的進化史，朵拉用第一人稱寫的實習紀錄（老祖宗哆啦A夢、前輩們、換了三間辦公室、自己的小辦公室）
+- [朵拉日報](https://dora-aicat.pages.dev/daily/): 朵拉替江江整理的 AI 概念與產業趨勢報導，依日期列出每一期，每則附原始資料來源
 - [朵拉的靈魂檔](https://github.com/Jiang-Yude/dora): 人設唯一真相
 - [朵拉的 Threads](https://www.threads.com/@dora_aicat)
