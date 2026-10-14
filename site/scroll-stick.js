@@ -40,27 +40,32 @@
       setTimeout(function(){ el.style.transitionDelay = ''; }, 2500);
     });
   }, { rootMargin: '0px 0px -12% 0px', threshold: 0.15 });
-  list.forEach(function(el){ io.observe(el); });
+  var afterWalk = [].slice.call(document.querySelectorAll('.about .note, .about-art .sy-hand'));
+  list.forEach(function(el){ if (afterWalk.indexOf(el) < 0) io.observe(el); });
 
   // 簡介區朵拉：跟著捲動從右邊走進來（江江：「有一種他從旁邊這樣走進來的感覺」）
-  // 捲動越多走越近，邊走邊小小上下踩步；招呼小字慢半拍跟進來，有前後景深的視差感。
+  // 走的距離 110px（江江：「距離再短一點 短一半好了」）；走到定位後，「注意」便條和「什麼都想試試看」才一張一張貼上來。
   var walker = document.querySelector('.about-art > img');
   if (walker) {
-    var art = walker.parentNode, hand = art.querySelector('.sy-hand');
-    var tick = false;
+    var art = walker.parentNode, tick = false, posted = false;
     function walk(){
       tick = false;
       var r = art.getBoundingClientRect(), vh = innerHeight;
-      var p = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.75)));   // 0＝剛露臉，1＝走到定位
+      var p = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.35)));   // 0＝剛露臉，1＝走到定位（江江：更快到定位，露出約三分之一畫面就站好）
       var k = 1 - p, ease = k * k * (3 - 2 * k);
-      var bob = -Math.abs(Math.sin(p * Math.PI * 5)) * 7 * k;          // 踩步
-      walker.style.translate = (ease * 220).toFixed(1) + 'px ' + bob.toFixed(1) + 'px';
+      var bob = -Math.abs(Math.sin(p * Math.PI * 4)) * 5 * k;          // 踩步
+      walker.style.translate = (ease * 110).toFixed(1) + 'px ' + bob.toFixed(1) + 'px';
       walker.style.opacity = Math.min(1, p * 1.6).toFixed(2);
-      if (hand) hand.style.translate = (ease * 90).toFixed(1) + 'px 0';
+      if (!posted && p >= 0.98) {
+        posted = true;
+        afterWalk.forEach(function(el, n){ el.style.transitionDelay = (0.25 + n * 0.35) + 's'; el.classList.add('ss-in'); });
+      }
     }
     function onScroll(){ if (!tick) { tick = true; requestAnimationFrame(walk); } }
     addEventListener('scroll', onScroll, { passive: true });
     addEventListener('resize', onScroll);
     walk();
+  } else {
+    afterWalk.forEach(function(el){ io.observe(el); });
   }
 })();
