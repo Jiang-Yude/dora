@@ -35,6 +35,11 @@ html:has(link[data-ep="home"]) div.more > img.sy-doodle{transform:translate(322p
 }
 /* @device laptop */
 @media (min-width:761px) and (max-width:1366px){
+html:has(link[data-ep="home"]) div.sprite.think{transform:translate(80.7px,52.6px) rotate(-5deg) scale(1.2)!important}
+html:has(link[data-ep="home"]) div.find.sy-sticky > img.sy-doodle{transform:translate(-43.5px,19.7px) rotate(8deg) scale(1)!important}
+html:has(link[data-ep="home"]) div.find.sy-sticky{transform:translate(19.3px,11.9px) rotate(-1.3deg) scale(1)!important}
+html:has(link[data-ep="home"]) div.find.sy-sticky > div:nth-of-type(2) > p{transform:translate(24.4px,2.2px) rotate(0deg) scale(1)!important}
+html:has(link[data-ep="home"]) div.find.sy-sticky > div:nth-of-type(2) > h3{transform:translate(10.1px,-2.3px) rotate(0deg) scale(1)!important}
 }
 /* @device mobile */
 @media (max-width:760px){
@@ -43,10 +48,7 @@ html:has(link[data-ep="home"]) div.more > img.sy-doodle{transform:translate(322p
 @media (min-width:761px) and (max-width:1366px){
 html:has(link[data-ep="blog"]) span.sprite.think{transform:translate(calc(-26.9 * 100vw / 1366),calc(-25.1 * 100vw / 1366)) rotate(0deg) scale(1)!important}
 html:has(link[data-ep="home"]) span.sprite.wave{transform:translate(calc(-6.4 * 100vw / 1366),calc(-17.1 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.sprite.think{transform:translate(calc(0 * 100vw / 1366),calc(0 * 100vw / 1366)) rotate(-5deg) scale(1.2)!important}
 html:has(link[data-ep="home"]) p.real-note{transform:translate(calc(135 * 100vw / 1366),calc(21.6 * 100vw / 1366)) rotate(-4.1deg) scale(1.31)!important}
-html:has(link[data-ep="home"]) div.find.sy-sticky{transform:translate(calc(19.3 * 100vw / 1366),calc(11.9 * 100vw / 1366)) rotate(-0.5deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.find.sy-sticky > img.sy-doodle{transform:translate(calc(4.2 * 100vw / 1366),calc(-10 * 100vw / 1366)) rotate(8deg) scale(1)!important}
 html:has(link[data-ep="home"]) div.about-art > img{transform:translate(calc(53.2 * 100vw / 1366),calc(-76.4 * 100vw / 1366)) rotate(0deg) scale(1.07)!important}
 html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > h3{transform:translate(calc(14.4 * 100vw / 1366),calc(-11.3 * 100vw / 1366)) rotate(0deg) scale(1)!important}
 html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(1){transform:translate(calc(28.3 * 100vw / 1366),calc(-0.7 * 100vw / 1366)) rotate(0deg) scale(1)!important}
