@@ -250,7 +250,7 @@ function splitSources(text, docs, picked = []) {
     // 靈魂檔 1.10.0：不用一般表情符號
     .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu, "")
     .replace(/ {2,}/g, " ").replace(/[ \t]+\n/g, "\n").replace(/\n{2,}/g, "\n").replace(/[:：]\s*$/gm, "").trim()
-    .split("\n").filter((l) => !/^(-{3,}|我是朵拉\s*AI|江江教練的實習生|朵拉\s*AI\s*實習生)\s*$/.test(l.trim()))
+    .split("\n").filter((l) => !/^(-{3,}|我是朵拉\s*AI|江江教練的實習生|朵拉\s*AI\s*實習生|朵拉\s*AI)\s*$/.test(l.trim()))
     .slice(0, 5).join("\n");
   const sources = [...new Set(urls)].map((u) => known.get(u)).filter(Boolean).slice(0, 3)
     .map((d) => ({ title: d.title, url: d.url, type: d.type || "page", date: d.date || undefined }));
