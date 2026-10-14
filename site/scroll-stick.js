@@ -41,4 +41,26 @@
     });
   }, { rootMargin: '0px 0px -12% 0px', threshold: 0.15 });
   list.forEach(function(el){ io.observe(el); });
+
+  // 簡介區朵拉：跟著捲動從右邊走進來（江江：「有一種他從旁邊這樣走進來的感覺」）
+  // 捲動越多走越近，邊走邊小小上下踩步；招呼小字慢半拍跟進來，有前後景深的視差感。
+  var walker = document.querySelector('.about-art > img');
+  if (walker) {
+    var art = walker.parentNode, hand = art.querySelector('.sy-hand');
+    var tick = false;
+    function walk(){
+      tick = false;
+      var r = art.getBoundingClientRect(), vh = innerHeight;
+      var p = Math.min(1, Math.max(0, (vh - r.top) / (vh * 0.75)));   // 0＝剛露臉，1＝走到定位
+      var k = 1 - p, ease = k * k * (3 - 2 * k);
+      var bob = -Math.abs(Math.sin(p * Math.PI * 5)) * 7 * k;          // 踩步
+      walker.style.translate = (ease * 220).toFixed(1) + 'px ' + bob.toFixed(1) + 'px';
+      walker.style.opacity = Math.min(1, p * 1.6).toFixed(2);
+      if (hand) hand.style.translate = (ease * 90).toFixed(1) + 'px 0';
+    }
+    function onScroll(){ if (!tick) { tick = true; requestAnimationFrame(walk); } }
+    addEventListener('scroll', onScroll, { passive: true });
+    addEventListener('resize', onScroll);
+    walk();
+  }
 })();
