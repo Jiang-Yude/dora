@@ -4,7 +4,7 @@
 (function () {
   'use strict';
   var CFG = window.__DE_CFG || {};
-  var DEV = new URLSearchParams(location.search).get('dev') || 'desktop';
+  var WIDTH = Math.round(+new URLSearchParams(location.search).get('w') || window.innerWidth);  // 這次預覽的寬度：存檔就存成這個寬度的錨點
   function shell() { try { return parent !== window ? parent.DoraShell : null; } catch (e) { return null; } }
   var MARK_NAME = { 'dora-nav': '導覽列', 'dora-latest': '首頁日報清單', 'dora-pager': '日報翻頁', 'dora-og': '分享預覽' };
 
@@ -120,18 +120,11 @@
     return uniq(full, el) ? full : null;
   }
 
-  // ---------- 既有 edit-overrides.css 規則檢查 ----------
-  var RULES = [], RULE_WARN = [];
-  var DEV_NAME = { desktop: '桌機', laptop: '筆電', mobile: '手機' };
+  // ---------- 這一頁的錨點（伺服器 /__anchors，正本 tools/editor/anchors.json） ----------
+  var RULES = [], RULE_WARN = [];   // RULES：[{sel, ib, anchors:[{w,x,y,r,s}]}]
   function loadRules() {
-    return fetch('/edit-overrides.css?t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.text(); }).then(function (txt) {
-      RULES = []; var dev = null;
-      txt.split('\n').forEach(function (line) {
-        var m = line.match(/^\s*\/\*\s*@device\s+(\w+)\s*\*\//);
-        if (m) { dev = m[1]; return; }
-        m = line.match(/^\s*html:has\(link\[data-ep="([^"]+)"\]\)\s+(.+?)\s*\{/);
-        if (m && dev && m[1] === CFG.ep) RULES.push({ dev: dev, sel: m[2] });
-      });
+    return fetch('/__anchors?ep=' + encodeURIComponent(CFG.ep) + '&t=' + Date.now(), { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (list) {
+      RULES = list || [];
       checkRules();
     }).catch(function () { });
   }
@@ -140,17 +133,24 @@
     RULES.forEach(function (r) {
       var n = -1; try { n = document.querySelectorAll(r.sel).length; } catch (e) { }
       if (n === 1) return;
-      RULE_WARN.push(DEV_NAME[r.dev] + '：' + r.sel + (n < 0 ? '（寫法錯誤）' : n === 0 ? '（這頁找不到這個元素）' : '（命中 ' + n + ' 個元素，不唯一）'));
+      RULE_WARN.push(r.sel + (n < 0 ? '（寫法錯誤）' : n === 0 ? '（這頁找不到這個元素）' : '（命中 ' + n + ' 個元素，不唯一）'));
     });
     notify();
   }
-  // 存檔時：同一個元素在目前裝置若已有舊寫法的規則（選擇器不同），把舊的拿掉，避免兩條疊在一起
-  function oldRulesFor(el, newSel) {
-    return RULES.filter(function (r) {
-      if (r.dev !== DEV || r.sel === newSel) return false;
-      try { var a = document.querySelectorAll(r.sel); return a.length === 1 && a[0] === el; } catch (e) { return false; }
-    }).map(function (r) { return r.sel; });
+  function ruleMatches(r, el) { try { var a = document.querySelectorAll(r.sel); return a.length === 1 && a[0] === el; } catch (e) { return false; } }
+  // 這個元素的錨點：選擇器完全一樣的優先，其次是別的寫法但剛好唯一命中它的
+  function ruleFor(el) {
+    var s = cssSel(el), hitR = null;
+    RULES.forEach(function (r) { if (r.sel === s) hitR = r; });
+    if (hitR) return hitR;
+    RULES.forEach(function (r) { if (!hitR && ruleMatches(r, el)) hitR = r; });
+    return hitR;
   }
+  // 存檔時：同一個元素以前用別的選擇器存過錨點，請伺服器搬到新選擇器底下（不會重複疊兩條）
+  function oldRulesFor(el, newSel) {
+    return RULES.filter(function (r) { return r.sel !== newSel && ruleMatches(r, el); }).map(function (r) { return r.sel; });
+  }
+  function anchorsHere() { return RULES.filter(function (r) { return r.anchors.some(function (a) { return a.w === WIDTH; }); }).length; }
 
   function domPath(el) {
     var out = [], cur = el;
@@ -286,10 +286,11 @@
     var dl = dirtyList(), info = null;
     if (sel && document.body.contains(sel)) {
       var d = rec(sel), g = genRegion(sel);
+      var rr = ruleFor(sel);
       info = { name: label(sel), selector: cssSel(sel) || '（找不到唯一選擇器，這個元素存不了）', x: d.cur.x, y: d.cur.y, r: d.cur.r, s: d.cur.s,
-        base: d.base, gen: g, changed: !eqv(d.cur, d.base) };
+        base: d.base, gen: g, changed: !eqv(d.cur, d.base), anchors: rr ? rr.anchors : [], anchorSel: rr ? rr.sel : null };
     }
-    sh.update({ ruleWarn: RULE_WARN, sel: info, dirty: dl.tfs.length + dl.txts.length, canUndo: undoS.length > 0, canRedo: redoS.length > 0, editing: !!editing });
+    sh.update({ ruleWarn: RULE_WARN, sel: info, width: WIDTH, anchorsHere: anchorsHere(), anchorElems: RULES.length, dirty: dl.tfs.length + dl.txts.length, canUndo: undoS.length > 0, canRedo: redoS.length > 0, editing: !!editing });
   }
   function toast(msg, kind) { var sh = shell(); if (sh && sh.toast) sh.toast(msg, kind); else console.log(msg); }
 
@@ -462,15 +463,14 @@
     dl.tfs.forEach(function (d) {
       var s = cssSel(d.el);
       if (!s) { bad.push(label(d.el)); return; }
-      oldRulesFor(d.el, s).forEach(function (o) { transforms.push({ selector: o, remove: true }); });
-      if (eqv(d.cur, d.base)) transforms.push({ selector: s, remove: true });
-      else transforms.push({ selector: s, x: d.cur.x, y: d.cur.y, r: d.cur.r, s: d.cur.s, ib: d.needIb });
+      transforms.push({ selector: s, x: d.cur.x, y: d.cur.y, r: d.cur.r, s: d.cur.s, ib: d.needIb && !eqv(d.cur, d.base),
+        isBase: eqv(d.cur, d.base), renameFrom: oldRulesFor(d.el, s) });
     });
     dl.txts.forEach(function (el) { var t = T.get(el); texts.push({ path: t.path, old: t.old, new: clean(el), label: t.label }); });
     if (bad.length) return Promise.resolve({ ok: false, error: '這些元素找不到唯一選擇器，存不了：' + bad.join('、') });
     if (!transforms.length && !texts.length) return Promise.resolve({ ok: true, written: [], note: '沒有變更' });
     return fetch('/__save', { method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ file: CFG.file, device: DEV, transforms: transforms, texts: texts }) })
+      body: JSON.stringify({ file: CFG.file, width: WIDTH, transforms: transforms, texts: texts }) })
       .then(function (r) { return r.json(); })
       .then(function (res) {
         if (res.ok) {
@@ -492,7 +492,13 @@
     dirty: function () { var d = dirtyList(); return d.tfs.length + d.txts.length; },
     setZoom: function (z) { zoom = z || 1; ui.style.setProperty('--de-k', String(1 / zoom)); document.documentElement.style.setProperty('--de-k', String(1 / zoom)); draw(); },
     keys: keys,
-    cfg: CFG, device: DEV
+    deleteAnchor: function (w) {
+      var r = sel && ruleFor(sel);
+      if (!r) return Promise.resolve({ ok: false, error: '這個元素沒有錨點' });
+      return fetch('/__anchor_delete', { method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ file: CFG.file, selector: r.sel, width: w }) }).then(function (x) { return x.json(); });
+    },
+    cfg: CFG, width: WIDTH
   };
 
   // 存檔後重新載入時回到原本捲動位置

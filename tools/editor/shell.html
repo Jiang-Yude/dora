@@ -16,6 +16,15 @@ html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font
 button,select,input{font:inherit;color:inherit}
 .bar button,.bar select{height:34px;padding:0 11px;border-radius:7px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;cursor:pointer}
 .bar select{max-width:230px}
+.bar input#wsel{height:34px;width:96px;padding:0 8px;border-radius:7px;border:1px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff}
+.anc{margin-bottom:14px}
+.anc .it{display:flex;align-items:center;gap:6px;padding:5px 8px;border:1px solid var(--line);border-radius:7px;background:#fff;margin-bottom:5px;font-size:13px}
+.anc .it.cur{border-color:#3d7fd1;background:#eaf2fc}
+.anc .it b{min-width:58px}
+.anc .it span{flex:1;color:#6b7780;font:12px ui-monospace,Menlo,monospace;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.anc .it button{height:26px;padding:0 8px;border:1px solid var(--line);border-radius:6px;background:#fff;cursor:pointer;font-size:12px}
+.anc .it button:hover{background:#f1ede5}
+.anc .it button.del{color:#9b2c2c}
 .bar select option,.bar select optgroup{color:#222}
 .bar button:hover{background:rgba(255,255,255,.18)}
 .bar button:disabled{opacity:.35;cursor:default}
@@ -54,7 +63,8 @@ button,select,input{font:inherit;color:inherit}
     <button data-dev="desktop" title="桌機 1920 寬">桌機</button>
     <button data-dev="laptop" title="筆電 1366 寬">筆電</button>
     <button data-dev="mobile" title="手機 390 寬">手機</button>
-    <select id="wsel" title="預覽寬度（同一段裝置內換寬度看看）"></select>
+    <input id="wsel" type="number" list="wlist" min="320" max="2560" step="1" title="預覽寬度：可以直接打任何數字再按 Enter，或從清單挑。存檔就存成這個寬度的錨點">
+    <datalist id="wlist"></datalist>
   </div>
   <div class="grp">
     <button id="undo" title="復原（⌘Z）">↶ 復原</button>
@@ -77,17 +87,27 @@ button,select,input{font:inherit;color:inherit}
 <script>
 (function(){
   var START = __START__;
-  var W = {desktop:1920, laptop:1366, mobile:390};
-  var WOPT = {desktop:[1920,1600,1440,1367], laptop:[1366,1280,1180,1024,980,900,800,761], mobile:[760,430,390,360]};
-  try { var sw0 = JSON.parse(sessionStorage.getItem('de-w')||'null'); if (sw0) W = sw0; } catch(e){}
-  var wsel = document.getElementById('wsel');
-  function fillW(){ wsel.innerHTML=''; WOPT[device].forEach(function(w){ wsel.appendChild(new Option(w+' 寬', w)); }); wsel.value = W[device]; }
-  wsel.addEventListener('change', function(){ W[device] = +wsel.value; try{ sessionStorage.setItem('de-w', JSON.stringify(W)); }catch(e){} layout(); });
   var NAME = {desktop:'桌機', laptop:'筆電', mobile:'手機'};
+  // 預覽寬度：存檔就存成「這個寬度」的錨點；同一段裝置裡兩個錨點之間會照寬度平滑內插
+  var PRESET = {desktop:1920, laptop:1366, mobile:390};
+  var WOPT = [1920,1600,1440,1367,1366,1300,1280,1180,1136,1024,980,900,800,761,760,430,390,360];
+  var curW = 1920;
+  try { curW = +sessionStorage.getItem('de-w2') || 1920; } catch(e){}
+  function segOf(w){ return w <= 760 ? 'mobile' : w <= 1366 ? 'laptop' : 'desktop'; }
+  var wsel = document.getElementById('wsel');
+  WOPT.forEach(function(w){ document.getElementById('wlist').appendChild(new Option(w + '（' + NAME[segOf(w)] + '）', w)); });
+  function setW(w){
+    w = Math.round(+w);
+    if (!(w >= 320 && w <= 2560)) { wsel.value = curW; toast('寬度要在 320 到 2560 之間', 'warn'); return; }
+    if (w === curW) { wsel.value = curW; return; }
+    if (!confirmLeave()) { wsel.value = curW; return; }
+    curW = w; load(true);
+  }
+  wsel.addEventListener('change', function(){ setW(wsel.value); });
+  wsel.addEventListener('keydown', function(ev){ if (ev.key === 'Enter') { ev.preventDefault(); setW(wsel.value); wsel.blur(); } });
   var MAIN = [['/', '首頁'], ['/blog/', '實習日記'], ['/daily/', 'AI 日報'], ['/search/', '搜尋']];
   var page = START || '/';
-  var device = 'desktop';
-  try { device = sessionStorage.getItem('de-dev') || 'desktop'; } catch(e){}
+  var device = segOf(curW);
   var frame = document.getElementById('frame'), vp = document.getElementById('vp'), stage = document.getElementById('stage');
   var side = document.getElementById('side'), st = document.getElementById('st');
   var last = {sel:null, dirty:0, canUndo:false, canRedo:false};
@@ -121,17 +141,18 @@ button,select,input{font:inherit;color:inherit}
   function load(keepScroll){
     try {
       if (keepScroll && frame.contentWindow) sessionStorage.setItem('de-scroll', String(frame.contentWindow.scrollY || 0));
-      sessionStorage.setItem('de-dev', device);
+      sessionStorage.setItem('de-w2', String(curW));
     } catch(e){}
+    device = segOf(curW);
     last = {sel:null, dirty:0, canUndo:false, canRedo:false}; render();
-    frame.src = page + (page.indexOf('?') >= 0 ? '&' : '?') + 'edit=1&frame=1&dev=' + device;
+    frame.src = page + (page.indexOf('?') >= 0 ? '&' : '?') + 'edit=1&frame=1&w=' + curW;
     history.replaceState(null, '', page + '?edit=1');
     document.querySelectorAll('[data-dev]').forEach(function(b){ b.classList.toggle('on', b.dataset.dev === device); });
-    fillW();
+    wsel.value = curW;
     layout();
   }
   function layout(){
-    var sw = stage.clientWidth - 24, sh = stage.clientHeight - 24, w = W[device];
+    var sw = stage.clientWidth - 24, sh = stage.clientHeight - 24, w = curW;
     zoom = Math.min(1, sw / w);
     var h = Math.round(sh / zoom);
     frame.style.width = w + 'px'; frame.style.height = h + 'px'; frame.style.transform = 'scale(' + zoom + ')';
@@ -143,9 +164,7 @@ button,select,input{font:inherit;color:inherit}
   window.addEventListener('resize', layout);
   document.querySelectorAll('[data-dev]').forEach(function(b){
     b.addEventListener('click', function(){
-      if (b.dataset.dev === device) return;
-      if (!confirmLeave()) return;
-      device = b.dataset.dev; load(true);
+      setW(PRESET[b.dataset.dev]);
     });
   });
 
@@ -153,14 +172,14 @@ button,select,input{font:inherit;color:inherit}
   function fmt(v){ return (Math.round(v * 1000) / 1000).toString(); }
   function render(){
     var s = last.sel;
-    st.textContent = NAME[device] + ' ' + W[device] + ' 寬・縮放 ' + Math.round(zoom * 100) + '%' + (last.dirty ? '・' + last.dirty + ' 個變更未儲存' : '');
+    st.textContent = '目前寬度 ' + curW + '（' + NAME[device] + '）・這個寬度有 ' + (last.anchorsHere || 0) + ' 個錨點・縮放 ' + Math.round(zoom * 100) + '%' + (last.dirty ? '・' + last.dirty + ' 個變更未儲存' : '');
     document.getElementById('undo').disabled = !last.canUndo;
     document.getElementById('redo').disabled = !last.canRedo;
     document.getElementById('parent').disabled = !s;
     document.getElementById('reset').disabled = !s || !s.changed;
     document.getElementById('save').classList.toggle('dirty', last.dirty > 0);
     var help = '<h3>怎麼用</h3><p class="hint">點一下選取；拖曳移動<br>四角把手：等比縮放<br>上方圓把手：旋轉（<kbd>Shift</kbd> 每 15 度）<br>方向鍵微移 1px，<kbd>Shift</kbd> 10px<br><kbd>Alt</kbd>＋點選：選到外面一層<br>雙擊文字：改字（<kbd>Enter</kbd> 完成、<kbd>Shift+Enter</kbd> 換行、<kbd>Esc</kbd> 取消）<br><kbd>⌘Z</kbd> 復原、<kbd>⇧⌘Z</kbd> 重做、<kbd>⌘S</kbd> 儲存</p>' +
-      '<p class="hint" style="margin-top:10px">位置、角度、大小只存給目前這個裝置寬度（' + NAME[device] + '）。其他裝置要切過去另外調。</p>';
+      '<p class="hint" style="margin-top:10px">按儲存＝把位置、角度、大小存成「' + curW + ' 寬」的錨點，其他寬度存的錨點不受影響。<br>同一段裝置（手機 ≤760／筆電 761–1366／桌機 ≥1367）裡，兩個錨點之間會照寬度平滑過渡；比最窄的錨點窄就照最窄的，比最寬的寬就照最寬的。</p>';
     var rw = last.ruleWarn || [];
     var warnHtml = rw.length ? '<div class="gen" style="background:#fbe3e3;border-color:#e3a1a1;color:#7d1f1f"><b>這頁有 ' + rw.length + ' 條既有規則選擇器有問題</b>（會套錯或套不到；在網頁上重新選到那個元素、動一下再儲存，就會換成穩定的寫法）<br>' + rw.map(function(x){ return '・' + x.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }).join('<br>') + '</div>' : '';
     if (!s) { side.innerHTML = warnHtml + '<h3>選取的元素</h3><p class="empty" style="margin-bottom:16px">還沒選取。在網頁上點一下任何東西。</p>' + help; return; }
@@ -177,6 +196,7 @@ button,select,input{font:inherit;color:inherit}
       '<label>旋轉（度）<input data-k="r" type="number" step="0.5"></label>' +
       '<label>縮放（倍）<input data-k="s" type="number" step="0.01" min="0.05"></label></div>' +
       '<div class="row"><button data-act="parent">選上一層</button><button data-act="reset">回原狀</button><button data-act="none">取消選取</button></div>' +
+      ancHtml(s) +
       '<p class="hint" style="margin-bottom:14px">原本：X ' + fmt(s.base.x) + '、Y ' + fmt(s.base.y) + '、旋轉 ' + fmt(s.base.r) + '°、縮放 ' + fmt(s.base.s) + '</p>' + help;
     side.querySelector('.name').textContent = s.name;
     side.querySelector('.selr').textContent = s.selector;
@@ -185,9 +205,35 @@ button,select,input{font:inherit;color:inherit}
       i.addEventListener('change', function(){ var v = {}; v[i.dataset.k] = parseFloat(i.value); var e = ed(); if (e) e.setVals(v); });
       i.addEventListener('keydown', function(ev){ if (ev.key === 'Enter') i.blur(); });
     });
+    side.querySelectorAll('[data-go]').forEach(function(b){ b.onclick = function(){ setW(+b.dataset.go); }; });
+    side.querySelectorAll('[data-del]').forEach(function(b){ b.onclick = function(){ delAnchor(+b.dataset.del); }; });
     side.querySelector('[data-act=parent]').onclick = function(){ var e = ed(); if (e) e.selectParent(); };
     side.querySelector('[data-act=reset]').onclick = function(){ var e = ed(); if (e) e.resetSel(); };
     side.querySelector('[data-act=none]').onclick = function(){ var e = ed(); if (e) e.deselect(); };
+  }
+
+  function ancHtml(s){
+    var a = s.anchors || [], seg = function(w){ return NAME[segOf(w)]; };
+    var h = '<h3>這個元素的錨點（' + a.length + ' 個）</h3><div class="anc">';
+    if (!a.length) h += '<p class="empty" style="font-size:13px">還沒有錨點。調好之後按儲存，就會存成 ' + curW + ' 寬的錨點。</p>';
+    a.forEach(function(x){
+      h += '<div class="it' + (x.w === curW ? ' cur' : '') + '"><b>' + x.w + '</b><span title="' + seg(x.w) + '">' + seg(x.w) + ' ' + fmt(x.x) + ',' + fmt(x.y) + ' ' + fmt(x.r) + '° ×' + fmt(x.s) + '</span>' +
+        (x.w === curW ? '' : '<button data-go="' + x.w + '" title="切到這個寬度看">看</button>') +
+        '<button class="del" data-del="' + x.w + '" title="刪掉這個寬度的錨點（其他錨點不動）">刪除</button></div>';
+    });
+    if (a.length && device === 'laptop' && !a.some(function(x){ return segOf(x.w) === 'laptop'; }) && a.some(function(x){ return segOf(x.w) === 'desktop'; }))
+      h += '<p class="hint" style="font-size:12px">筆電段沒有錨點：現在是照桌機位置等比例縮放。</p>';
+    else if (a.length && !a.some(function(x){ return segOf(x.w) === device; }))
+      h += '<p class="hint" style="font-size:12px">' + NAME[device] + '段沒有錨點：這個寬度維持原本的樣子。</p>';
+    return h + '</div>';
+  }
+  function delAnchor(w){
+    var e = ed(); if (!e) return;
+    if (!confirm('刪掉這個元素在 ' + w + ' 寬的錨點？其他寬度的錨點不動。' + (e.dirty() ? '\n（還沒儲存的變更會被放棄）' : ''))) return;
+    e.deleteAnchor(w).then(function(res){
+      if (res.ok) { toast('已刪除 ' + w + ' 寬的錨點（這個元素還剩 ' + res.left + ' 個）', 'ok'); load(true); }
+      else toast('刪除失敗：' + (res.error || ''), 'err');
+    }).catch(function(err){ toast('刪除失敗：' + err, 'err'); });
   }
 
   var tt = 0;
@@ -204,7 +250,8 @@ button,select,input{font:inherit;color:inherit}
       b.disabled = false; b.textContent = '儲存';
       if (res.ok) {
         if (!res.written || !res.written.length) { toast('沒有變更，不用存', 'info'); return; }
-        toast('已儲存：' + res.written.join('、') + '\n備份在 tools/editor/' + String(res.backup || '').replace(/^tools\/editor\//, ''), 'ok');
+        var isAnc = res.written.some(function(x){ return /edit-overrides|anchors\.json/.test(x); });
+        toast((isAnc ? '已存成 ' + (res.width || curW) + ' 寬的錨點，其他寬度不受影響。\n' : '已儲存。\n') + '寫入：' + res.written.join('、') + '\n備份在 tools/editor/' + String(res.backup || '').replace(/^tools\/editor\//, ''), 'ok');
         load(true);
       } else {
         var d = (res.details || []).map(function(x){ return '・' + (x.label ? x.label + '：' : '') + x.error; }).join('\n');

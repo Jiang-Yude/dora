@@ -1,75 +1,95 @@
-/* edit-overrides.css：由排版編輯器 tools/editor/dora-editor.py 管理。
-   一行一條規則，用 html:has(link[data-ep=頁面代號]) 限定在單一頁；三段分別給桌機、筆電、手機。
-   手改可以，但請保持一行一條的格式，編輯器才讀得回來。 */
-/* @device desktop */
-@media (min-width:1367px){
-html:has(link[data-ep="blog"]) span.sprite.think{transform:translate(-26.9px,-25.1px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) span.sprite.wave{transform:translate(-6.4px,-17.1px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.sprite.think{transform:translate(0px,0px) rotate(-5deg) scale(1.2)!important}
-html:has(link[data-ep="home"]) p.real-note{transform:translate(135px,21.6px) rotate(-4.1deg) scale(1.31)!important}
-html:has(link[data-ep="home"]) div.find.sy-sticky{transform:translate(19.3px,11.9px) rotate(-0.5deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.find.sy-sticky > img.sy-doodle{transform:translate(4.2px,-10px) rotate(8deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about-art > img{transform:translate(53.2px,-76.4px) rotate(0deg) scale(1.07)!important}
-html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > h3{transform:translate(14.4px,-11.3px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(1){transform:translate(28.3px,-0.7px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(2){transform:translate(35.7px,0.9px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(3){transform:translate(17.8px,0.3px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(2) > span:nth-of-type(1){transform:translate(2.4px,14.2px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(2) > span:nth-of-type(2){transform:translate(14.4px,14.9px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.note.sy-sticky.sy-tape{transform:translate(366.5px,-34.2px) rotate(-1.2deg) scale(0.85)!important}
-html:has(link[data-ep="home"]) figure.clip.pola.s1{transform:translate(12.2px,-38.4px) rotate(1.8deg) scale(1)!important}
-html:has(link[data-ep="home"]) figure.clip.pola.s2{transform:translate(-19.9px,-22.4px) rotate(-1.2deg) scale(1)!important}
-html:has(link[data-ep="daily"]) span.sprite.work{transform:translate(-40.3px,-21.6px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="daily"]) h1{transform:translate(3.6px,-4.7px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="daily"]) div.sy-hero-text{transform:translate(98px,-210.8px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) span.h1-sub{transform:translate(6.5px,0px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(2){transform:translate(14.9px,0px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="blog"]) span.h1-sub{transform:translate(6.8px,0.5px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="blog"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(2){transform:translate(38.9px,-2.1px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="blog"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(3){transform:translate(11.4px,-0.3px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="blog"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(1){transform:translate(6.1px,-0.9px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="daily"]) div.sy-lead-row > p.sy-lead.lines > span:nth-of-type(1){transform:translate(-11.3px,-4.9px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="daily"]) div.sy-lead-row > p.sy-lead.lines > span:nth-of-type(2){transform:translate(9.3px,1.9px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about-art > span.sy-hand{transform:translate(-23.9px,-22px) rotate(-7deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.more > img.sy-doodle{transform:translate(322px,12.1px) rotate(-8deg) scale(1)!important}
-}
-/* @device laptop */
-@media (min-width:761px) and (max-width:1366px){
-html:has(link[data-ep="home"]) div.find.sy-sticky > img.sy-doodle{transform:translate(-43.5px,19.7px) rotate(8deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.find.sy-sticky{transform:translate(19.3px,11.9px) rotate(-1.3deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.find.sy-sticky > div:nth-of-type(2) > p{transform:translate(24.4px,2.2px) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.find.sy-sticky > div:nth-of-type(2) > h3{transform:translate(10.1px,-2.3px) rotate(0deg) scale(1)!important}
-}
-/* @device mobile */
-@media (max-width:760px){
-}
-/* @device auto：筆電沒另外調的元素，自動照桌機位置等比例縮放（編輯器自動產生，不要手改） */
-@media (min-width:761px) and (max-width:1366px){
-html:has(link[data-ep="blog"]) span.sprite.think{transform:translate(calc(-26.9 * 100vw / 1366),calc(-25.1 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) span.sprite.wave{transform:translate(calc(-6.4 * 100vw / 1366),calc(-17.1 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.sprite.think{transform:translate(calc(0 * 100vw / 1366),calc(0 * 100vw / 1366)) rotate(-5deg) scale(1.2)!important}
-html:has(link[data-ep="home"]) p.real-note{transform:translate(calc(135 * 100vw / 1366),calc(21.6 * 100vw / 1366)) rotate(-4.1deg) scale(1.31)!important}
-html:has(link[data-ep="home"]) div.about-art > img{transform:translate(calc(53.2 * 100vw / 1366),calc(-76.4 * 100vw / 1366)) rotate(0deg) scale(1.07)!important}
-html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > h3{transform:translate(calc(14.4 * 100vw / 1366),calc(-11.3 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(1){transform:translate(calc(28.3 * 100vw / 1366),calc(-0.7 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(2){transform:translate(calc(35.7 * 100vw / 1366),calc(0.9 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(3){transform:translate(calc(17.8 * 100vw / 1366),calc(0.3 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(2) > span:nth-of-type(1){transform:translate(calc(2.4 * 100vw / 1366),calc(14.2 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(2) > span:nth-of-type(2){transform:translate(calc(14.4 * 100vw / 1366),calc(14.9 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.note.sy-sticky.sy-tape{transform:translate(calc(366.5 * 100vw / 1366),calc(-34.2 * 100vw / 1366)) rotate(-1.2deg) scale(0.85)!important}
-html:has(link[data-ep="home"]) figure.clip.pola.s1{transform:translate(calc(12.2 * 100vw / 1366),calc(-38.4 * 100vw / 1366)) rotate(1.8deg) scale(1)!important}
-html:has(link[data-ep="home"]) figure.clip.pola.s2{transform:translate(calc(-19.9 * 100vw / 1366),calc(-22.4 * 100vw / 1366)) rotate(-1.2deg) scale(1)!important}
-html:has(link[data-ep="daily"]) span.sprite.work{transform:translate(calc(-40.3 * 100vw / 1366),calc(-21.6 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="daily"]) h1{transform:translate(calc(3.6 * 100vw / 1366),calc(-4.7 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="daily"]) div.sy-hero-text{transform:translate(calc(98 * 100vw / 1366),calc(-210.8 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) span.h1-sub{transform:translate(calc(6.5 * 100vw / 1366),calc(0 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(2){transform:translate(calc(14.9 * 100vw / 1366),calc(0 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="blog"]) span.h1-sub{transform:translate(calc(6.8 * 100vw / 1366),calc(0.5 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="blog"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(2){transform:translate(calc(38.9 * 100vw / 1366),calc(-2.1 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="blog"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(3){transform:translate(calc(11.4 * 100vw / 1366),calc(-0.3 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="blog"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(1){transform:translate(calc(6.1 * 100vw / 1366),calc(-0.9 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="daily"]) div.sy-lead-row > p.sy-lead.lines > span:nth-of-type(1){transform:translate(calc(-11.3 * 100vw / 1366),calc(-4.9 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="daily"]) div.sy-lead-row > p.sy-lead.lines > span:nth-of-type(2){transform:translate(calc(9.3 * 100vw / 1366),calc(1.9 * 100vw / 1366)) rotate(0deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.about-art > span.sy-hand{transform:translate(calc(-23.9 * 100vw / 1366),calc(-22 * 100vw / 1366)) rotate(-7deg) scale(1)!important}
-html:has(link[data-ep="home"]) div.more > img.sy-doodle{transform:translate(calc(322 * 100vw / 1366),calc(12.1 * 100vw / 1366)) rotate(-8deg) scale(1)!important}
-}
+/* edit-overrides.css：由排版編輯器 tools/editor/dora-editor.py 從 tools/editor/anchors.json 自動產生，不要手改（下次存檔會被蓋掉）。
+   每個元素可以在不同預覽寬度各存一個「錨點」；兩個錨點之間照視窗寬度平滑內插，
+   不跨手機（≤760）、筆電（761–1366）、桌機（≥1367）的邊界。每行一條：@media{頁面 選擇器{transform}}。 */
+/* @anchor blog | span.sprite.think | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="blog"]) span.sprite.think{transform:translate(calc(-15px + -11.9 * (100vw - 761px) / 605),calc(-14px + -11.1 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="blog"]) span.sprite.think{transform:translate(-26.9px,-25.1px) rotate(0deg) scale(1)!important}}
+/* @anchor home | span.sprite.wave | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) span.sprite.wave{transform:translate(calc(-3.6px + -2.8 * (100vw - 761px) / 605),calc(-9.5px + -7.6 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) span.sprite.wave{transform:translate(-6.4px,-17.1px) rotate(0deg) scale(1)!important}}
+/* @anchor home | div.sprite.think | 761 800 1366 1367 1920 */
+@media (min-width:761px) and (max-width:800px){html:has(link[data-ep="home"]) div.sprite.think{transform:translate(calc(0px + 10.5 * (100vw - 761px) / 39),calc(0px + 63.2 * (100vw - 761px) / 39)) rotate(-5deg) scale(1.2)!important}}
+@media (min-width:800px) and (max-width:1366px){html:has(link[data-ep="home"]) div.sprite.think{transform:translate(calc(10.5px + -10.5 * (100vw - 800px) / 566),calc(63.2px + -63.2 * (100vw - 800px) / 566)) rotate(-5deg) scale(1.2)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.sprite.think{transform:translate(0px,0px) rotate(-5deg) scale(1.2)!important}}
+/* @anchor home | p.real-note | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) p.real-note{transform:translate(calc(75.2px + 59.8 * (100vw - 761px) / 605),calc(12px + 9.6 * (100vw - 761px) / 605)) rotate(-4.1deg) scale(1.31)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) p.real-note{transform:translate(135px,21.6px) rotate(-4.1deg) scale(1.31)!important}}
+/* @anchor home | div.find.sy-sticky | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.find.sy-sticky{transform:translate(19.3px,11.9px) rotate(-1.3deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.find.sy-sticky{transform:translate(19.3px,11.9px) rotate(-0.5deg) scale(1)!important}}
+/* @anchor home | div.find.sy-sticky > img.sy-doodle | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.find.sy-sticky > img.sy-doodle{transform:translate(-43.5px,19.7px) rotate(8deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.find.sy-sticky > img.sy-doodle{transform:translate(4.2px,-10px) rotate(8deg) scale(1)!important}}
+/* @anchor home | div.about-art > img | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.about-art > img{transform:translate(calc(29.6px + 23.6 * (100vw - 761px) / 605),calc(-42.6px + -33.8 * (100vw - 761px) / 605)) rotate(0deg) scale(1.07)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.about-art > img{transform:translate(53.2px,-76.4px) rotate(0deg) scale(1.07)!important}}
+/* @anchor home | div.about > div:nth-of-type(1) > h3 | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > h3{transform:translate(calc(8px + 6.4 * (100vw - 761px) / 605),calc(-6.3px + -5 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > h3{transform:translate(14.4px,-11.3px) rotate(0deg) scale(1)!important}}
+/* @anchor home | div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(1) | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(1){transform:translate(calc(15.8px + 12.5 * (100vw - 761px) / 605),calc(-0.4px + -0.3 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(1){transform:translate(28.3px,-0.7px) rotate(0deg) scale(1)!important}}
+/* @anchor home | div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(2) | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(2){transform:translate(calc(19.9px + 15.8 * (100vw - 761px) / 605),calc(0.5px + 0.4 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(2){transform:translate(35.7px,0.9px) rotate(0deg) scale(1)!important}}
+/* @anchor home | div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(3) | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(3){transform:translate(calc(9.9px + 7.9 * (100vw - 761px) / 605),calc(0.2px + 0.1 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(1) > span:nth-of-type(3){transform:translate(17.8px,0.3px) rotate(0deg) scale(1)!important}}
+/* @anchor home | div.about > div:nth-of-type(1) > p.lines:nth-of-type(2) > span:nth-of-type(1) | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(2) > span:nth-of-type(1){transform:translate(calc(1.3px + 1.1 * (100vw - 761px) / 605),calc(7.9px + 6.3 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(2) > span:nth-of-type(1){transform:translate(2.4px,14.2px) rotate(0deg) scale(1)!important}}
+/* @anchor home | div.about > div:nth-of-type(1) > p.lines:nth-of-type(2) > span:nth-of-type(2) | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(2) > span:nth-of-type(2){transform:translate(calc(8px + 6.4 * (100vw - 761px) / 605),calc(8.3px + 6.6 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.about > div:nth-of-type(1) > p.lines:nth-of-type(2) > span:nth-of-type(2){transform:translate(14.4px,14.9px) rotate(0deg) scale(1)!important}}
+/* @anchor home | div.note.sy-sticky.sy-tape | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.note.sy-sticky.sy-tape{transform:translate(calc(204.2px + 162.3 * (100vw - 761px) / 605),calc(-19.1px + -15.1 * (100vw - 761px) / 605)) rotate(-1.2deg) scale(0.85)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.note.sy-sticky.sy-tape{transform:translate(366.5px,-34.2px) rotate(-1.2deg) scale(0.85)!important}}
+/* @anchor home | figure.clip.pola.s1 | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) figure.clip.pola.s1{transform:translate(calc(6.8px + 5.4 * (100vw - 761px) / 605),calc(-21.4px + -17 * (100vw - 761px) / 605)) rotate(1.8deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) figure.clip.pola.s1{transform:translate(12.2px,-38.4px) rotate(1.8deg) scale(1)!important}}
+/* @anchor home | figure.clip.pola.s2 | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) figure.clip.pola.s2{transform:translate(calc(-11.1px + -8.8 * (100vw - 761px) / 605),calc(-12.5px + -9.9 * (100vw - 761px) / 605)) rotate(-1.2deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) figure.clip.pola.s2{transform:translate(-19.9px,-22.4px) rotate(-1.2deg) scale(1)!important}}
+/* @anchor daily | span.sprite.work | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="daily"]) span.sprite.work{transform:translate(calc(-22.5px + -17.8 * (100vw - 761px) / 605),calc(-12px + -9.6 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="daily"]) span.sprite.work{transform:translate(-40.3px,-21.6px) rotate(0deg) scale(1)!important}}
+/* @anchor daily | h1 | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="daily"]) h1{transform:translate(calc(2px + 1.6 * (100vw - 761px) / 605),calc(-2.6px + -2.1 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="daily"]) h1{transform:translate(3.6px,-4.7px) rotate(0deg) scale(1)!important}}
+/* @anchor daily | div.sy-hero-text | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="daily"]) div.sy-hero-text{transform:translate(calc(54.6px + 43.4 * (100vw - 761px) / 605),calc(-117.4px + -93.4 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="daily"]) div.sy-hero-text{transform:translate(98px,-210.8px) rotate(0deg) scale(1)!important}}
+/* @anchor home | span.h1-sub | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) span.h1-sub{transform:translate(calc(3.6px + 2.9 * (100vw - 761px) / 605),0px) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) span.h1-sub{transform:translate(6.5px,0px) rotate(0deg) scale(1)!important}}
+/* @anchor home | div.sy-lead-row > p.sy-lead > span:nth-of-type(2) | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(2){transform:translate(calc(8.3px + 6.6 * (100vw - 761px) / 605),0px) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(2){transform:translate(14.9px,0px) rotate(0deg) scale(1)!important}}
+/* @anchor blog | span.h1-sub | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="blog"]) span.h1-sub{transform:translate(calc(3.8px + 3 * (100vw - 761px) / 605),calc(0.3px + 0.2 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="blog"]) span.h1-sub{transform:translate(6.8px,0.5px) rotate(0deg) scale(1)!important}}
+/* @anchor blog | div.sy-lead-row > p.sy-lead > span:nth-of-type(2) | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="blog"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(2){transform:translate(calc(21.7px + 17.2 * (100vw - 761px) / 605),calc(-1.2px + -0.9 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="blog"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(2){transform:translate(38.9px,-2.1px) rotate(0deg) scale(1)!important}}
+/* @anchor blog | div.sy-lead-row > p.sy-lead > span:nth-of-type(3) | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="blog"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(3){transform:translate(calc(6.4px + 5 * (100vw - 761px) / 605),calc(-0.2px + -0.1 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="blog"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(3){transform:translate(11.4px,-0.3px) rotate(0deg) scale(1)!important}}
+/* @anchor blog | div.sy-lead-row > p.sy-lead > span:nth-of-type(1) | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="blog"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(1){transform:translate(calc(3.4px + 2.7 * (100vw - 761px) / 605),calc(-0.5px + -0.4 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="blog"]) div.sy-lead-row > p.sy-lead > span:nth-of-type(1){transform:translate(6.1px,-0.9px) rotate(0deg) scale(1)!important}}
+/* @anchor daily | div.sy-lead-row > p.sy-lead.lines > span:nth-of-type(1) | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="daily"]) div.sy-lead-row > p.sy-lead.lines > span:nth-of-type(1){transform:translate(calc(-6.3px + -5 * (100vw - 761px) / 605),calc(-2.7px + -2.2 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="daily"]) div.sy-lead-row > p.sy-lead.lines > span:nth-of-type(1){transform:translate(-11.3px,-4.9px) rotate(0deg) scale(1)!important}}
+/* @anchor daily | div.sy-lead-row > p.sy-lead.lines > span:nth-of-type(2) | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="daily"]) div.sy-lead-row > p.sy-lead.lines > span:nth-of-type(2){transform:translate(calc(5.2px + 4.1 * (100vw - 761px) / 605),calc(1.1px + 0.8 * (100vw - 761px) / 605)) rotate(0deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="daily"]) div.sy-lead-row > p.sy-lead.lines > span:nth-of-type(2){transform:translate(9.3px,1.9px) rotate(0deg) scale(1)!important}}
+/* @anchor home | div.about-art > span.sy-hand | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.about-art > span.sy-hand{transform:translate(calc(-13.3px + -10.6 * (100vw - 761px) / 605),calc(-12.3px + -9.7 * (100vw - 761px) / 605)) rotate(-7deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.about-art > span.sy-hand{transform:translate(-23.9px,-22px) rotate(-7deg) scale(1)!important}}
+/* @anchor home | div.more > img.sy-doodle | 761 1366 1367 1920 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.more > img.sy-doodle{transform:translate(calc(179.4px + 142.6 * (100vw - 761px) / 605),calc(6.7px + 5.4 * (100vw - 761px) / 605)) rotate(-8deg) scale(1)!important}}
+@media (min-width:1367px){html:has(link[data-ep="home"]) div.more > img.sy-doodle{transform:translate(322px,12.1px) rotate(-8deg) scale(1)!important}}
+/* @anchor home | div.find.sy-sticky > div:nth-of-type(2) > p | 761 1366 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.find.sy-sticky > div:nth-of-type(2) > p{transform:translate(24.4px,2.2px) rotate(0deg) scale(1)!important}}
+/* @anchor home | div.find.sy-sticky > div:nth-of-type(2) > h3 | 761 1366 */
+@media (min-width:761px) and (max-width:1366px){html:has(link[data-ep="home"]) div.find.sy-sticky > div:nth-of-type(2) > h3{transform:translate(10.1px,-2.3px) rotate(0deg) scale(1)!important}}
