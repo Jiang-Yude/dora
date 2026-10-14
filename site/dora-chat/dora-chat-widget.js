@@ -37,6 +37,7 @@
   var GREETING = '嗨嗨 我是朵拉\n你要找朵拉嗎\n想認識朵拉 看朵拉日報\n或想知道江江在做什麼 都可以問我';
   var CHIPS = ['認識朵拉', '朵拉日報在講什麼？', '看看江江在做什麼', '想找江江本人'];
   var DEFAULT_SUB = 'AI 實習生';
+  var SIGNATURE = '我是朵拉 AI\n江江教練的實習生';  // 照 repo 根目錄 SKILL.md 第六段兩行原文
 
   /* 來源圖示自己畫 SVG（不用 emoji）：日記＝筆記本、日報＝報紙、其他頁＝連結 */
   var SVG_HEAD = '<svg class="dcw-source-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">';
@@ -160,6 +161,13 @@
     var bub = document.createElement('div');
     bub.className = 'dcw-bubble';
     fillBubble(bub, msg.text);
+    if (msg.role !== 'user') {
+      // 簽名檔：靈魂檔 1.10.0 第六段「每一則都要接簽名，回覆再短也一樣」；由介面固定加，不靠模型寫
+      var sign = document.createElement('div');
+      sign.className = 'dcw-sign';
+      sign.textContent = SIGNATURE;
+      bub.appendChild(sign);
+    }
     if (msg.sources && msg.sources.length) {
       var box = document.createElement('div');
       box.className = 'dcw-sources';

@@ -173,6 +173,7 @@
   color: var(--dcw-ink-soft);
 }
 #dcw-root .dcw-msg.dcw-user { align-self: flex-end; flex-direction: row-reverse; }
+#dcw-root .dcw-sign { margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--dcw-pencil-soft); font-size: 16px; line-height: 1.5; color: var(--dcw-ink-faint); white-space: pre-line; }
 #dcw-root .dcw-msg.dcw-user .dcw-bubble { background: var(--dcw-accent); color: #fff; border-bottom-right-radius: 6px; }
 #dcw-root .dcw-bubble a { color: var(--dcw-accent-deep); }
 

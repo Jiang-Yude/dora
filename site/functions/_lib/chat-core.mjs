@@ -147,7 +147,7 @@ function pickDocs(docs, question) {
 const FINAL_RULES = `===== 回覆前最後確認（最優先，蓋過上面所有格式說明）=====
 1. 最多三行，每行一句短句，用斷行代替逗號句號。不要列出整篇內容。
 2. 先用一兩行回答，最後一行請他點下面的文章看。站內文章不要寫網址，寫在來源標記裡。
-3. 不加簽名檔，不寫「我是朵拉 AI」「江江教練的實習生」，不用分隔線。
+3. 正文不寫簽名（視窗會自動加在下方），不寫「我是朵拉 AI」「江江教練的實習生」，不用分隔線，不用表情符號（emoji）。
 4. 不說「幫你轉告」「交給江江」「記住了」。想找江江就給知識官網和 Threads 兩個網址。
 5. 站內資料沒有的就說朵拉不知道，不要編。`;
 
@@ -246,7 +246,10 @@ function splitSources(text, docs, picked = []) {
   const reply = text.replace(/<<\s*來源\s*[:：]([^>]*)>>/g, (_, list) => {
     list.split(/[,，\s]+/).forEach((u) => { if (u) urls.push(u.trim()); });
     return "";
-  }).replace(/<<[^<>]*>>/g, "").replace(/ {2,}/g, " ").replace(/[ \t]+\n/g, "\n").replace(/\n{2,}/g, "\n").replace(/[:：]\s*$/gm, "").trim()
+  }).replace(/<<[^<>]*>>/g, "")
+    // 靈魂檔 1.10.0：不用一般表情符號
+    .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{2B00}-\u{2BFF}\u{FE0F}\u{200D}]/gu, "")
+    .replace(/ {2,}/g, " ").replace(/[ \t]+\n/g, "\n").replace(/\n{2,}/g, "\n").replace(/[:：]\s*$/gm, "").trim()
     .split("\n").filter((l) => !/^(-{3,}|我是朵拉\s*AI|江江教練的實習生|朵拉\s*AI\s*實習生)\s*$/.test(l.trim()))
     .slice(0, 5).join("\n");
   const sources = [...new Set(urls)].map((u) => known.get(u)).filter(Boolean).slice(0, 3)
