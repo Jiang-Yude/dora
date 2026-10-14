@@ -211,7 +211,12 @@ function splitSources(text, docs, picked = []) {
   const known = new Map([...SITE_PAGES, ...docs].map((d) => [d.url, d]));
   const urls = [];
   // 模型把站內網址寫進內文：轉成來源卡，內文拿掉；結尾被截斷的半截標記也清掉
-  text = text.replace(/https?:\/\/dora-aicat\.pages\.dev(\/[^\s<>）)，。]*)/g, (_, path) => { urls.push(path); return ""; })
+  // 路徑只收網址字元（不吃緊接的中文）；對不到站內頁就原樣留著，不刪訪客看得到的字
+  text = text.replace(/https?:\/\/dora-aicat\.pages\.dev(\/[A-Za-z0-9\-._~\/%]*)/g, (m, path) => {
+    if (!known.has(path) && !known.has(path + ".html") && !known.has(path.replace(/\.html$/, ""))) return m;
+    urls.push(known.has(path) ? path : known.has(path + ".html") ? path + ".html" : path.replace(/\.html$/, ""));
+    return "";
+  })
     .replace(/<<[^>]*$/, "");
   const reply = text.replace(/<<\s*來源\s*[:：]([^>]*)>>/g, (_, list) => {
     list.split(/[,，\s]+/).forEach((u) => { if (u) urls.push(u.trim()); });

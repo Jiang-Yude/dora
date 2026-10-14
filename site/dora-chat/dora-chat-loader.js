@@ -14,7 +14,11 @@
     window.__dcwOpenOnLoad = !!open;
     var s = document.createElement('script');
     s.src = base + 'dora-chat-widget.js';
-    s.onerror = function () { window.__dcwFull = false; };
+    s.onerror = function () {  // 完整版載不到：退回小按鈕，可再按一次
+      window.__dcwFull = false; wasOpen = false; s.remove();
+      var t = document.querySelector('#dcw-lite .t');
+      if (t) t.textContent = '問問朵拉？'; else paint();
+    };
     document.body.appendChild(s);
   }
 
@@ -22,6 +26,7 @@
   try { wasOpen = localStorage.getItem('doraChat.open.v1') === '1'; } catch (e) {}
 
   function paint() {
+    if (document.getElementById('dcw-root') || document.getElementById('dcw-lite')) return;  // 完整版已在或按鈕已畫過
     if (wasOpen) { loadFull(false); return; }
     var css =
       '#dcw-lite{position:fixed;right:24px;bottom:24px;z-index:99990;font-family:"Noto Sans TC",system-ui,-apple-system,"PingFang TC",sans-serif}' +
