@@ -355,7 +355,9 @@ export async function handleChat(context) {
    回傳 rows（新到舊，問句＋回答＋所在頁＋文章卡）與統計：最常被問、站上找不到（hits=0，補別名候選）、各頁提問數 */
 export async function handleLogRead(context) {
   const { request, env } = context;
-  const given = request.headers.get("x-read-token") || "";
+  // 後台頁會先 encodeURIComponent（HTTP header 不能放中文，江江的密碼是中文）；舊的英數密碼解碼後不變
+  let given = request.headers.get("x-read-token") || "";
+  try { given = decodeURIComponent(given); } catch (e) { /* 不是編碼過的就照原樣比 */ }
   if (!env.DORA_CHAT_READ_TOKEN || given !== env.DORA_CHAT_READ_TOKEN) return json({ error: "forbidden" }, 403);
   if (!env.DORA_DB) return json({ error: "log not configured" }, 503);
   const u = new URL(request.url);
