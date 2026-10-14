@@ -317,8 +317,8 @@ export async function handleChat(context) {
 /* ── 讀記錄：GET /api/dora-chat-log?month=YYYY-MM&limit=N，header X-Read-Token ── */
 export async function handleLogRead(context) {
   const { request, env } = context;
-  const token = request.headers.get("x-read-token") || "";
-  if (!env.DORA_CHAT_READ_TOKEN || token !== env.DORA_CHAT_READ_TOKEN) return json({ error: "forbidden" }, 403);
+  const given = request.headers.get("x-read-token") || "";
+  if (!env.DORA_CHAT_READ_TOKEN || given !== env.DORA_CHAT_READ_TOKEN) return json({ error: "forbidden" }, 403);
   if (!env.DORA_UPSTASH_URL || !env.DORA_UPSTASH_TOKEN) return json({ error: "log not configured" }, 503);
   const u = new URL(request.url);
   const month = /^\d{4}-\d{2}$/.test(u.searchParams.get("month") || "") ? u.searchParams.get("month") : taipeiNow().slice(0, 7);
