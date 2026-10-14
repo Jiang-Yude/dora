@@ -55,7 +55,8 @@ http.createServer(async (req, res) => {
     const chunks = [];
     for await (const c of req) chunks.push(c);
     const request = new Request(url, { method: req.method, headers: req.headers, body: req.method === 'POST' ? Buffer.concat(chunks) : undefined });
-    out = await handleChat({ request, env, waitUntil: (p) => p });
+    try { out = await handleChat({ request, env, waitUntil: (p) => p }); }
+    catch (e) { console.error('[dev] chat crash', e); out = new Response('{"error":"crash"}', { status: 500 }); }
     console.log('[dev] chat', out.status);
   } else {
     out = await serveFile(url.pathname);

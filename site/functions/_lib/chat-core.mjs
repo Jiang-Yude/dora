@@ -30,11 +30,35 @@ function hit(key, limit, ttlMs) {
   c.n += 1;
   return c.n <= limit;
 }
-function rateOk(ip) {
+function rateOkLocal(ip) {
   if (counters.size > 5000) for (const [k, v] of counters) if (v.reset < Date.now()) counters.delete(k);
   return hit("ip-m:" + ip, LIMITS.ipMinute, 60e3)
     && hit("ip-d:" + ip, LIMITS.ipDay, 864e5)
     && hit("site-d", LIMITS.siteDay, 864e5);
+}
+/* 有設 Upstash 就用它做跨執行個體計數（精準配額）；IP 只做雜湊後當計數 key，到期自動消失，不進問句記錄。
+   Upstash 連不上就退回執行個體記憶體計數，不擋正常訪客。 */
+async function sha(s) {
+  const d = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(s));
+  return [...new Uint8Array(d)].slice(0, 8).map((b) => b.toString(16).padStart(2, "0")).join("");
+}
+async function rateOk(env, ip) {
+  if (!rateOkLocal(ip)) return false;
+  if (!env.DORA_UPSTASH_URL || !env.DORA_UPSTASH_TOKEN) return true;
+  try {
+    const h = await sha("dora-rl:" + ip);
+    const now = new Date(Date.now() + 8 * 3600e3);
+    const day = now.toISOString().slice(0, 10), min = now.toISOString().slice(0, 16);
+    const keys = [["dora:rl:m:" + h + ":" + min, 120, LIMITS.ipMinute], ["dora:rl:d:" + h + ":" + day, 172800, LIMITS.ipDay], ["dora:rl:site:" + day, 172800, LIMITS.siteDay]];
+    const cmds = keys.flatMap(([k, ttl]) => [["INCR", k], ["EXPIRE", k, String(ttl)]]);
+    const r = await fetch(env.DORA_UPSTASH_URL.replace(/\/$/, "") + "/pipeline", {
+      method: "POST",
+      headers: { authorization: "Bearer " + env.DORA_UPSTASH_TOKEN, "content-type": "application/json" },
+      body: JSON.stringify(cmds),
+    });
+    const j = await r.json();
+    return keys.every(([, , limit], i) => Number(j[i * 2] && j[i * 2].result) <= limit);
+  } catch (e) { return true; }
 }
 
 /* ── 站內資料：唯一真相＝site/search-index.json（由總控台的產生器產出），不另外接線 ── */
@@ -172,6 +196,13 @@ async function logQuestion(env, row) {
     });
   } catch (e) { /* 記錄失敗不影響回答 */ }
 }
+// 記錄前遮罩常見個資：Email、手機與市話、身分證號、長串數字（卡號、帳號）
+function maskPII(t) {
+  return String(t)
+    .replace(/[\w.+-]+@[\w-]+(\.[\w-]+)+/g, "[email]")
+    .replace(/[A-Za-z][12]\d{8}/g, "[id]")
+    .replace(/\+?\d[\d\s-]{7,}\d/g, "[number]");
+}
 function taipeiNow() {
   return new Date(Date.now() + 8 * 3600e3).toISOString().replace("T", " ").slice(0, 19);
 }
@@ -186,23 +217,27 @@ export async function handleChat(context) {
   const { request, env } = context;
   if (request.method !== "POST") return json({ error: "method" }, 405);
   const ip = request.headers.get("cf-connecting-ip") || "local";
-  if (!rateOk(ip)) return json({ reply: "你問得有點快\n讓朵拉喘口氣 休息一下下再問我好嗎", sources: [] }, 429);
+  if (!(await rateOk(env, ip))) return json({ reply: "你問得有點快\n讓朵拉喘口氣 休息一下下再問我好嗎", sources: [] }, 429);
 
   let body;
   try { body = await request.json(); } catch (e) { return json({ error: "bad json" }, 400); }
-  const messages = Array.isArray(body.messages) ? body.messages.slice(-MAX_TURNS) : [];
+  if (!body || typeof body !== "object" || Array.isArray(body)) return json({ error: "bad body" }, 400);
+  const messages = (Array.isArray(body.messages) ? body.messages : [])
+    .filter((m) => m && typeof m === "object" && (m.role === "user" || m.role === "bot" || m.role === "assistant") && typeof m.text === "string")
+    .slice(-MAX_TURNS);
   const lastUser = [...messages].reverse().find((m) => m && m.role === "user");
   const question = String(lastUser && lastUser.text || "").trim();
   if (!question) return json({ error: "empty" }, 400);
   if (question.length > MAX_INPUT) return json({ reply: `一次最多 ${MAX_INPUT} 字\n分段問朵拉好嗎`, sources: [] }, 400);
-  const page = String(body.page || "").slice(0, 200);
+  // page 會進 system prompt，只收單純的站內路徑，其他一律丟掉（防 prompt injection）
+  const page = typeof body.page === "string" && /^\/[A-Za-z0-9\-._~\/%]{0,150}$/.test(body.page) ? body.page : "";
 
   const docs = await loadIndex(env, request);
   const picked = pickDocs(docs, question);
   const system = buildContext(docs, picked, page);
   const turns = toTurns(messages);
 
-  const logRow = { t: taipeiNow(), q: question, page, hits: picked.length, v: PERSONA_VERSION };
+  const logRow = { t: taipeiNow(), q: maskPII(question), page, hits: picked.length, v: PERSONA_VERSION };
   if (context.waitUntil) context.waitUntil(logQuestion(env, logRow)); else logQuestion(env, logRow);
 
   try {

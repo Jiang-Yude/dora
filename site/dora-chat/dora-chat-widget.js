@@ -267,8 +267,12 @@
     else askDora(finish);
   }
 
+  var panelEl = root.querySelector('.dcw-panel');
   function setOpen(open) {
     root.classList.toggle('dcw-open', open);
+    /* 收起時整個面板不可聚焦，避免 Tab 跳進隱藏的輸入框誤送訊息 */
+    panelEl.inert = !open;
+    panelEl.setAttribute('aria-hidden', open ? 'false' : 'true');
     try { localStorage.setItem(OPEN_KEY, open ? '1' : '0'); } catch (e) {}
     if (open) { renderAll(); setTimeout(scrollBottom, 240); }
   }
@@ -279,11 +283,15 @@
     try { return window.matchMedia('(max-width: 520px)').matches; } catch (e) { return false; }
   }
   function sizeSteps() { return isPhone() ? ['s', 'l'] : ['m', 'l']; }
+  /* 目前尺寸以記憶體為準，localStorage 只拿來跨頁還原（寫不進去時也還能放大縮回） */
+  var curSize = null;
   function getSize() {
     var steps = sizeSteps();
+    if (steps.indexOf(curSize) >= 0) return curSize;
     try { var v = localStorage.getItem(SIZE_KEY); return steps.indexOf(v) >= 0 ? v : steps[0]; } catch (e) { return steps[0]; }
   }
   function applySize(sz) {
+    curSize = sz;
     ['s', 'm', 'l'].forEach(function (x) { root.classList.remove('dcw-size-' + x); });
     root.classList.add('dcw-size-' + sz);
     try { localStorage.setItem(SIZE_KEY, sz); } catch (e) {}
@@ -305,6 +313,8 @@
     history = [];
     saveHistory(history);
     busy = false;
+    input.value = '';
+    showLimit(0);
     renderAll();
     input.focus();
   });
@@ -314,6 +324,8 @@
   });
 
   renderAll();
+  panelEl.inert = true;
+  panelEl.setAttribute('aria-hidden', 'true');
   var wasOpen = false;
   try { wasOpen = localStorage.getItem(OPEN_KEY) === '1'; } catch (e) {}
   if (wasOpen) {
