@@ -436,3 +436,11 @@ footer .foot-logo{display:block;width:72px;height:72px;border-radius:50%;object-
 .posts-newest .post .tag{justify-self:start}
 .posts-newest .post .go{grid-column:2;justify-self:start}
 .posts-newest .post h2,.posts-newest .post p{text-align:left}
+
+/* 對比修正（2026-10-14 跨家審：手寫小字、最新一篇標、搜尋提示字要過 WCAG AA 4.5:1）；
+   手機日記目錄最新一篇卡：單欄時「閱讀日記」不要再指定第 2 欄 */
+:root{--sy-pencil-text:#4a6f98}
+.sy-hand{color:var(--sy-pencil-text)}
+.posts-newest .new-badge,#diary .real-note{color:var(--sy-pencil-text)}
+.sy-search input::placeholder{color:#5d6a72}
+@media (max-width:760px){.posts-newest .post .go{grid-column:auto}}

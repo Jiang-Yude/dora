@@ -22,7 +22,9 @@
 11. llms.txt 後段「網站結構」（標記 <!-- dora-site-map -->）列出全站頁面清單；前段人設接待指引不動
 12. 別名庫 data/search-aliases.json（4O 第八節）：各頁 tags／keywords／aliases 併進 search-index.json，tags＋keywords 寫進 JSON-LD keywords；
     沒有別名的頁面會印警告，新文章發布跑本檔時就會提醒補別名
-不改日報頁的配色與版面。標題取自該期 <script id="daily"> JSON 第一則 title_zh。
+13. 版型統一（標記 <!--dora-style-->，插在 </head> 前）：各篇日記補 /suya.css＋blog.css，每期日報補 /suya.css＋/daily/issue.css，
+    讓日記、日報跟首頁同一套網點底、紙卡、紙膠帶與色鉛筆插畫；公版 <style> 不動，issue.css 排在後面覆蓋
+標題取自該期 <script id="daily"> JSON 第一則 title_zh。
 """
 import json, re, sys
 from html import unescape
@@ -50,7 +52,8 @@ def alias_keywords(url):
     a = load_aliases().get(_akey(url)) or {}
     return list(dict.fromkeys((a.get("tags") or []) + (a.get("keywords") or [])))
 BASE = "https://dora-aicat.pages.dev"
-CSS_VER = "20261015g"  # 改 suya.css 後換新，全站一起換
+CSS_VER = "20261015h"  # 改 suya.css 後換新，全站一起換
+PAGE_CSS_VER = "20261014b"  # 改 blog/blog.css 或 daily/issue.css 後換新（put_style 會同步到各篇日記與每期日報）
 NAV = (SITE / "_partials" / "nav.html").read_text(encoding="utf-8").strip()
 NAV_RE = re.compile(r"<!--dora-nav-->.*?<!--/dora-nav-->\s*", re.S)
 PAGER_RE = re.compile(r"\s*<!--dora-pager-->.*?<!--/dora-pager-->", re.S)
@@ -84,9 +87,9 @@ def issues():
     return out  # 新到舊
 
 PAGER_CSS = """<style>
-.dpager{max-width:860px;margin:0 auto;padding:0 16px 56px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;font-family:"Noto Sans TC",system-ui,sans-serif;font-size:18px;line-height:1.5}
-.dpager a{text-decoration:none;color:#1d2b4f;font-weight:700;background:#fff;border:2px solid #b9d3f0;border-radius:999px;padding:6px 16px}
-.dpager a:hover{background:#eaf3fe}
+.dpager{max-width:880px;margin:0 auto;padding:0 24px 56px;display:flex;gap:10px;justify-content:space-between;flex-wrap:wrap;font-family:"Noto Sans TC",system-ui,sans-serif;font-size:18px;line-height:1.5}
+.dpager a{text-decoration:none;color:#3b5a7d;font-weight:500;background:#fffefa;border:1.5px solid #a9c2df;border-radius:999px;padding:7px 18px;box-shadow:0 4px 10px rgba(70,84,93,.06)}
+.dpager a:hover{background:#fff;border-color:#4a6f98}
 .dpager .sp{flex:1}
 @media (max-width:480px){.dpager{justify-content:center}}
 </style>"""
@@ -254,9 +257,30 @@ def write_index(items):
     return total
 
 # 手寫小字字型（LXGW WenKai TC）只載入用到的字；改手寫註記文字時，把新字補進 HAND_TEXT
-HAND_TEXT = "什麼都想試試看每則附來源喔日記會繼續寫下去找今天也很努力朵拉過的東西"
+HAND_TEXT = "什麼都想試試看每則附來源喔日記會繼續寫下去找今天也很努力朵拉過的東西進化史年月日星期一二三四五六0123456789"
 HAND_FONT = ('<link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC&text='
              + quote("".join(dict.fromkeys(HAND_TEXT))) + '&display=swap" rel="stylesheet">')
+
+STYLE_RE = re.compile(r"\s*<!--dora-style-->.*?<!--/dora-style-->", re.S)
+SERIF_FONT = '<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">'
+
+def put_style(path, sheets):
+    """各篇日記、每期日報插入共用樣式（標記 <!--dora-style-->，插在 </head> 前，可重複執行）。"""
+    t = path.read_text(encoding="utf-8")
+    t = STYLE_RE.sub("", t)
+    t = re.sub(r'<link rel="stylesheet" href="blog\.css[^"]*">\s*', "", t)  # 舊的 blog.css 連結改由本段統一載入
+    links = "".join(f'<link rel="stylesheet" href="{s}">\n' for s in sheets)
+    block = "<!--dora-style-->\n" + SERIF_FONT + "\n" + HAND_FONT + "\n" + links + "<!--/dora-style-->\n"
+    t, n = re.subn(r"</head>", lambda m: block + "</head>", t, count=1)
+    if n == 0:
+        sys.exit(f"找不到 </head>：{path}")
+    path.write_text(t, encoding="utf-8")
+
+def put_all_style(items):
+    for f in blog_posts():
+        put_style(f, [f"/suya.css?v={CSS_VER}", f"/blog/blog.css?v={PAGE_CSS_VER}"])
+    for it in items:
+        put_style(it["file"], [f"/suya.css?v={CSS_VER}", f"/daily/issue.css?v={PAGE_CSS_VER}"])
 
 def _plain(html):
     html = re.sub(r"<(script|style)[^>]*>.*?</\1>", " ", html, flags=re.S)
@@ -597,6 +621,7 @@ def main():
         put_nav(SITE / "search" / "index.html", "search")
     for it in items:
         put_nav(it["file"], "daily")
+    put_all_style(items)
     put_all_og(items)
     put_all_seo(items)
     put_llms(items)

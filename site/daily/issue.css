@@ -1,0 +1,85 @@
+/* 朵拉日報｜每期內頁（2026-10-14 改成跟首頁同一套：米白底＋淡藍網點、紙白卡片、淡藍紙膠帶、藍色色鉛筆插畫）
+   每期頁面原本的 <style> 是日報公版（dora-daily 技能包 templates/daily.html），本檔由 build-index.py 的 put_style
+   插在 </head> 前面，排在公版之後，所以同樣的選擇器以本檔為準。顏色字體都用 /suya.css 的 --sy-* 變數。
+   日報走比較專業的報刊感：報頭雙線、襯線大標題；插畫只用同一支藍色色鉛筆（朵拉戴眼鏡讀報、圖表、地球儀、放大鏡）。 */
+body{
+  font-family:var(--sy-sans);color:var(--sy-text);background:var(--sy-bg);background-image:none;
+  font-size:20px;line-height:1.9;
+}
+a{color:var(--sy-blue-deep)}
+.wrap{max-width:880px;padding:40px 24px 64px}
+
+/* 報頭：左邊日期＋大標＋副標，右邊朵拉戴眼鏡讀報（拍立得） */
+header{
+  position:relative;display:grid;grid-template-columns:minmax(0,1fr) auto;column-gap:34px;align-items:center;
+  text-align:left;margin-bottom:46px;padding:22px 0 26px;
+  border-top:3px double var(--sy-ink);border-bottom:1px solid var(--sy-ink);
+}
+header>*{grid-column:1;min-width:0}
+header::after{
+  content:"";grid-column:2;grid-row:1/4;align-self:center;
+  width:clamp(200px,26vw,280px);aspect-ratio:3/2;
+  background:url("/img/daily/dora-glasses.webp") center/cover no-repeat,#fff;
+  border:10px solid #fff;border-bottom-width:24px;
+  box-shadow:0 1px 2px rgba(70,84,93,.08),0 10px 24px rgba(70,84,93,.12);transform:rotate(2deg);
+}
+.date{
+  display:inline-block;background:none;border:0;border-radius:0;padding:0 0 4px;transform:rotate(-1.5deg);
+  font-family:"LXGW WenKai TC","Kaiti TC","BiauKai",var(--sy-serif);font-weight:400;font-size:21px;letter-spacing:.06em;color:var(--sy-pencil-text,#4a6f98);
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5c20-3 50-2 70-1s36 0 46-2' fill='none' stroke='%23a9c2df' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") left bottom/100% 8px no-repeat;
+  justify-self:start;
+}
+h1{font-family:var(--sy-serif);color:var(--sy-ink);font-weight:700;font-size:clamp(44px,6.4vw,70px);letter-spacing:.12em;line-height:1.2;margin-top:8px}
+.sub{color:var(--sy-soft);font-size:19px;margin-top:6px}
+
+/* 紙膠帶：每張卡只留一條淡藍膠帶（同首頁 .pola） */
+.taped{position:relative;background:var(--sy-paper);border:0;border-radius:2px;
+  box-shadow:0 1px 2px rgba(70,84,93,.08),0 12px 26px rgba(70,84,93,.10)}
+.taped::before{
+  content:"";position:absolute;z-index:2;top:-13px;left:50%;width:96px;height:26px;margin-left:-48px;opacity:1;
+  background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 55%),var(--sy-tape);
+  clip-path:polygon(4% 0,96% 0,100% 18%,96% 36%,100% 54%,96% 72%,100% 90%,96% 100%,4% 100%,0 82%,4% 64%,0 46%,4% 28%,0 10%);
+  transform:rotate(-3deg);
+}
+.taped::after{content:none}
+.cover{background:#fff;padding:12px 12px 28px;transform:rotate(-1deg)}
+
+.cards{gap:52px}
+.card{padding:34px 34px 28px}
+.card:nth-child(n){background:var(--sy-paper);transform:rotate(-.35deg)}
+.card:nth-child(even){transform:rotate(.3deg)}
+.card:nth-child(even)::before{left:auto;right:14%;margin-left:0;transform:rotate(3deg)}
+.num{width:40px;height:40px;border:0;box-shadow:inset 0 0 0 1.6px var(--sy-pencil);color:var(--sy-blue-deep);
+  font-family:var(--sy-serif);font-weight:700;font-size:20px;background:#fff;vertical-align:middle}
+.kind{display:inline-block;vertical-align:middle;font-size:18px;font-weight:500;color:var(--sy-blue-deep);
+  border:1px solid #c9d8ea;border-radius:999px;padding:0 12px;letter-spacing:.08em}
+.card h2{font-family:var(--sy-serif);color:var(--sy-ink);font-weight:700;font-size:clamp(23px,2.6vw,27px);line-height:1.5;margin:14px 0 8px}
+.card p.body{margin-top:12px}
+.srcs{margin-top:16px;padding-top:12px;border-top:1px dashed var(--sy-line);font-size:18px;color:var(--sy-soft)}
+.srcs a{color:var(--sy-blue-deep);text-decoration:underline;text-decoration-color:var(--sy-pencil-soft);text-underline-offset:3px}
+.srcs a:hover{text-decoration-color:var(--sy-blue-deep)}
+
+/* 色鉛筆小插畫：第 1 則右上角圖表、第 3 則右上角地球儀、頁尾放大鏡（點綴就這三個） */
+.card:nth-child(1)::after,.card:nth-child(3)::after{
+  content:"";position:absolute;z-index:1;top:-44px;right:-30px;width:120px;height:96px;pointer-events:none;
+  background:url("/img/daily/chart.webp") center/contain no-repeat;transform:rotate(6deg);
+}
+.card:nth-child(3)::after{background-image:url("/img/daily/globe.webp");width:78px;height:104px;top:-46px;transform:rotate(-5deg)}
+.card:nth-child(1) h2,.card:nth-child(3) h2{padding-right:40px}
+
+footer{margin-top:60px;color:var(--sy-soft);font-size:18px}
+footer::before{
+  content:"";display:block;width:84px;height:88px;margin:0 auto 6px;
+  background:url("/img/daily/magnifier.webp") center/contain no-repeat;transform:rotate(-8deg);
+}
+.sign{background:var(--sy-paper);border:1px solid var(--sy-line);border-radius:6px;color:var(--sy-ink);font-family:var(--sy-serif);font-size:19px}
+
+@media (max-width:640px){
+  .wrap{padding:28px 16px 56px}
+  header{grid-template-columns:1fr;row-gap:4px;text-align:left}
+  header::after{grid-column:1;grid-row:auto;justify-self:center;width:min(78vw,300px);margin-top:18px}
+  .card{padding:28px 20px 24px}
+  .card:nth-child(n),.cover{transform:none}
+  .card:nth-child(1)::after,.card:nth-child(3)::after{right:-6px;top:-30px;width:70px;height:60px}
+  .card:nth-child(3)::after{width:58px;height:78px;top:-40px}
+}
