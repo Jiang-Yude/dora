@@ -5,6 +5,13 @@ const TAG = '<script src="/dora-chat/dora-chat-loader.js" defer></script>';  // 
 
 export async function onRequest(context) {
   const res = await context.next();
+  // 後台頁：不插客服、不給搜尋引擎收錄
+  if (new URL(context.request.url).pathname.startsWith("/dora-chat/admin")) {
+    const r = new Response(res.body, res);
+    r.headers.set("X-Robots-Tag", "noindex, nofollow");
+    r.headers.set("Cache-Control", "no-store");
+    return r;
+  }
   if (context.env.DORA_CHAT_WIDGET === "off") return res;
   const type = res.headers.get("content-type") || "";
   if (!type.includes("text/html")) return res;

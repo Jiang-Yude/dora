@@ -1,0 +1,10 @@
+# 朵拉官網 Cloudflare Pages 設定（只為了綁朵拉小客服的 D1 資料庫；secrets 不寫在這裡）
+# 部署照舊走 safe-deploy.sh --cf dora-aicat <site 乾淨夾>，wrangler 會讀本檔把 DORA_DB 綁上去
+name = "dora-aicat"
+pages_build_output_dir = "."
+compatibility_date = "2025-10-01"
+
+[[d1_databases]]
+binding = "DORA_DB"          # chat-core.mjs 用 env.DORA_DB 記問答、做限流
+database_name = "dora-chat"  # 朵拉專用，跟咪卡的 Upstash 分開（江江 2026-10-14）
+database_id = "2316e9da-0bd5-42fe-b9f8-dec8696468a1"

@@ -44,6 +44,7 @@ async function sha(s) {
 }
 async function rateOk(env, ip) {
   if (!rateOkLocal(ip)) return false;
+  if (env.DORA_DB) return rateOkD1(env.DORA_DB, ip);
   if (!env.DORA_UPSTASH_URL || !env.DORA_UPSTASH_TOKEN) return true;
   try {
     const h = await sha("dora-rl:" + ip);
@@ -58,6 +59,20 @@ async function rateOk(env, ip) {
     });
     const j = await r.json();
     return keys.every(([, , limit], i) => Number(j[i * 2] && j[i * 2].result) <= limit);
+  } catch (e) { return true; }
+}
+
+/* D1 版跨執行個體計數（江江 2026-10-14：跟咪卡同概念、分開放 → 朵拉自己的 D1 dora-chat） */
+async function rateOkD1(db, ip) {
+  try {
+    const h = await sha("dora-rl:" + ip);
+    const now = Date.now();
+    const tp = new Date(now + 8 * 3600e3).toISOString();
+    const keys = [["m:" + h + ":" + tp.slice(0, 16), now + 120e3, LIMITS.ipMinute], ["d:" + h + ":" + tp.slice(0, 10), now + 172800e3, LIMITS.ipDay], ["site:" + tp.slice(0, 10), now + 172800e3, LIMITS.siteDay]];
+    const up = db.prepare("INSERT INTO ratelimit (k, n, exp) VALUES (?1, 1, ?2) ON CONFLICT(k) DO UPDATE SET n = n + 1 RETURNING n");
+    const res = await db.batch(keys.map(([k, exp]) => up.bind(k, exp)));
+    if (Math.random() < 0.02) await db.prepare("DELETE FROM ratelimit WHERE exp < ?1").bind(now).run();  // 順手清過期列
+    return keys.every(([, , limit], i) => Number(res[i].results[0].n) <= limit);
   } catch (e) { return true; }
 }
 
@@ -247,6 +262,13 @@ function cards(list) {
 
 /* ── 匿名記錄：只記問句、時間、所在頁、命中幾筆；不記 IP、不記答覆 ── */
 async function logQuestion(env, row) {
+  if (env.DORA_DB) {
+    try {
+      await env.DORA_DB.prepare("INSERT INTO questions (t, month, q, a, page, hits, sources, status, v) VALUES (?1, ?2, ?3, ?4, ?5, ?6, ?7, ?8, ?9)")
+        .bind(row.t, row.t.slice(0, 7), row.q, row.a || "", row.page || "", row.hits || 0, row.sources || "", row.status || "", row.v || "").run();
+    } catch (e) { console.error("[dora-chat log]", e.message); }
+    return;
+  }
   if (!env.DORA_UPSTASH_URL || !env.DORA_UPSTASH_TOKEN) return;
   const key = "dora:chat:" + row.t.slice(0, 7);
   try {
@@ -299,43 +321,50 @@ export async function handleChat(context) {
   const turns = toTurns(messages);
 
   const logRow = { t: taipeiNow(), q: maskPII(question), page, hits: picked.length, v: PERSONA_VERSION };
-  if (context.waitUntil) context.waitUntil(logQuestion(env, logRow)); else logQuestion(env, logRow);
+  const done = (out, status) => {  // 回應前記一筆：問句＋回答＋附了哪些文章（同咪卡：問答都記）
+    const row = { ...logRow, a: String(out.reply || "").slice(0, 600), sources: (out.sources || []).map((x) => x.url).join(","), status };
+    const p = logQuestion(env, row);
+    if (context.waitUntil) context.waitUntil(p);
+    return json(out);
+  };
 
   const provider = env.DORA_LLM_PROVIDER || "anthropic";
   // 還沒設 key（或 key 被拿掉）：不報錯，回「準備中」，照樣用檢索推最相關的文章
   const notReady = provider === "anthropic" ? !env.ANTHROPIC_API_KEY : !env.DORA_LLM_BASE_URL;
   if (notReady) {
-    return json({
+    return done({
       reply: "朵拉小客服還在準備中\n先幫你找了可能相關的文章 點下面看看",
       sources: cards(picked.filter((d) => d.text).slice(0, 2)),
       ready: false,
-    });
+    }, "not_ready");
   }
   try {
     const raw = provider === "openai" ? await callOpenAICompat(env, system, turns) : await callAnthropic(env, system, turns);
     if (!raw) throw new Error("empty reply");
-    return json(splitSources(raw, docs, picked.filter((d) => d.text)));
+    return done(splitSources(raw, docs, picked.filter((d) => d.text)), "ok");
   } catch (e) {
     console.error("[dora-chat]", e.message);
-    return json({ reply: "朵拉這邊好像當機了一下\n耳朵垂下來了\n先看看下面的文章 等一下再問我一次好嗎", sources: cards(picked.filter((d) => d.text).slice(0, 2)), error: "upstream" }, 200);
+    return done({ reply: "朵拉這邊好像當機了一下\n耳朵垂下來了\n先看看下面的文章 等一下再問我一次好嗎", sources: cards(picked.filter((d) => d.text).slice(0, 2)), error: "upstream" }, "error");
   }
 }
 
-/* ── 讀記錄：GET /api/dora-chat-log?month=YYYY-MM&limit=N，header X-Read-Token ── */
+/* ── 讀記錄（後台用）：GET /api/dora-chat-log?month=YYYY-MM&limit=N，header X-Read-Token＝後台密碼 ──
+   回傳 rows（新到舊，問句＋回答＋所在頁＋文章卡）與統計：最常被問、站上找不到（hits=0，補別名候選）、各頁提問數 */
 export async function handleLogRead(context) {
   const { request, env } = context;
   const given = request.headers.get("x-read-token") || "";
   if (!env.DORA_CHAT_READ_TOKEN || given !== env.DORA_CHAT_READ_TOKEN) return json({ error: "forbidden" }, 403);
-  if (!env.DORA_UPSTASH_URL || !env.DORA_UPSTASH_TOKEN) return json({ error: "log not configured" }, 503);
+  if (!env.DORA_DB) return json({ error: "log not configured" }, 503);
   const u = new URL(request.url);
   const month = /^\d{4}-\d{2}$/.test(u.searchParams.get("month") || "") ? u.searchParams.get("month") : taipeiNow().slice(0, 7);
-  const limit = Math.min(Math.max(Number(u.searchParams.get("limit")) || 200, 1), 20000);
-  const r = await fetch(env.DORA_UPSTASH_URL.replace(/\/$/, "") + "/pipeline", {
-    method: "POST",
-    headers: { authorization: "Bearer " + env.DORA_UPSTASH_TOKEN, "content-type": "application/json" },
-    body: JSON.stringify([["LRANGE", "dora:chat:" + month, "0", String(limit - 1)]]),
-  });
-  const j = await r.json().catch(() => []);
-  const rows = ((j[0] && j[0].result) || []).map((s) => { try { return JSON.parse(s); } catch (e) { return null; } }).filter(Boolean);
-  return json({ month, count: rows.length, rows });
+  const limit = Math.min(Math.max(Number(u.searchParams.get("limit")) || 500, 1), 5000);
+  const db = env.DORA_DB;
+  const [rows, top, miss, pages, months] = await db.batch([
+    db.prepare("SELECT t, q, a, page, hits, sources, status FROM questions WHERE month = ?1 ORDER BY id DESC LIMIT ?2").bind(month, limit),
+    db.prepare("SELECT q, COUNT(*) AS n, MAX(t) AS last FROM questions WHERE month = ?1 GROUP BY lower(trim(q)) ORDER BY n DESC, last DESC LIMIT 30").bind(month),
+    db.prepare("SELECT q, COUNT(*) AS n, MAX(t) AS last FROM questions WHERE month = ?1 AND hits = 0 GROUP BY lower(trim(q)) ORDER BY n DESC, last DESC LIMIT 30").bind(month),
+    db.prepare("SELECT page, COUNT(*) AS n FROM questions WHERE month = ?1 GROUP BY page ORDER BY n DESC LIMIT 20").bind(month),
+    db.prepare("SELECT month, COUNT(*) AS n FROM questions GROUP BY month ORDER BY month DESC LIMIT 24"),
+  ]);
+  return json({ month, count: rows.results.length, rows: rows.results, top: top.results, miss: miss.results, pages: pages.results, months: months.results });
 }

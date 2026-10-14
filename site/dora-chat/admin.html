@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>朵拉小客服後台</title>
+<!-- 朵拉小客服後台：看訪客都問朵拉什麼。資料在朵拉自己的 D1（dora-chat），讀取走 /api/dora-chat-log，要後台密碼。
+     密碼存在江江 Mac 的鑰匙圈（服務名 dora-chat-admin-password），本頁只存在這個分頁的 sessionStorage，關掉分頁就忘記。 -->
+<style>
+:root{--bg:#f8f6f0;--paper:#fffefa;--mist:#eaf1f4;--ink:#2f3c45;--text:#46545d;--soft:#5f6d75;--line:#ded4c5;--blue:#4a6f98;--pencil:#a9c2df;--warn:#9a5b3c}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"Noto Sans TC",system-ui,-apple-system,"PingFang TC",sans-serif;font-size:18px;line-height:1.7}
+main{max-width:1100px;margin:0 auto;padding:28px 16px 60px}
+h1{font-size:28px;color:var(--ink);margin:0 0 4px;letter-spacing:.04em}
+h2{font-size:22px;color:var(--ink);margin:30px 0 10px}
+.sub{color:var(--soft);margin:0 0 20px}
+.card{background:var(--paper);border:1.5px solid var(--pencil);border-radius:16px;padding:18px 20px;box-shadow:0 4px 12px rgba(70,84,93,.08)}
+.login{max-width:420px;margin:60px auto}
+input,select,button{font:inherit;font-size:18px}
+input[type=password]{width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:12px;background:#fff;margin:10px 0}
+button{background:var(--blue);color:#fff;border:0;border-radius:999px;padding:9px 22px;cursor:pointer}
+button.ghost{background:none;color:var(--blue);border:1.5px solid var(--pencil)}
+select{padding:8px 12px;border:1.5px solid var(--line);border-radius:12px;background:#fff}
+.bar{display:flex;flex-wrap:wrap;gap:12px;align-items:center;margin-bottom:8px}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px}
+.stat b{display:block;font-size:30px;color:var(--ink)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+@media (max-width:760px){.grid2{grid-template-columns:1fr}}
+ol{margin:0;padding-left:26px}
+ol li{margin:4px 0}
+.n{color:var(--blue);font-weight:700;margin-left:6px;white-space:nowrap}
+.tablewrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th,td{text-align:left;vertical-align:top;padding:10px 8px;border-bottom:1px solid var(--line)}
+th{color:var(--soft);font-weight:600;white-space:nowrap}
+td.t{white-space:nowrap;color:var(--soft);font-size:16px}
+.q{color:var(--ink);font-weight:600}
+details summary{cursor:pointer;color:var(--blue)}
+.a{white-space:pre-wrap;margin-top:6px}
+.tag{display:inline-block;font-size:16px;border:1px solid var(--pencil);border-radius:999px;padding:0 10px;margin:2px 4px 0 0;color:var(--blue)}
+.miss{color:var(--warn)}
+.err{color:var(--warn);margin-top:8px}
+.empty{color:var(--soft)}
+</style>
+</head>
+<body>
+<main>
+  <section id="login" class="card login" hidden>
+    <h1>朵拉小客服後台</h1>
+    <p class="sub">看大家都問朵拉什麼問題</p>
+    <form id="lf">
+      <label for="pw">後台密碼</label>
+      <input id="pw" type="password" autocomplete="current-password" required>
+      <button type="submit">進入後台</button>
+      <div id="lerr" class="err" role="alert"></div>
+    </form>
+  </section>
+
+  <section id="app" hidden>
+    <h1>朵拉小客服後台</h1>
+    <p class="sub">訪客問朵拉的每一句話、朵拉怎麼回、附了哪篇文章。問句裡的 Email、電話、身分證號會先遮掉才存。</p>
+    <div class="bar">
+      <label for="month">月份</label>
+      <select id="month"></select>
+      <button class="ghost" id="reload" type="button">重新整理</button>
+      <button class="ghost" id="logout" type="button">登出</button>
+    </div>
+    <div class="stats">
+      <div class="card stat"><span>這個月提問</span><b id="sTotal">0</b></div>
+      <div class="card stat"><span>站上找不到的</span><b id="sMiss">0</b></div>
+      <div class="card stat"><span>有附文章卡</span><b id="sCard">0</b></div>
+    </div>
+    <div class="grid2">
+      <div><h2>最常被問</h2><div class="card"><ol id="top"></ol></div></div>
+      <div><h2>站上找不到（補別名候選）</h2><div class="card"><ol id="miss"></ol>
+        <p class="sub" style="margin:10px 0 0;font-size:16px">這些問題檢索沒對到任何文章。常出現的就到 data/search-aliases.json 幫相關文章補別名，或寫一篇新的。</p></div></div>
+    </div>
+    <h2>在哪一頁問的</h2>
+    <div class="card" id="pages"></div>
+    <h2>所有提問（新到舊）</h2>
+    <div class="card tablewrap">
+      <table>
+        <thead><tr><th>時間</th><th>問題與朵拉的回答</th><th>所在頁</th><th>文章卡</th></tr></thead>
+        <tbody id="rows"></tbody>
+      </table>
+    </div>
+  </section>
+</main>
+<script>
+(function () {
+  var KEY = 'doraAdmin.pw';
+  var $ = function (id) { return document.getElementById(id); };
+  function pw() { try { return sessionStorage.getItem(KEY) || ''; } catch (e) { return window.__pw || ''; } }
+  function setPw(v) { try { sessionStorage.setItem(KEY, v); } catch (e) { window.__pw = v; } }
+  function clearPw() { try { sessionStorage.removeItem(KEY); } catch (e) {} window.__pw = ''; }
+  function el(tag, text, cls) { var e = document.createElement(tag); if (text != null) e.textContent = text; if (cls) e.className = cls; return e; }
+  function thisMonth() { return new Date(Date.now() + 8 * 3600e3).toISOString().slice(0, 7); }
+
+  function show(which) { $('login').hidden = which !== 'login'; $('app').hidden = which !== 'app'; }
+
+  function load(month) {
+    return fetch('/api/dora-chat-log?month=' + encodeURIComponent(month) + '&limit=2000', { headers: { 'X-Read-Token': pw() } })
+      .then(function (r) { if (r.status === 403) throw new Error('forbidden'); if (!r.ok) throw new Error('http ' + r.status); return r.json(); });
+  }
+
+  function list(ol, items, cls) {
+    ol.textContent = '';
+    if (!items.length) { ol.appendChild(el('li', '這個月還沒有', 'empty')); return; }
+    items.forEach(function (x) { var li = el('li', x.q, cls); li.appendChild(el('span', '×' + x.n, 'n')); ol.appendChild(li); });
+  }
+
+  function render(d) {
+    var sel = $('month'), cur = d.month;
+    var ms = (d.months || []).map(function (m) { return m.month; });
+    if (ms.indexOf(cur) < 0) ms.unshift(cur);
+    if (ms.indexOf(thisMonth()) < 0) ms.unshift(thisMonth());
+    sel.textContent = '';
+    ms.sort().reverse().forEach(function (m) {
+      var o = el('option', m + (d.months || []).filter(function (x) { return x.month === m; }).map(function (x) { return '（' + x.n + ' 則）'; }).join(''));
+      o.value = m; if (m === cur) o.selected = true; sel.appendChild(o);
+    });
+    var rows = d.rows || [];
+    $('sTotal').textContent = rows.length;
+    $('sMiss').textContent = rows.filter(function (r) { return !r.hits; }).length;
+    $('sCard').textContent = rows.filter(function (r) { return r.sources; }).length;
+    list($('top'), d.top || []);
+    list($('miss'), d.miss || [], 'miss');
+    var pg = $('pages'); pg.textContent = '';
+    if (!(d.pages || []).length) pg.appendChild(el('span', '這個月還沒有', 'empty'));
+    (d.pages || []).forEach(function (p) { pg.appendChild(el('span', (p.page || '（不明）') + ' ×' + p.n, 'tag')); });
+    var tb = $('rows'); tb.textContent = '';
+    if (!rows.length) { var tr0 = el('tr'); var td0 = el('td', '這個月還沒有人問', 'empty'); td0.colSpan = 4; tr0.appendChild(td0); tb.appendChild(tr0); }
+    rows.forEach(function (r) {
+      var tr = el('tr');
+      tr.appendChild(el('td', (r.t || '').slice(5, 16), 't'));
+      var td = el('td');
+      td.appendChild(el('div', r.q, 'q' + (r.hits ? '' : ' miss')));
+      if (r.a) { var dt = el('details'); dt.appendChild(el('summary', '朵拉的回答' + (r.status && r.status !== 'ok' ? '（' + r.status + '）' : ''))); dt.appendChild(el('div', r.a, 'a')); td.appendChild(dt); }
+      tr.appendChild(td);
+      tr.appendChild(el('td', r.page || ''));
+      var tc = el('td');
+      (r.sources ? r.sources.split(',') : []).forEach(function (u) { var a = el('a', u, 'tag'); a.href = u; a.target = '_blank'; a.rel = 'noopener'; tc.appendChild(a); });
+      tr.appendChild(tc);
+      tb.appendChild(tr);
+    });
+  }
+
+  function go(month) {
+    return load(month).then(function (d) { show('app'); render(d); })
+      .catch(function (e) {
+        if (e.message === 'forbidden') { clearPw(); show('login'); $('lerr').textContent = '密碼不對，再試一次'; }
+        else { show('app'); $('rows').textContent = ''; alert('讀不到紀錄：' + e.message); }
+      });
+  }
+
+  $('lf').addEventListener('submit', function (e) { e.preventDefault(); $('lerr').textContent = ''; setPw($('pw').value.trim()); $('pw').value = ''; go(thisMonth()); });
+  $('month').addEventListener('change', function () { go(this.value); });
+  $('reload').addEventListener('click', function () { go($('month').value || thisMonth()); });
+  $('logout').addEventListener('click', function () { clearPw(); show('login'); });
+
+  if (pw()) go(thisMonth()); else show('login');
+})();
+</script>
+</body>
+</html>
