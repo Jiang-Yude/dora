@@ -1,0 +1,236 @@
+<!doctype html>
+<html lang="zh-Hant-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>朵拉排版編輯器</title>
+<!-- 本機編輯器外框（dora-editor.py 在 ?edit=1 時回傳）；sync-guard:allow 遠端領先只動 media/ -->
+<style>
+:root{--bar:#2f3c45;--line:#ded4c5;--bg:#e9e6df;--blue:#3d7fd1;--ink:#24313a}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;background:var(--bg);color:var(--ink);font:14px/1.5 "Noto Sans TC",system-ui,-apple-system,sans-serif}
+.bar{height:56px;display:flex;align-items:center;gap:8px;padding:0 12px;background:var(--bar);color:#fff;white-space:nowrap;overflow-x:auto}
+.bar .grp{display:flex;align-items:center;gap:4px;padding-right:8px;margin-right:2px;border-right:1px solid rgba(255,255,255,.18)}
+.bar .grp:last-child{border-right:0}
+.bar b{font-size:15px;letter-spacing:.05em;margin-right:6px}
+button,select,input{font:inherit;color:inherit}
+.bar button,.bar select{height:34px;padding:0 11px;border-radius:7px;border:1px solid rgba(255,255,255,.25);background:rgba(255,255,255,.08);color:#fff;cursor:pointer}
+.bar select{max-width:230px}
+.bar select option,.bar select optgroup{color:#222}
+.bar button:hover{background:rgba(255,255,255,.18)}
+.bar button:disabled{opacity:.35;cursor:default}
+.bar button.on{background:#fff;color:var(--bar);border-color:#fff;font-weight:700}
+.bar button.save{background:#e8a33d;border-color:#e8a33d;color:#2b1d05;font-weight:700}
+.bar button.save.dirty{box-shadow:0 0 0 3px rgba(232,163,61,.35)}
+.bar .sp{flex:1}
+.bar .st{font-size:13px;opacity:.85}
+.main{position:absolute;top:56px;left:0;right:0;bottom:0;display:flex}
+.stage{flex:1;position:relative;overflow:hidden}
+.vp{position:absolute;top:12px;background:#fff;box-shadow:0 2px 14px rgba(0,0,0,.18);overflow:hidden}
+.vp iframe{position:absolute;left:0;top:0;border:0;transform-origin:0 0;background:#fff}
+.side{width:290px;flex:none;background:#fbfaf7;border-left:1px solid var(--line);padding:16px;overflow:auto}
+.side h3{font-size:13px;letter-spacing:.08em;color:#6b7780;margin:0 0 8px}
+.side .name{font-weight:700;word-break:break-all;margin-bottom:4px}
+.side .selr{font:12px/1.4 ui-monospace,Menlo,monospace;color:#6b7780;word-break:break-all;margin-bottom:12px}
+.side .gen{background:#fdf0dd;border:1px solid #f0c98a;color:#7a4b0c;border-radius:8px;padding:8px 10px;font-size:13px;margin-bottom:12px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.grid label{display:flex;flex-direction:column;font-size:12px;color:#6b7780;gap:3px}
+.grid input{height:34px;border:1px solid var(--line);border-radius:7px;padding:0 8px;background:#fff;font-size:14px;color:var(--ink);width:100%}
+.side .hint{font-size:13px;color:#56626b;line-height:1.7}
+.side .hint kbd{font:12px ui-monospace,Menlo,monospace;background:#eee9df;border-radius:4px;padding:0 5px}
+.side .empty{color:#8a949b}
+.side .row{display:flex;gap:6px;margin-bottom:14px}
+.side .row button{flex:1;height:32px;border:1px solid var(--line);border-radius:7px;background:#fff;cursor:pointer}
+.side .row button:hover{background:#f1ede5}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%);max-width:min(680px,90vw);padding:10px 16px;border-radius:9px;background:#2f3c45;color:#fff;box-shadow:0 6px 24px rgba(0,0,0,.25);font-size:14px;opacity:0;transition:opacity .2s;pointer-events:none;z-index:9;white-space:pre-line}
+.toast.on{opacity:1}
+.toast.ok{background:#2f6b45}.toast.err{background:#9b2c2c}.toast.warn{background:#8a5a12}
+</style>
+</head>
+<body>
+<div class="bar">
+  <div class="grp"><b>朵拉排版編輯器</b><select id="page" title="切換頁面"></select></div>
+  <div class="grp">
+    <button data-dev="desktop" title="桌機 1920 寬">桌機</button>
+    <button data-dev="laptop" title="筆電 1366 寬">筆電</button>
+    <button data-dev="mobile" title="手機 390 寬">手機</button>
+  </div>
+  <div class="grp">
+    <button id="undo" title="復原（⌘Z）">↶ 復原</button>
+    <button id="redo" title="重做（⇧⌘Z）">↷ 重做</button>
+    <button id="parent" title="選到外面一層（也可以 Alt＋點選）">選上一層</button>
+    <button id="reset" title="把選取的元素放回原本的位置、角度、大小">回原狀</button>
+  </div>
+  <span class="sp"></span>
+  <span class="st" id="st"></span>
+  <div class="grp">
+    <button id="save" class="save" title="寫回網站原始檔（⌘S）">儲存</button>
+    <button id="leave" title="離開編輯器，看一般網頁">離開</button>
+  </div>
+</div>
+<div class="main">
+  <div class="stage" id="stage"><div class="vp" id="vp"><iframe id="frame" title="網頁編輯區"></iframe></div></div>
+  <aside class="side" id="side"></aside>
+</div>
+<div class="toast" id="toast"></div>
+<script>
+(function(){
+  var START = __START__;
+  var W = {desktop:1920, laptop:1366, mobile:390};
+  var NAME = {desktop:'桌機', laptop:'筆電', mobile:'手機'};
+  var MAIN = [['/', '首頁'], ['/blog/', '實習日記'], ['/daily/', 'AI 日報'], ['/search/', '搜尋']];
+  var page = START || '/';
+  var device = 'desktop';
+  try { device = sessionStorage.getItem('de-dev') || 'desktop'; } catch(e){}
+  var frame = document.getElementById('frame'), vp = document.getElementById('vp'), stage = document.getElementById('stage');
+  var side = document.getElementById('side'), st = document.getElementById('st');
+  var last = {sel:null, dirty:0, canUndo:false, canRedo:false};
+  var zoom = 1;
+  function ed(){ try { return frame.contentWindow && frame.contentWindow.DoraEditor; } catch(e){ return null; } }
+
+  // 頁面清單
+  var sel = document.getElementById('page');
+  function fillPages(list){
+    sel.innerHTML = '';
+    var g1 = document.createElement('optgroup'); g1.label = '主要頁面';
+    MAIN.forEach(function(p){ var o = new Option(p[1], p[0]); g1.appendChild(o); });
+    sel.appendChild(g1);
+    var g2 = document.createElement('optgroup'); g2.label = '其他頁面';
+    (list||[]).forEach(function(p){ if (MAIN.some(function(m){return m[0]===p.url;})) return; g2.appendChild(new Option(p.title + '（' + p.url + '）', p.url)); });
+    if (g2.children.length) sel.appendChild(g2);
+    if (![].some.call(sel.options, function(o){return o.value===page;})) sel.appendChild(new Option(page, page));
+    sel.value = page;
+  }
+  fillPages([]);
+  fetch('/__pages').then(function(r){return r.json();}).then(fillPages).catch(function(){});
+  sel.addEventListener('change', function(){
+    if (!confirmLeave()) { sel.value = page; return; }
+    page = sel.value; load();
+  });
+
+  function confirmLeave(){
+    var e = ed(), n = e ? e.dirty() : 0;
+    return !n || confirm('還有 ' + n + ' 個變更沒有儲存，確定要放棄嗎？');
+  }
+  function load(keepScroll){
+    try {
+      if (keepScroll && frame.contentWindow) sessionStorage.setItem('de-scroll', String(frame.contentWindow.scrollY || 0));
+      sessionStorage.setItem('de-dev', device);
+    } catch(e){}
+    last = {sel:null, dirty:0, canUndo:false, canRedo:false}; render();
+    frame.src = page + (page.indexOf('?') >= 0 ? '&' : '?') + 'edit=1&frame=1&dev=' + device;
+    history.replaceState(null, '', page + '?edit=1');
+    document.querySelectorAll('[data-dev]').forEach(function(b){ b.classList.toggle('on', b.dataset.dev === device); });
+    layout();
+  }
+  function layout(){
+    var sw = stage.clientWidth - 24, sh = stage.clientHeight - 24, w = W[device];
+    zoom = Math.min(1, sw / w);
+    var h = Math.round(sh / zoom);
+    frame.style.width = w + 'px'; frame.style.height = h + 'px'; frame.style.transform = 'scale(' + zoom + ')';
+    vp.style.width = Math.round(w * zoom) + 'px'; vp.style.height = sh + 'px';
+    vp.style.left = Math.max(12, Math.round((stage.clientWidth - w * zoom) / 2)) + 'px';
+    var e = ed(); if (e) e.setZoom(zoom);
+    render();
+  }
+  window.addEventListener('resize', layout);
+  document.querySelectorAll('[data-dev]').forEach(function(b){
+    b.addEventListener('click', function(){
+      if (b.dataset.dev === device) return;
+      if (!confirmLeave()) return;
+      device = b.dataset.dev; load(true);
+    });
+  });
+
+  // 側邊面板
+  function fmt(v){ return (Math.round(v * 1000) / 1000).toString(); }
+  function render(){
+    var s = last.sel;
+    st.textContent = NAME[device] + ' ' + W[device] + ' 寬・縮放 ' + Math.round(zoom * 100) + '%' + (last.dirty ? '・' + last.dirty + ' 個變更未儲存' : '');
+    document.getElementById('undo').disabled = !last.canUndo;
+    document.getElementById('redo').disabled = !last.canRedo;
+    document.getElementById('parent').disabled = !s;
+    document.getElementById('reset').disabled = !s || !s.changed;
+    document.getElementById('save').classList.toggle('dirty', last.dirty > 0);
+    var help = '<h3>怎麼用</h3><p class="hint">點一下選取；拖曳移動<br>四角把手：等比縮放<br>上方圓把手：旋轉（<kbd>Shift</kbd> 每 15 度）<br>方向鍵微移 1px，<kbd>Shift</kbd> 10px<br><kbd>Alt</kbd>＋點選：選到外面一層<br>雙擊文字：改字（<kbd>Enter</kbd> 完成、<kbd>Shift+Enter</kbd> 換行、<kbd>Esc</kbd> 取消）<br><kbd>⌘Z</kbd> 復原、<kbd>⇧⌘Z</kbd> 重做、<kbd>⌘S</kbd> 儲存</p>' +
+      '<p class="hint" style="margin-top:10px">位置、角度、大小只存給目前這個裝置寬度（' + NAME[device] + '）。其他裝置要切過去另外調。</p>';
+    var rw = last.ruleWarn || [];
+    var warnHtml = rw.length ? '<div class="gen" style="background:#fbe3e3;border-color:#e3a1a1;color:#7d1f1f"><b>這頁有 ' + rw.length + ' 條既有規則選擇器有問題</b>（會套錯或套不到；在網頁上重新選到那個元素、動一下再儲存，就會換成穩定的寫法）<br>' + rw.map(function(x){ return '・' + x.replace(/&/g,'&amp;').replace(/</g,'&lt;'); }).join('<br>') + '</div>' : '';
+    if (!s) { side.innerHTML = warnHtml + '<h3>選取的元素</h3><p class="empty" style="margin-bottom:16px">還沒選取。在網頁上點一下任何東西。</p>' + help; return; }
+    var active = document.activeElement && document.activeElement.closest && document.activeElement.closest('#side');
+    if (active && active.tagName === 'INPUT') { // 正在輸入時只更新別的欄位
+      ['x','y','r','s'].forEach(function(k){ var i = side.querySelector('[data-k=' + k + ']'); if (i && i !== document.activeElement) i.value = fmt(s[k]); });
+      return;
+    }
+    side.innerHTML = warnHtml + '<h3>選取的元素</h3><div class="name"></div><div class="selr"></div>' +
+      (s.gen ? '<div class="gen">' + s.gen + '：改字無效（下次重生會被蓋掉），位置、大小、旋轉可以調。</div>' : '') +
+      '<div class="grid">' +
+      '<label>X（px）<input data-k="x" type="number" step="1"></label>' +
+      '<label>Y（px）<input data-k="y" type="number" step="1"></label>' +
+      '<label>旋轉（度）<input data-k="r" type="number" step="0.5"></label>' +
+      '<label>縮放（倍）<input data-k="s" type="number" step="0.01" min="0.05"></label></div>' +
+      '<div class="row"><button data-act="parent">選上一層</button><button data-act="reset">回原狀</button><button data-act="none">取消選取</button></div>' +
+      '<p class="hint" style="margin-bottom:14px">原本：X ' + fmt(s.base.x) + '、Y ' + fmt(s.base.y) + '、旋轉 ' + fmt(s.base.r) + '°、縮放 ' + fmt(s.base.s) + '</p>' + help;
+    side.querySelector('.name').textContent = s.name;
+    side.querySelector('.selr').textContent = s.selector;
+    side.querySelectorAll('input[data-k]').forEach(function(i){
+      i.value = fmt(s[i.dataset.k]);
+      i.addEventListener('change', function(){ var v = {}; v[i.dataset.k] = parseFloat(i.value); var e = ed(); if (e) e.setVals(v); });
+      i.addEventListener('keydown', function(ev){ if (ev.key === 'Enter') i.blur(); });
+    });
+    side.querySelector('[data-act=parent]').onclick = function(){ var e = ed(); if (e) e.selectParent(); };
+    side.querySelector('[data-act=reset]').onclick = function(){ var e = ed(); if (e) e.resetSel(); };
+    side.querySelector('[data-act=none]').onclick = function(){ var e = ed(); if (e) e.deselect(); };
+  }
+
+  var tt = 0;
+  function toast(msg, kind){
+    var t = document.getElementById('toast');
+    t.textContent = msg; t.className = 'toast on ' + (kind || '');
+    clearTimeout(tt); tt = setTimeout(function(){ t.className = 'toast'; }, kind === 'err' ? 7000 : 3500);
+  }
+
+  function save(){
+    var e = ed(); if (!e) return;
+    var b = document.getElementById('save'); b.disabled = true; b.textContent = '儲存中…';
+    e.save().then(function(res){
+      b.disabled = false; b.textContent = '儲存';
+      if (res.ok) {
+        if (!res.written || !res.written.length) { toast('沒有變更，不用存', 'info'); return; }
+        toast('已儲存：' + res.written.join('、') + '\n備份在 tools/editor/' + String(res.backup || '').replace(/^tools\/editor\//, ''), 'ok');
+        load(true);
+      } else {
+        var d = (res.details || []).map(function(x){ return '・' + (x.label ? x.label + '：' : '') + x.error; }).join('\n');
+        toast('儲存失敗：' + (res.error || '') + (d ? '\n' + d : ''), 'err');
+      }
+    }).catch(function(err){ b.disabled = false; b.textContent = '儲存'; toast('儲存失敗：' + err, 'err'); });
+  }
+
+  window.DoraShell = {
+    update: function(info){ last = info; render(); },
+    toast: toast, save: save,
+    frameReady: function(e){ e.setZoom(zoom); }
+  };
+  frame.addEventListener('load', function(){ var e = ed(); if (e) e.setZoom(zoom); });
+
+  document.getElementById('undo').onclick = function(){ var e = ed(); if (e) e.undo(); };
+  document.getElementById('redo').onclick = function(){ var e = ed(); if (e) e.redo(); };
+  document.getElementById('parent').onclick = function(){ var e = ed(); if (e) e.selectParent(); };
+  document.getElementById('reset').onclick = function(){ var e = ed(); if (e) e.resetSel(); };
+  document.getElementById('save').onclick = save;
+  document.getElementById('leave').onclick = function(){ if (confirmLeave()) { leaving = true; location.href = page; } };
+  var leaving = false;
+  window.addEventListener('beforeunload', function(ev){ var e = ed(); if (!leaving && e && e.dirty()) { ev.preventDefault(); ev.returnValue = ''; } });
+  document.addEventListener('keydown', function(ev){
+    var t = ev.target; if (t && (t.tagName === 'INPUT' || t.tagName === 'SELECT' || t.tagName === 'TEXTAREA')) {
+      if ((ev.metaKey || ev.ctrlKey) && (ev.key === 's' || ev.key === 'S')) { ev.preventDefault(); save(); }
+      return;
+    }
+    var e = ed(); if (e) e.keys(ev);
+  });
+
+  load(false);
+})();
+</script>
+</body>
+</html>

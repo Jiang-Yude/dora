@@ -1,0 +1,438 @@
+/* 朵拉官網｜素雅版共用樣式（2026-10-14 江江選定風格 3 素雅）
+   米白底、紙白卡片、霧藍區塊、石板灰字、鼠尾草綠點綴、淺米褐細線。固定淺色。
+   首頁、實習日記目錄、AI 日報目錄共用：Hero 滿版插畫＋左側標題＋右下角 Q 版小動畫。 */
+:root{
+  color-scheme:light;
+  --sy-bg:#f8f6f0;
+  --sy-paper:#fffefa;
+  --sy-mist:#dce7ed;
+  --sy-mist-soft:#eaf1f4;
+  --sy-ink:#2f3c45;        /* 標題：比石板灰再深一階，確保對比 */
+  --sy-text:#46545d;       /* 石板灰內文 */
+  --sy-soft:#5f6d75;
+  --sy-sage:#abb8a7;
+  --sy-sage-deep:#6f8269;
+  --sy-line:#ded4c5;
+  --sy-blue:#4a6f98;       /* 按鈕霧深藍 */
+  --sy-blue-deep:#3b5a7d;
+  --sy-serif:"Noto Serif TC","Songti TC",serif;
+  --sy-sans:"Noto Sans TC",system-ui,-apple-system,sans-serif;
+}
+
+/* ===== Q 版朵拉動作表（朵拉桌寵 spritesheet：8 欄 × 9 列，每格 192×208） ===== */
+.sprite{
+  --w:120px; --row:0; --n:6; --speed:.2s;
+  width:var(--w);height:calc(var(--w) * 208 / 192);flex:none;
+  background:url("/dora-sprite.webp") no-repeat;
+  background-size:calc(var(--w) * 8) calc(var(--w) * 208 / 192 * 9);
+  background-position:0 calc(var(--w) * 208 / 192 * var(--row) * -1);
+  animation:sy-play calc(var(--speed) * var(--n)) steps(var(--n)) infinite;
+}
+@keyframes sy-play{to{background-position-x:calc(var(--w) * var(--n) * -1)}}
+.sprite.idle{--row:0;--n:6;--speed:.22s}
+.sprite.wave{--row:3;--n:4;--speed:.2s}
+.sprite.jump{--row:4;--n:5;--speed:.15s}
+.sprite.wait{--row:6;--n:6;--speed:.22s}
+.sprite.work{--row:8;--n:6;--speed:.2s}
+.sprite.think{--row:5;--n:8;--speed:.24s}
+.sprite-box{position:relative;display:inline-block;cursor:pointer}
+.say{
+  position:absolute;left:50%;bottom:calc(100% + 4px);transform:translate(-50%,6px);
+  white-space:nowrap;background:var(--sy-paper);color:var(--sy-ink);border:1px solid var(--sy-line);
+  font-family:var(--sy-sans);font-size:18px;font-weight:500;line-height:1.5;
+  padding:4px 12px;border-radius:12px;opacity:0;pointer-events:none;transition:.2s;
+  box-shadow:0 4px 12px rgba(70,84,93,.10);
+}
+.sprite-box:hover .say,.sprite-box.on .say{opacity:1;transform:translate(-50%,0)}
+
+/* ===== Hero：滿版寫實插畫，左側疊 HTML 標題，右下角 Q 版 ===== */
+.sy-hero{
+  position:relative;overflow:hidden;background:var(--sy-bg);
+  height:clamp(520px,56.25vw,960px);border-bottom:1px solid var(--sy-line);
+}
+.sy-hero.short{height:clamp(440px,50vw,860px)}
+.sy-hero.short .sy-hero-art{object-position:72% 6%}
+.sy-hero-art{
+  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:72% 8%;display:block;
+}
+.sy-hero::after{ /* 左側米白淡出，讓標題清楚、不壓到朵拉 */
+  content:"";position:absolute;inset:0;pointer-events:none;
+  background:linear-gradient(90deg,rgba(248,246,240,.92) 0%,rgba(248,246,240,.75) 32%,rgba(248,246,240,0) 52%);
+}
+.sy-hero-in{
+  position:relative;z-index:2;height:100%;max-width:1180px;margin:0 auto;padding:0 32px;
+  display:flex;align-items:center;
+}
+.sy-hero-text{max-width:min(520px,44%)}
+.sy-eyebrow{
+  display:block;font-family:var(--sy-sans);font-size:18px;letter-spacing:.32em;color:var(--sy-blue);
+  font-weight:500;margin-bottom:14px;
+}
+.sy-hero h1{
+  font-family:var(--sy-serif);font-weight:700;color:var(--sy-ink);
+  font-size:clamp(42px,4.6vw,74px);line-height:1.28;letter-spacing:.04em;
+}
+.sy-hero .sy-lead{margin-top:18px;font-size:20px;line-height:1.85;color:var(--sy-text)}
+.sy-hero .sy-lead span{display:block}
+.sy-btns{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.sy-btn{
+  display:inline-flex;align-items:center;gap:10px;text-decoration:none;
+  font-family:var(--sy-sans);font-size:19px;font-weight:500;letter-spacing:.06em;
+  padding:11px 24px;border-radius:999px;border:1.5px solid var(--sy-blue);
+  transition:background .15s,color .15s,transform .15s;
+}
+.sy-btn svg{width:18px;height:18px}
+.sy-btn.main{background:var(--sy-blue);color:#fff}
+.sy-btn.main:hover{background:var(--sy-blue-deep);border-color:var(--sy-blue-deep)}
+.sy-btn.sub{background:rgba(255,254,250,.85);color:var(--sy-blue-deep)}
+.sy-btn.sub:hover{background:var(--sy-paper)}
+.sy-btn:hover{transform:translateY(-1px)}
+.sy-hero-pet{position:absolute;z-index:3;right:max(24px,3vw);bottom:14px}
+.sy-hero-pet .sprite{--w:104px;filter:drop-shadow(0 6px 10px rgba(70,84,93,.18))}
+
+/* 手機：插畫在上、文字在下，文字不蓋朵拉 */
+@media (max-width:760px){
+  .sy-hero,.sy-hero.short{height:auto;display:flex;flex-direction:column}
+  .sy-hero::after{display:none}
+  .sy-hero-media{position:relative;aspect-ratio:16/11;overflow:hidden}
+  .sy-hero-art{object-position:78% 6%}
+  .sy-hero-in{height:auto;padding:26px 16px 34px;display:block}
+  .sy-hero-text{max-width:none}
+  .sy-hero h1{font-size:clamp(34px,9vw,44px)}
+  .sy-hero-pet{right:10px;bottom:6px}
+  .sy-hero-pet .sprite{--w:72px}
+}
+@media (min-width:761px){.sy-hero-media{position:absolute;inset:0}}
+
+/* ===== 區塊標題：襯線大字＋小葉枝＋英文小字 ===== */
+.sy-head{display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px;padding-bottom:14px;border-bottom:1px solid var(--sy-line);margin-bottom:30px}
+.sy-head h2{font-family:var(--sy-serif);font-weight:700;color:var(--sy-ink);font-size:clamp(30px,3.2vw,38px);line-height:1.3;letter-spacing:.08em}
+.sy-head .leaf{width:34px;height:34px;color:var(--sy-sage-deep);flex:none}
+.sy-head small{font-family:var(--sy-sans);font-size:18px;letter-spacing:.28em;color:var(--sy-blue);text-transform:uppercase}
+
+@media (prefers-reduced-motion:reduce){
+  .sprite{animation:none}
+  .sy-btn,.say{transition:none}
+}
+
+/* 靠右邊的 Q 版：對話泡泡往左長，避免手機橫向捲動 */
+.sy-hero-pet .say,.say.r{left:auto;right:0;transform:translate(0,6px)}
+.sy-hero-pet .sprite-box:hover .say,.sy-hero-pet .sprite-box.on .say,.sprite-box:hover .say.r,.sprite-box.on .say.r{transform:translate(0,0)}
+
+/* =====================================================================
+   v2（2026-10-14 江江：素雅與可愛折中）拍立得卡片＋淡藍紙膠帶＋便利貼＋淡藍鉛筆手繪
+   手繪痕跡只用一種淡藍 --sy-pencil，不加其他顏色。
+   ===================================================================== */
+:root{
+  --sy-pencil:#6f94c2;      /* 藍色色鉛筆主色（同色系唯一） */
+  --sy-pencil-soft:#a9c2df; /* 同色淡版 */
+  --sy-tape:rgba(111,148,194,.30);
+  --sy-sticky:#f1f6fb;      /* 極淡藍便利貼 */
+  --sy-sticky-blue:#e4edf7; /* 淡藍便利貼 */
+}
+/* 底紋：非常淡的淡藍圓點（固定在最底層） */
+body::before{
+  content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;
+  background-image:radial-gradient(rgba(111,148,194,.16) 1.1px,transparent 1.6px);
+  background-size:24px 24px;
+}
+
+/* 寬螢幕 Hero：文字區貼齊視窗左側，固定比例邊距，不跟 1180 容器置中 */
+@media (min-width:761px){
+  .sy-hero-in{max-width:none;margin:0;padding:0 24px 0 clamp(32px,7vw,140px)}
+  .sy-hero-text{max-width:min(600px,44vw)}
+}
+
+/* Hero 說明文字旁的小 Q 版（取代右下角） */
+.sy-lead-row{display:flex;align-items:center;gap:14px;margin-top:18px}
+.sy-lead-row .sy-lead,.sy-hero .sy-lead-row .sy-lead{margin-top:0}
+.sy-lead-pet{flex:none}
+.sy-lead-pet .sprite{--w:78px;filter:drop-shadow(0 4px 8px rgba(70,84,93,.16))}
+@media (max-width:760px){.sy-lead-pet .sprite{--w:66px}}
+
+/* 區塊標題：藍色色鉛筆塗兩三筆的底線（只在標題字下）＋旁邊一個小塗鴉 */
+.sy-head{border-bottom:0;padding-bottom:6px}
+.sy-head h2{padding-bottom:12px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 300 18' preserveAspectRatio='none'%3E%3Cfilter id='r'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' seed='3'/%3E%3CfeDisplacementMap in='SourceGraphic' scale='2.6'/%3E%3C/filter%3E%3Cg filter='url(%23r)' fill='none' stroke='%236f94c2' stroke-linecap='round'%3E%3Cpath d='M4 10 C50 7 100 12 160 9 S250 7 296 9' stroke-width='6' stroke-opacity='.5'/%3E%3Cpath d='M10 12 C70 10 130 14 190 11 S270 10 290 12' stroke-width='3.4' stroke-opacity='.42'/%3E%3Cpath d='M6 8 C80 6 150 9 220 7 S280 8 294 7' stroke-width='1.4' stroke-opacity='.55'/%3E%3C/g%3E%3C/svg%3E") left bottom/100% 18px no-repeat}
+.sy-head .leaf{color:var(--sy-pencil)}
+.sy-head::after{
+  content:"";width:28px;height:28px;flex:none;margin-left:2px;opacity:.9;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath d='M15 4.5l2.6 6.4 6.6.4-5.1 4.3 1.7 6.6L15 18.6l-5.8 3.6 1.7-6.6-5.1-4.3 6.6-.4z' fill='none' stroke='%236f94c2' stroke-width='1.6' stroke-linejoin='round' stroke-linecap='round'/%3E%3Cpath d='M25 4l1 2M27.5 9l-2 .3' stroke='%236f94c2' stroke-width='1.4' stroke-linecap='round'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+.sy-head.doodle-loop::after{ /* 小圈圈＋箭頭 */
+  width:46px;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 46 30'%3E%3Cpath d='M3 20c6-1 9-6 7-10s-7-2-6 3 7 7 14 6 14-4 22-6' fill='none' stroke='%236f94c2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3Cpath d='M36 9l5 4-6 3' fill='none' stroke='%236f94c2' stroke-width='1.6' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+}
+.sy-head.doodle-spark::after{ /* 小閃光 */
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3E%3Cpath d='M12 5c.6 5 2 6.6 7 7.2-5 .7-6.4 2.2-7 7.3-.6-5-2-6.6-7-7.2 5-.7 6.4-2.2 7-7.3z' fill='none' stroke='%236f94c2' stroke-width='1.5' stroke-linejoin='round'/%3E%3Ccircle cx='23.5' cy='21.5' r='2.4' fill='none' stroke='%236f94c2' stroke-width='1.3'/%3E%3Cpath d='M23 5v4M21 7h4' stroke='%236f94c2' stroke-width='1.3' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* 拍立得卡：白框、下緣厚白邊、淡陰影、輕微角度（hover 回正）、上方淡藍紙膠帶 */
+.pola{
+  position:relative;background:#fff;border:0;border-radius:2px;
+  padding:12px 12px 26px;
+  box-shadow:0 1px 2px rgba(70,84,93,.08),0 10px 24px rgba(70,84,93,.10);
+  transform:rotate(var(--tilt,0deg));
+  transition:transform .22s ease,box-shadow .22s ease;
+}
+.pola::after{ /* 略抖的手繪邊框 */
+  content:"";position:absolute;inset:4px;pointer-events:none;opacity:.55;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200' preserveAspectRatio='none'%3E%3Cpath d='M2 3 C60 1 140 4 198 2 C197 60 199 140 197 198 C140 196 60 199 3 197 C1 140 4 60 2 3' fill='none' stroke='%236f94c2' stroke-width='1.1' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat;
+}
+.pola:hover{transform:rotate(0deg) translateY(-3px);box-shadow:0 2px 4px rgba(70,84,93,.08),0 16px 30px rgba(70,84,93,.13)}
+.pola::before,.sy-tape::before{ /* 紙膠帶：兩端鋸齒 */
+  content:"";position:absolute;z-index:2;top:-13px;left:50%;width:92px;height:26px;margin-left:-46px;
+  background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0) 55%),var(--sy-tape);
+  clip-path:polygon(4% 0,96% 0,100% 18%,96% 36%,100% 54%,96% 72%,100% 90%,96% 100%,4% 100%,0 82%,4% 64%,0 46%,4% 28%,0 10%);
+  transform:rotate(var(--tape-tilt,-3deg));pointer-events:none;
+}
+.pola:nth-child(3n+1){--tilt:-1.5deg;--tape-tilt:-4deg}
+.pola:nth-child(3n+2){--tilt:1deg;--tape-tilt:3deg}
+.pola:nth-child(3n){--tilt:-.5deg;--tape-tilt:-2deg}
+.pola:nth-child(3n+2)::before{left:auto;right:18%;margin-left:0}
+.pola:nth-child(3n)::before{left:30%}
+/* 拍立得的「相片」區：封面圖或退回線條圖 */
+.pola-photo{
+  position:relative;display:grid;place-items:center;overflow:hidden;
+  aspect-ratio:16/10;background:var(--sy-mist-soft);color:var(--sy-pencil);
+}
+.pola-photo>svg{width:40%;height:auto}
+.pola-photo>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;display:block}
+
+/* 便利貼：極淡米黃／淡藍，膠帶貼著、一角微翹、輕微傾斜 */
+.sy-sticky{
+  position:relative;background:var(--sy-sticky);border:0;border-radius:1px 1px 2px 2px;
+  box-shadow:0 1px 1px rgba(70,84,93,.06),0 8px 18px rgba(70,84,93,.09);
+  transform:rotate(var(--tilt,-1deg));
+}
+.sy-sticky.blue{background:var(--sy-sticky-blue)}
+.sy-sticky::after{ /* 右下角微翹 */
+  content:"";position:absolute;right:0;bottom:0;width:26px;height:26px;pointer-events:none;
+  background:linear-gradient(135deg,transparent 50%,rgba(70,84,93,.07) 50%,rgba(255,255,255,.75) 62%,rgba(255,255,255,.95));
+  border-top-left-radius:6px;box-shadow:-2px -2px 4px rgba(70,84,93,.05);
+}
+.sy-tape{position:relative}
+.sy-tape::before{width:84px;margin-left:-42px}
+
+/* 鉛筆小勾勾（清單用） */
+.pencil-check li::before{
+  content:"";position:absolute;left:0;top:.42em;width:16px;height:16px;border-radius:0;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='M2.5 8.5c1.4 1 2.4 2.2 3.2 3.8C7.6 8 10 5 13.8 2.6' fill='none' stroke='%236f94c2' stroke-width='1.8' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") center/contain no-repeat;
+}
+
+/* 手機：角度收小，不歪到難讀 */
+@media (max-width:600px){
+  .pola:nth-child(3n+1){--tilt:-.8deg}
+  .pola:nth-child(3n+2){--tilt:.6deg}
+  .pola:nth-child(3n){--tilt:-.3deg}
+}
+@media (prefers-reduced-motion:reduce){
+  .pola{transition:none}
+}
+@media (max-width:480px){.sy-head::after{display:none}}
+
+/* Hero 標題：第一行大字，第二行「江江教練的 AI 實習生」不斷行、小一點（江江 2026-10-14） */
+.sy-hero h1 .h1-sub{display:block;white-space:nowrap;font-size:.56em;letter-spacing:.06em;margin-top:.28em;color:var(--sy-ink)}
+@media (max-width:380px){.sy-hero h1 .h1-sub{font-size:.5em;letter-spacing:.02em}}
+
+/* 首頁 Hero：江江用微調器 v3 定的數值（2026-10-14）
+   桌機 1920：高 40vw、圖 79% 2%、文字左 10.6%／中心 54.2%、大標 76／副標 48、Q 159px 在 左30.2% 上23.9%
+   筆電 1366：高 44vw、圖 74% 1%、文字左 10.3%／中心 54.6%、大標 58／副標 35、Q 101px 在 左31.4% 上26.7%
+   1366～1920 之間線性過渡；1366 以下照筆電比例縮；手機另一組 */
+@media (min-width:761px){
+  .sy-hero.home{height:clamp(520px,min(44vw,calc(30.14vw + 189.3px)),960px)}
+  .sy-hero.home .sy-hero-art{object-position:74% 1%}
+  .sy-hero.home .sy-hero-in{position:absolute;inset:0;max-width:none;margin:0;padding:0;display:block}
+  .sy-hero.home .sy-hero-text{position:absolute;left:min(10.6vw,max(10.3vw,calc(11.339vw - 14.19px)));top:54.6%;transform:translateY(-50%);max-width:min(640px,46vw)}
+  .sy-hero.home h1{font-size:clamp(38px,min(4.25vw,calc(3.249vw + 15.62px)),78px)}
+  .sy-hero.home h1 .h1-sub{font-size:clamp(22px,min(2.56vw,calc(2.3466vw + 4.95px)),50px)}
+  .sy-hero.home .sy-hero-q{position:absolute;z-index:3;left:min(31.4vw,calc(27.238vw + 56.8px));top:26.7%}
+  .sy-hero.home .sy-hero-q .sprite{--w:clamp(64px,max(7.39vw,calc(10.469vw - 42px)),159px);filter:drop-shadow(0 6px 10px rgba(70,84,93,.18))}
+}
+@media (min-width:1366px){
+  .sy-hero.home .sy-hero-text{top:clamp(328px,calc(15.903vw + 111px),520px)}
+  .sy-hero.home .sy-hero-q{top:clamp(160px,calc(4.17vw + 103.5px),230px)}
+}
+/* 背景圖位置 1366→1920 分段過渡：74% 1% → 79% 2% */
+@media (min-width:1477px){.sy-hero.home .sy-hero-art{object-position:75% 1.2%}}
+@media (min-width:1588px){.sy-hero.home .sy-hero-art{object-position:76% 1.4%}}
+@media (min-width:1699px){.sy-hero.home .sy-hero-art{object-position:77% 1.6%}}
+@media (min-width:1810px){.sy-hero.home .sy-hero-art{object-position:78% 1.8%}}
+@media (min-width:1920px){.sy-hero.home .sy-hero-art{object-position:79% 2%}}
+/* 手機 390：圖 100% 0% 放大 131%、圖高 50vw、大標 38／副標 21、Q 106px 在 左65.1% 上56.7% */
+@media (max-width:760px){
+  .sy-hero.home .sy-hero-media{aspect-ratio:2/1}
+  .sy-hero.home .sy-hero-art{object-position:100% 0%;transform:scale(1.31);transform-origin:100% 0%}
+  .sy-hero.home h1{font-size:clamp(32px,9.74vw,44px)}
+  .sy-hero.home h1 .h1-sub{font-size:clamp(19px,5.38vw,26px)}
+  .sy-hero.home{position:relative}
+  .sy-hero.home .sy-hero-q{position:absolute;z-index:3;left:65.1%;top:56.7%}
+  .sy-hero.home .sy-hero-q .sprite{--w:clamp(84px,27vw,120px)}
+}
+
+/* 首頁 Hero Q 版：站在「AI 實習生」的「生」字正上方，跟著字走，不會跑掉（江江 2026-10-14） */
+.sy-hero.home .q-on{position:relative;display:inline-block}
+.sy-hero.home .q-on .sprite-box{display:none}
+@media (min-width:761px){
+  .sy-hero.home .sy-hero-q{display:none}
+  .sy-hero.home .q-on .sprite-box{display:block;position:absolute;left:50%;bottom:77%;transform:translateX(-56%);line-height:0;letter-spacing:0}
+  .sy-hero.home .q-on .sprite{display:block;--w:clamp(64px,max(7.39vw,calc(10.469vw - 42px)),159px);filter:drop-shadow(0 6px 10px rgba(70,84,93,.18))}
+}
+
+/* =====================================================================
+   v3（2026-10-14）日報目錄、日記目錄的 Hero 照首頁做法：文字貼左、大標＋副標兩行、
+   Q 版站在副標最後一個字上方。首頁 .sy-hero.home 是首頁專用，這裡另寫 .sy-hero.page。
+   ===================================================================== */
+.sy-hero.page h1 .h1-sub{display:block;white-space:nowrap;font-size:.56em;letter-spacing:.06em;margin-top:.28em;color:var(--sy-ink)}
+.sy-hero.page .q-on{position:relative;display:inline-block}
+.sy-hero.page .q-on .sprite-box{display:none}
+@media (min-width:761px){
+  .sy-hero.page{height:clamp(520px,min(44vw,calc(30.14vw + 189.3px)),960px)}
+  .sy-hero.page .sy-hero-in{position:absolute;inset:0;max-width:none;margin:0;padding:0;display:block}
+  .sy-hero.page .sy-hero-text{position:absolute;left:min(10.6vw,max(10.3vw,calc(11.339vw - 14.19px)));top:54.6%;transform:translateY(-50%);max-width:min(640px,46vw)}
+  .sy-hero.page h1{font-size:clamp(38px,min(4.25vw,calc(3.249vw + 15.62px)),78px)}
+  .sy-hero.page h1 .h1-sub{font-size:clamp(22px,min(2.56vw,calc(2.3466vw + 4.95px)),50px)}
+  .sy-hero.page .q-on .sprite-box{display:block;position:absolute;left:50%;bottom:78%;transform:translateX(-50%);line-height:0;letter-spacing:0}
+  .sy-hero.page .q-on .sprite{display:block;--w:clamp(64px,max(7.39vw,calc(10.469vw - 42px)),159px);filter:drop-shadow(0 6px 10px rgba(70,84,93,.18))}
+  .sy-hero.page .sy-lead-pet{display:none}
+}
+@media (min-width:1366px){
+  .sy-hero.page .sy-hero-text{top:clamp(328px,calc(15.903vw + 111px),520px)}
+}
+@media (max-width:760px){
+  .sy-hero.page h1{font-size:clamp(32px,9.74vw,44px)}
+  .sy-hero.page h1 .h1-sub{font-size:clamp(19px,4.9vw,24px);white-space:normal}
+}
+@media (max-width:380px){.sy-hero.page h1 .h1-sub{font-size:.5em;letter-spacing:.02em}}
+
+/* ===== 手寫塗鴉：同一支藍色色鉛筆（只用 --sy-pencil／--sy-pencil-soft） ===== */
+.sy-hand{
+  font-family:"LXGW WenKai TC","Kaiti TC","BiauKai","STKaiti",var(--sy-serif);
+  color:var(--sy-pencil);font-size:21px;line-height:1.4;font-weight:400;letter-spacing:.06em;
+  display:inline-block;transform:rotate(var(--r,-3deg));white-space:nowrap;
+}
+.sy-hand.u{padding-bottom:4px;background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 120 8' preserveAspectRatio='none'%3E%3Cpath d='M2 5c20-3 50-2 70-1s36 0 46-2' fill='none' stroke='%23a9c2df' stroke-width='2' stroke-linecap='round'/%3E%3C/svg%3E") left bottom/100% 8px no-repeat}
+/* 手繪虛線箭頭（區塊之間） */
+.sy-arrow{display:block;width:74px;height:58px;margin:0 auto -18px;color:var(--sy-pencil);opacity:.85}
+/* 小插圖（朵拉畫的色鉛筆小塗鴉；檔案沒到就 onerror 自己消失） */
+.sy-doodle{position:absolute;z-index:1;width:var(--d,92px);height:auto;transform:rotate(var(--r,-6deg));pointer-events:none;user-select:none}
+.sy-doodle.inline{position:static;display:inline-block;vertical-align:middle}
+@media (max-width:600px){.sy-doodle{--d:64px}}
+
+/* ===== 搜尋框（首頁、日記目錄共用，送出到 /search/?q=） ===== */
+.sy-search{position:relative;display:flex;align-items:center;gap:8px;max-width:560px;width:100%;
+  background:var(--sy-paper);border-radius:999px;padding:6px 6px 6px 18px;
+  box-shadow:0 1px 2px rgba(70,84,93,.08),0 8px 20px rgba(70,84,93,.08)}
+.sy-search::after{content:"";position:absolute;inset:-2px;pointer-events:none;border-radius:999px;
+  background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 400 60' preserveAspectRatio='none'%3E%3Cpath d='M30 3C120 1 280 4 370 2c18 1 28 12 28 27s-10 28-30 29C280 60 120 57 30 58 12 57 2 45 2 30S12 4 30 3z' fill='none' stroke='%236f94c2' stroke-width='1.3' stroke-linecap='round' vector-effect='non-scaling-stroke'/%3E%3C/svg%3E") 0 0/100% 100% no-repeat}
+.sy-search>svg{width:22px;height:22px;flex:none;color:var(--sy-pencil)}
+.sy-search input{flex:1;min-width:0;border:0;background:transparent;font:inherit;font-size:19px;color:var(--sy-ink);padding:8px 4px;outline:none}
+.sy-search input::placeholder{color:#7d8a92}
+.sy-search:focus-within{box-shadow:0 0 0 3px var(--sy-pencil-soft),0 8px 20px rgba(70,84,93,.08)}
+.sy-search button{flex:none;border:0;cursor:pointer;font:inherit;font-size:18px;font-weight:500;letter-spacing:.08em;color:#fff;background:var(--sy-blue);border-radius:999px;padding:9px 20px}
+.sy-search button:hover{background:var(--sy-blue-deep)}
+@media (max-width:420px){.sy-search{padding-left:14px}.sy-search button{padding:9px 14px}}
+
+/* 首頁實習日記：一大三小散落拼貼（江江 2026-10-14），示意用、不連各篇 */
+#diary .collage{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:clamp(18px,3vw,44px);align-items:center;margin-top:30px}
+#diary .clip{margin:0;background:#fffefa;padding:10px 10px 14px;box-shadow:0 6px 18px rgba(70,84,93,.12);position:relative}
+#diary .clip::before{content:"";position:absolute;top:-12px;left:50%;width:84px;height:24px;transform:translateX(-50%) rotate(-3deg);background:rgba(169,194,223,.55)}
+#diary .clip .pola-photo{display:block;aspect-ratio:16/10;overflow:hidden;background:#eef3f8}
+#diary .clip img{width:100%;height:100%;object-fit:cover;display:block}
+#diary .clip figcaption{font-family:var(--sy-serif);font-weight:700;color:var(--sy-ink);font-size:19px;line-height:1.45;padding:10px 4px 0;display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+#diary .clip .tag{font-family:var(--sy-sans);font-weight:500;font-size:16px;color:#5d7eaa;border:1px solid #c9d8ea;border-radius:999px;padding:1px 10px}
+#diary .clip.big{transform:rotate(-1.6deg)}
+#diary .clip.big figcaption{font-size:clamp(20px,1.6vw,24px)}
+#diary .smalls{display:grid;gap:18px}
+#diary .clip.s1{transform:rotate(1.8deg);margin-right:12%}
+#diary .clip.s2{transform:rotate(-1.2deg);margin-left:14%}
+#diary .clip.s3{transform:rotate(2.2deg);margin-right:6%}
+#diary .smalls .clip{padding:8px 8px 10px}
+#diary .smalls .clip .pola-photo{aspect-ratio:16/9}
+#diary .smalls .clip figcaption{font-size:18px}
+#diary .more{display:flex;align-items:center;gap:22px;flex-wrap:wrap;margin-top:34px}
+#diary .real-note{font-family:"LXGW WenKai TC","Kaiti TC",cursive;color:#5f86b8;font-size:20px;line-height:1.75;margin:0;padding:12px 18px;background:rgba(233,241,250,.85);border-radius:4px;transform:rotate(-1deg);box-shadow:0 3px 10px rgba(70,84,93,.08)}
+@media (max-width:760px){
+  #diary .collage{grid-template-columns:1fr}
+  #diary .clip.s1,#diary .clip.s2,#diary .clip.s3{margin:0}
+  #diary .smalls{grid-template-columns:1fr 1fr 1fr;gap:12px}
+  #diary .smalls .clip figcaption{font-size:16px}
+  #diary .smalls .clip .tag{display:none}
+}
+@media (max-width:480px){#diary .smalls{grid-template-columns:1fr}#diary .smalls .clip figcaption{font-size:18px}}
+
+#daily .daily-note{display:flex;align-items:flex-end;justify-content:flex-end;gap:6px}
+#daily .daily-note .up-arrow{width:48px;height:48px;color:var(--sy-pencil);opacity:.85;flex:none}
+
+/* 完整日記按鈕＋真實紀錄註記放在左邊大張下面（江江 2026-10-14） */
+#diary .left{display:grid;gap:26px}
+#diary .left .more{margin-top:6px;justify-content:flex-start}
+
+/* 首頁 AI 日報：左示意插圖＋右「最近 7 天」清單（build-index.py put_latest 產生；江江 2026-10-14） */
+#daily .daily.week{grid-template-columns:minmax(0,230px) minmax(0,1fr);gap:40px;align-items:center}
+#daily .daily.week .illust{display:block;background:#fff;padding:10px 10px 28px;border-radius:2px;transform:rotate(-2.5deg);
+  box-shadow:0 1px 2px rgba(70,84,93,.10),0 10px 22px rgba(70,84,93,.16);transition:transform .2s}
+#daily .daily.week .illust:hover{transform:rotate(0)}
+#daily .daily.week .illust img{display:block;width:100%;height:auto;aspect-ratio:1/1;object-fit:contain;background:var(--sy-mist-soft,#f3f6f9)}
+#daily .dl-list{list-style:none;margin:6px 0 0;padding:0}
+#daily .dl-list li{border-bottom:1px dashed var(--sy-line)}
+#daily .dl-list li:first-child{border-top:1px dashed var(--sy-line)}
+#daily .dl-list a{display:grid;grid-template-columns:4.2em minmax(0,1fr);gap:12px;align-items:baseline;padding:10px 4px;text-decoration:none;color:var(--sy-text);transition:background .15s}
+#daily .dl-list a:hover{background:var(--sy-sticky)}
+#daily .dl-list .dd{font-family:"LXGW WenKai TC","Kaiti TC",var(--sy-serif);color:var(--sy-pencil);font-size:20px;letter-spacing:.04em;white-space:nowrap}
+#daily .dl-list .tt{font-size:19px;line-height:1.6;color:var(--sy-ink);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+#daily .dl-list li:first-child .tt{font-family:var(--sy-serif);font-weight:700}
+#daily .daily.week .sy-btns{margin-top:20px}
+@media (max-width:920px){
+  #daily .daily.week{grid-template-columns:1fr;gap:26px}
+  #daily .daily.week .illust{width:min(200px,60%);margin:0 auto}
+  #daily .dl-list a{grid-template-columns:3.2em minmax(0,1fr);gap:10px}
+}
+@media (prefers-reduced-motion:reduce){#daily .daily.week .illust{transition:none}}
+
+/* 日報目錄分頁：便利貼小按鈕（只有一頁時 build-index.py 不輸出） */
+.sy-pages{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px 10px;margin:46px 0 0}
+.sy-pages a,.sy-pages span{font-size:19px;line-height:1;text-decoration:none}
+.sy-pages .pg-num{display:inline-grid;place-items:center;min-width:44px;height:44px;padding:0 8px;color:var(--sy-blue-deep);font-weight:500;
+  background:var(--sy-sticky);box-shadow:0 1px 1px rgba(70,84,93,.06),0 5px 12px rgba(70,84,93,.09);transform:rotate(-2deg);transition:transform .15s}
+.sy-pages .pg-num:nth-of-type(even){transform:rotate(1.6deg);background:var(--sy-sticky-blue)}
+.sy-pages a.pg-num:hover{transform:rotate(0) translateY(-2px)}
+.sy-pages .pg-num.on{background:var(--sy-blue);color:#fff;font-weight:700;transform:rotate(0)}
+.sy-pages .pg-gap{color:var(--sy-soft);padding:0 2px}
+.sy-pages .pg-step{color:var(--sy-blue-deep);font-weight:500;padding:12px 14px;border-radius:999px;border:1.5px solid var(--sy-line);background:var(--sy-paper)}
+.sy-pages .pg-step:hover{border-color:var(--sy-blue)}
+@media (prefers-reduced-motion:reduce){.sy-pages .pg-num{transition:none}}
+
+/* 拍立得放大（pola-zoom.js）：整張卡歪歪地放大，保留膠帶便條感 */
+.pz{position:fixed;inset:0;z-index:200;background:rgba(244,242,236,.82);-webkit-backdrop-filter:blur(3px);backdrop-filter:blur(3px);display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;transition:opacity .2s;cursor:zoom-out}
+.pz.on{opacity:1}
+.pz .pz-card{width:min(1500px,92vw,calc((88vh - 90px) * 1.6));margin:0;transform:rotate(var(--pz-r,-2deg)) scale(.92);transition:transform .25s;box-shadow:0 18px 40px rgba(70,84,93,.22)!important;background:#fffefa;padding:14px 14px 18px;position:relative}
+.pz.on .pz-card{transform:rotate(var(--pz-r,-2deg)) scale(1)}
+.pz .pz-card::before{content:"";position:absolute;top:-16px;left:50%;width:120px;height:32px;transform:translateX(-50%) rotate(-3deg);background:rgba(169,194,223,.6)}
+.pz .pz-card figcaption,.pz .pz-card h3,.pz .pz-card h4{font-size:clamp(20px,2.2vw,26px)}
+.pz .pz-card p{font-size:19px}
+.pz-x{position:fixed;top:18px;right:20px;width:44px;height:44px;border-radius:50%;border:1.5px solid #6f94c2;background:#fffefa;color:#3a5a88;font-size:28px;line-height:1;cursor:pointer}
+@media (prefers-reduced-motion:reduce){.pz,.pz .pz-card{transition:none}}
+.pz .pz-card .pola-photo{display:block;aspect-ratio:16/10;overflow:hidden}
+.pz .pz-card .pola-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.pz .pz-card figcaption{font-family:var(--sy-serif);font-weight:700;color:var(--sy-ink);display:flex;gap:12px;align-items:center;padding:14px 6px 2px;font-size:clamp(22px,2vw,30px)}
+.pz .pz-card .tag{font-family:var(--sy-sans);font-weight:500;font-size:18px;color:#5d7eaa;border:1px solid #c9d8ea;border-radius:999px;padding:2px 12px}
+
+/* 日報目錄「每一期」旁邊放 Q 版朵拉讀報插圖（江江 2026-10-14） */
+.list-head{position:relative}
+.list-head .list-dora{width:clamp(84px,8vw,130px);height:auto;margin:-40px 0 -40px 18px;align-self:center;transform:rotate(-3deg);background:#fffefa;padding:6px 6px 14px;box-shadow:0 4px 12px rgba(70,84,93,.12);flex:none}
+@media (max-width:560px){.list-head .list-dora{width:72px;margin:-24px 0 -24px 10px}}
+
+/* 朵拉 LOGO＝社群大頭貼（江江 2026-10-14：品牌標記一律用這張） */
+footer .foot-logo{display:block;width:72px;height:72px;border-radius:50%;object-fit:cover;margin:0 auto 10px;border:3px solid #fffefa;box-shadow:0 0 0 1px #c9d8ea,0 4px 12px rgba(70,84,93,.12)}
+
+/* 日記目錄：最新一篇大張放最上面，其餘由新到舊兩～三欄並排（江江 2026-10-14） */
+.posts-newest{margin:22px 0 34px}
+.posts-newest .post{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:22px;align-items:center;transform:rotate(-.8deg)}
+.posts-newest .post .pola-photo{grid-row:1/5}
+.posts-newest .post h2{font-size:clamp(24px,2.4vw,32px)}
+.posts-newest .new-badge{display:inline-block;justify-self:start;font-family:"LXGW WenKai TC","Kaiti TC",cursive;color:#5f86b8;font-size:20px;border-bottom:2px solid #a9c2df;margin-bottom:4px}
+@media (min-width:1100px){.posts{grid-template-columns:repeat(3,minmax(0,1fr))!important}}
+@media (max-width:760px){.posts-newest .post{grid-template-columns:1fr}.posts-newest .post .pola-photo{grid-row:auto}}
+.posts-newest .post .tag{justify-self:start}
+.posts-newest .post .go{grid-column:2;justify-self:start}
+.posts-newest .post h2,.posts-newest .post p{text-align:left}

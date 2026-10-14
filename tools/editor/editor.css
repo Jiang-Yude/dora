@@ -1,0 +1,18 @@
+/* 朵拉排版編輯器：注入在網站頁面裡的樣式（只在 ?edit=1&frame=1 出現；sync-guard:allow 遠端領先只動 media/） */
+#de-ui{position:fixed;inset:0;z-index:2147483000;pointer-events:none;--de-k:1;font-family:"Noto Sans TC",system-ui,sans-serif}
+#de-glass{position:fixed;inset:0;pointer-events:auto;background:transparent;cursor:default}
+#de-ui.editing #de-glass{pointer-events:none}
+#de-svg{position:fixed;left:0;top:0;width:100vw;height:100vh;pointer-events:none;overflow:visible}
+#de-hover{fill:rgba(127,178,229,.06);stroke:#7fb2e5;stroke-width:calc(1.5px * var(--de-k));stroke-dasharray:calc(5px * var(--de-k)) calc(4px * var(--de-k))}
+#de-sel{fill:rgba(61,127,209,.05);stroke:#3d7fd1;stroke-width:calc(2px * var(--de-k))}
+#de-sel.gen{stroke:#d9822b}
+#de-rotline{stroke:#3d7fd1;stroke-width:calc(1.5px * var(--de-k))}
+.de-h{position:fixed;left:0;top:0;width:calc(12px * var(--de-k));height:calc(12px * var(--de-k));margin:calc(-6px * var(--de-k)) 0 0 calc(-6px * var(--de-k));background:#fff;border:calc(2px * var(--de-k)) solid #3d7fd1;border-radius:calc(2px * var(--de-k));pointer-events:auto;display:none;box-sizing:border-box;touch-action:none}
+#de-ui.has-sel .de-h{display:block}
+#de-ui.editing .de-h{display:none}
+.de-h[data-h=nw],.de-h[data-h=se]{cursor:nwse-resize}
+.de-h[data-h=ne],.de-h[data-h=sw]{cursor:nesw-resize}
+.de-h.de-rot{border-radius:50%;width:calc(16px * var(--de-k));height:calc(16px * var(--de-k));margin:calc(-8px * var(--de-k)) 0 0 calc(-8px * var(--de-k));cursor:grab;background:#eaf2fc}
+#de-tip{position:fixed;left:0;top:0;display:none;padding:calc(3px * var(--de-k)) calc(8px * var(--de-k));border-radius:calc(4px * var(--de-k));background:#2f3c45;color:#fff;font-size:calc(12px * var(--de-k));line-height:1.4;white-space:nowrap;pointer-events:none}
+html.de-hit body *{pointer-events:auto!important}
+[data-de-editing]{outline:calc(2px * var(--de-k,1)) solid #e8a33d!important;outline-offset:2px;cursor:text!important;-webkit-user-select:text!important;user-select:text!important;caret-color:#c0392b}
