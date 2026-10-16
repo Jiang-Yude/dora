@@ -87,24 +87,35 @@ function cookie(name, value, maxAgeSec, request) {
   const secure = new URL(request.url).protocol === "https:" ? "; Secure" : "";
   return `${name}=${value}; Path=/api/dora-admin; HttpOnly; SameSite=Strict; Max-Age=${maxAgeSec}${secure}`;
 }
+async function clearLockIfOpen(env, k) {
+  if (env.DORA_DB) await env.DORA_DB.prepare("UPDATE admin_lock SET fails = 0 WHERE k = ?1 AND until = 0").bind(k).run();
+  else { const r = mem.get(k); if (r && !r.until) r.fails = 0; }
+}
+async function bumpLock(env, k, now) {  // 原子：先記一次嘗試，再驗密碼（Codex 跨家審：避免併發沖掉錯誤次數）
+  if (env.DORA_DB) {
+    await ensureTable(env.DORA_DB);
+    return env.DORA_DB.prepare("INSERT INTO admin_lock (k, fails, until) VALUES (?1, 1, 0) ON CONFLICT(k) DO UPDATE SET fails = CASE WHEN until > 0 AND until <= ?2 THEN 1 ELSE fails + 1 END, until = CASE WHEN until > 0 AND until <= ?2 THEN 0 ELSE until END RETURNING fails, until").bind(k, now).first();
+  }
+  const r = mem.get(k) || { fails: 0, until: 0 };
+  if (r.until && r.until <= now) { r.fails = 0; r.until = 0; }
+  r.fails += 1; mem.set(k, r); return { ...r };
+}
 async function checkPass(env, request, gate) {
   const g = GATES[gate];
   const ip = request.headers.get("cf-connecting-ip") || "local";
   const k = await sha256("dora-admin:" + gate + ":" + ip);
   const now = nowMs(env);
-  const lock = await getLock(env, k);
+  const lock = await bumpLock(env, k, now);
   if (lock.until > now) return json({ ok: false, locked: true, retryAfterSec: Math.ceil((lock.until - now) / 1000) }, 429);
+  if (lock.fails > MAX_FAILS) { await setLock(env, k, 0, now + LOCK_MS); return json({ ok: false, locked: true, retryAfterSec: LOCK_MS / 1000 }, 429); }
   let pass = "";
   try { pass = String((await request.json()).pass || ""); } catch (e) {}
   const ok = pass.length > 0 && pass.length <= 200 && await pbkdf2Ok(env[g.env], pass);
   if (!ok) {
-    const fails = (lock.until && lock.until <= now ? 0 : lock.fails) + 1;
-    const until = fails >= MAX_FAILS ? now + LOCK_MS : 0;
-    await setLock(env, k, fails >= MAX_FAILS ? 0 : fails, until);
-    if (until) return json({ ok: false, locked: true, retryAfterSec: LOCK_MS / 1000 }, 429);
-    return json({ ok: false, left: MAX_FAILS - fails }, 401);
+    if (lock.fails >= MAX_FAILS) { await setLock(env, k, 0, now + LOCK_MS); return json({ ok: false, locked: true, retryAfterSec: LOCK_MS / 1000 }, 429); }
+    return json({ ok: false, left: MAX_FAILS - lock.fails }, 401);
   }
-  await setLock(env, k, 0, 0);
+  await clearLockIfOpen(env, k);  // 只在沒被鎖時清零，不蓋掉別的請求剛建立的鎖定
   const exp = nextTaipeiMidnight(now);
   const sig = await hmac(env[g.env], gate + ":" + exp);
   return json({ ok: true, exp }, 200, { "set-cookie": cookie(g.cookie, exp + "." + sig, Math.ceil((exp - now) / 1000), request) });
@@ -135,7 +146,7 @@ function pickModel(text) {
 }
 function tpTime() { const d = new Date(Date.now() + 8 * 3600e3).toISOString(); return { day: d.slice(0, 10), month: d.slice(0, 7), t: d.replace("T", " ").slice(0, 19) }; }
 const memUsage = [];
-const memAlerts = new Set();
+const memAlerts = new Map();
 async function usageSums(env) {
   const { day, month } = tpTime();
   if (env.DORA_DB) {
@@ -148,6 +159,34 @@ async function usageSums(env) {
   const byModel = Object.values(mon.reduce((a, u) => { const m = a[u.model] || (a[u.model] = { model: u.model, i: 0, o: 0, usd: 0, n: 0 }); m.i += u.in_tok; m.o += u.out_tok; m.usd += u.usd; m.n++; return a; }, {}));
   return { today: mon.filter((u) => u.day === day).reduce((a, u) => a + u.usd, 0), month: mon.reduce((a, u) => a + u.usd, 0), byModel };
 }
+/* 原子占額（Codex 跨家審：避免併發一起通過檢查）：呼叫前先寫一筆「預估最大花費」，同一條 SQL 檢查日／月硬上限；
+   呼叫完改成實際花費；呼叫失敗且沒有用量就歸零；中途出錯就保留預估值（寧可多算）。 */
+async function reserveUsage(env, model, est, L) {
+  const { day, month, t } = tpTime();
+  if (env.DORA_DB) {
+    await usageSums(env);  // 確保資料表存在
+    const r = await env.DORA_DB.prepare("INSERT INTO admin_usage (t, day, month, model, in_tok, out_tok, usd) SELECT ?1, ?2, ?3, ?4, 0, 0, ?5 WHERE (SELECT COALESCE(SUM(usd),0) FROM admin_usage WHERE month = ?3) + ?5 <= ?6 AND (SELECT COALESCE(SUM(usd),0) FROM admin_usage WHERE day = ?2) + ?5 <= ?7 RETURNING id")
+      .bind(t, day, month, model + "（預估）", est, L.monthHard, L.dayHard).first();
+    return r ? r.id : null;
+  }
+  const mon = memUsage.filter((u) => u.month === month).reduce((a, u) => a + u.usd, 0);
+  const tod = memUsage.filter((u) => u.day === day).reduce((a, u) => a + u.usd, 0);
+  if (mon + est > L.monthHard || tod + est > L.dayHard) return null;
+  memUsage.push({ id: memUsage.length + 1, day, month, model, in_tok: 0, out_tok: 0, usd: est });
+  return memUsage.length;
+}
+function usageTokens(u) {  // token 數必須是非負整數；選填的快取欄位缺省補 0，其餘無效就回 null（保留占額）
+  const okN = (x) => Number.isSafeInteger(x) && x >= 0;
+  if (!u || !okN(u.input_tokens) || !okN(u.output_tokens)) return null;
+  const cw = u.cache_creation_input_tokens == null ? 0 : u.cache_creation_input_tokens;
+  const cr = u.cache_read_input_tokens == null ? 0 : u.cache_read_input_tokens;
+  if (!okN(cw) || !okN(cr)) return null;
+  return { inTok: u.input_tokens + cw + cr, outTok: u.output_tokens };
+}
+async function settleUsage(env, id, model, inTok, outTok, usd) {
+  if (env.DORA_DB) await env.DORA_DB.prepare("UPDATE admin_usage SET model = ?2, in_tok = ?3, out_tok = ?4, usd = ?5 WHERE id = ?1").bind(id, model, inTok, outTok, usd).run();
+  else { const r = memUsage.find((u) => u.id === id); if (r) Object.assign(r, { model, in_tok: inTok, out_tok: outTok, usd }); }
+}
 async function recordUsage(env, model, inTok, outTok, usd) {
   const { day, month, t } = tpTime();
   if (env.DORA_DB) await env.DORA_DB.prepare("INSERT INTO admin_usage (t, day, month, model, in_tok, out_tok, usd) VALUES (?1,?2,?3,?4,?5,?6,?7)").bind(t, day, month, model, inTok, outTok, usd).run();
@@ -155,16 +194,33 @@ async function recordUsage(env, model, inTok, outTok, usd) {
 }
 /* 每個上限每天（或每月）只通知一次；有設 Trello 就在卡上 @江江 留言（Trello 會推到手機），沒設就只記在 D1 */
 async function alertOnce(env, key, text) {
+  const channelOn = env.DORA_ADMIN_WRITE === "on" && !!(env.DORA_ALERT_TRELLO_KEY && env.DORA_ALERT_TRELLO_TOKEN && env.DORA_ALERT_TRELLO_CARD);
+  key += channelOn ? ":sent" : ":logged";  // 之後開了通知管道，同一則還會補送一次
+  const now = Date.now();
+  // 搶發送權：沒有紀錄就建一筆 pending；pending 超過 10 分鐘（上次送到一半中斷）可以重搶；sent 就不再送
   if (env.DORA_DB) {
-    await env.DORA_DB.prepare("CREATE TABLE IF NOT EXISTS admin_alerts (k TEXT PRIMARY KEY, t TEXT NOT NULL, text TEXT NOT NULL)").run();
-    const r = await env.DORA_DB.prepare("INSERT OR IGNORE INTO admin_alerts (k, t, text) VALUES (?1, ?2, ?3)").bind(key, tpTime().t, text).run();
-    if (!r.meta || !r.meta.changes) return false;
-  } else { if (memAlerts.has(key)) return false; memAlerts.add(key); }
-  if (env.DORA_ALERT_TRELLO_KEY && env.DORA_ALERT_TRELLO_TOKEN && env.DORA_ALERT_TRELLO_CARD) {
-    const body = new URLSearchParams({ text: "@ai_pkm " + text, key: env.DORA_ALERT_TRELLO_KEY, token: env.DORA_ALERT_TRELLO_TOKEN });
-    await fetch("https://api.trello.com/1/cards/" + env.DORA_ALERT_TRELLO_CARD + "/actions/comments", { method: "POST", body }).catch(() => {});
+    const db = env.DORA_DB;
+    await db.prepare("CREATE TABLE IF NOT EXISTS admin_alert_log (k TEXT PRIMARY KEY, t TEXT NOT NULL, text TEXT NOT NULL, state TEXT NOT NULL DEFAULT 'pending', ts INTEGER NOT NULL DEFAULT 0)").run();
+    const got = await db.prepare("INSERT INTO admin_alert_log (k, t, text, state, ts) VALUES (?1, ?2, ?3, 'pending', ?4) ON CONFLICT(k) DO UPDATE SET ts = ?4 WHERE admin_alert_log.state = 'pending' AND admin_alert_log.ts < ?5 RETURNING k").bind(key, tpTime().t, text, now, now - 600e3).first();
+    if (!got) return false;
+  } else {
+    const r = memAlerts.get(key);
+    if (r && (r.state === "sent" || r.ts >= now - 600e3)) return false;
+    memAlerts.set(key, { state: "pending", ts: now });
   }
-  return true;
+  let ok = true;
+  if (channelOn) {
+    ok = false;
+    try {
+      const body = new URLSearchParams({ text: "@ai_pkm " + text, key: env.DORA_ALERT_TRELLO_KEY, token: env.DORA_ALERT_TRELLO_TOKEN });
+      ok = (await fetch("https://api.trello.com/1/cards/" + env.DORA_ALERT_TRELLO_CARD + "/actions/comments", { method: "POST", body })).ok;
+    } catch (e) {}
+  }
+  if (env.DORA_DB) {
+    if (ok) await env.DORA_DB.prepare("UPDATE admin_alert_log SET state = 'sent' WHERE k = ?1").bind(key).run();
+    else await env.DORA_DB.prepare("DELETE FROM admin_alert_log WHERE k = ?1 AND state = 'pending'").bind(key).run();
+  } else if (ok) memAlerts.set(key, { state: "sent", ts: now }); else memAlerts.delete(key);
+  return ok;
 }
 function limitState(sums, L) {
   return {
@@ -196,14 +252,16 @@ async function adminChat(env, text, history, actionOk) {
     : "目前沒有接任何工具。");
   let inTok = 0, outTok = 0, usd = 0, reply = "", pending = [];
   for (let round = 0; round < 4; round++) {
-    // 呼叫前先占額：用字數粗估輸入、用輸出上限估最大花費，會超過硬上限就不呼叫
-    const estIn = Math.ceil((system.length + JSON.stringify(turns).length) * 1.2);
+    // 呼叫前先占額：輸入 token 上界取整個請求（system、對話、工具定義）的 UTF-8 位元組數再加 500，加上輸出上限，算最大可能花費
+    const estIn = enc.encode(system + JSON.stringify(turns) + JSON.stringify(tools)).length + 500;
     const reserve = (estIn * price.in + maxOut * price.out) / 1e6;
-    if (sums.month + reserve > L.monthHard) {
-      await alertOnce(env, "monthHard:" + month, `朵拉後台本月用量已達 ${L.monthHard} 美元上限，已自動停止（目前約 ${sums.month.toFixed(2)} 美元）`);
-      return { ok: false, stopped: "monthHard", reply: `本月已達 ${L.monthHard} 美元上限\n後台先停下來了\n要繼續請調高設定值 DORA_ADMIN_LIMITS`, usage: { ...sums, limits: L } };
-    }
-    if (sums.today + reserve > L.dayHard) {
+    const rid = await reserveUsage(env, model, reserve, L);
+    if (!rid) {
+      sums = await usageSums(env);
+      if (sums.month + reserve > L.monthHard) {
+        await alertOnce(env, "monthHard:" + month, `朵拉後台本月用量已達 ${L.monthHard} 美元上限，已自動停止（目前約 ${sums.month.toFixed(2)} 美元）`);
+        return { ok: false, stopped: "monthHard", reply: `本月已達 ${L.monthHard} 美元上限\n後台先停下來了\n要繼續請調高設定值 DORA_ADMIN_LIMITS`, usage: { ...sums, limits: L } };
+      }
       await alertOnce(env, "dayHard:" + day, `朵拉後台今天用量已達 ${L.dayHard} 美元的安全上限，已停止（目前約 ${sums.today.toFixed(2)} 美元）`);
       return { ok: false, stopped: "dayHard", reply: `今天已達 ${L.dayHard} 美元的安全上限\n後台先停下來了\n明天會恢復 要提早恢復請調高設定值`, usage: { ...sums, limits: L } };
     }
@@ -218,12 +276,19 @@ async function adminChat(env, text, history, actionOk) {
       }),
     });
     const j = await r.json().catch(() => ({}));
-    if (!r.ok) return { ok: false, reply: "後台呼叫 Claude 失敗（" + r.status + "）\n等一下再試", usage: { ...sums, limits: L } };
-    const u = j.usage || {};
-    const i1 = (u.input_tokens || 0) + (u.cache_creation_input_tokens || 0) + (u.cache_read_input_tokens || 0), o1 = u.output_tokens || 0;
+    if (!r.ok) {
+      const et = usageTokens(j.usage);
+      if (et) await settleUsage(env, rid, model, et.inTok, et.outTok, (et.inTok * price.in + et.outTok * price.out) / 1e6);
+      else if (r.status >= 400 && r.status < 500) await settleUsage(env, rid, model, 0, 0, 0);  // 請求被拒（4xx）不計費
+      // 其他（5xx、連線異常）費用無法確認：保留預估占額
+      sums = await usageSums(env);
+      return { ok: false, reply: "後台呼叫 Claude 失敗（" + r.status + "）\n等一下再試", usage: { ...sums, limits: L } }; }
+    const tk = usageTokens(j.usage);
+    if (!tk) { sums = await usageSums(env); return { ok: false, reply: "Claude 的回應少了用量資訊\n這次先照預估金額記帳", usage: { ...sums, limits: L } }; }  // 費用無法確認就保留占額
+    const i1 = tk.inTok, o1 = tk.outTok;
     const c1 = (i1 * price.in + o1 * price.out) / 1e6;
     inTok += i1; outTok += o1; usd += c1;
-    await recordUsage(env, model, i1, o1, c1);
+    await settleUsage(env, rid, model, i1, o1, c1);
     sums = await usageSums(env);
     const content = j.content || [];
     reply += content.filter((b) => b.type === "text").map((b) => b.text).join("");
@@ -290,6 +355,7 @@ async function recentAudit(env) {
 export async function handleAdmin(context, action) {
   const { request, env } = context;
   if (!env.DORA_ENTRY_HASH) return json({ error: "closed" }, 503);
+  if (!env.DORA_DB && env.DORA_ADMIN_ALLOW_MEMORY !== "1") return json({ error: "closed" }, 503);  // 沒有 D1 就不開（鎖定與用量要跨執行個體）；記憶體模式只給本機測試
   if (request.method !== "POST" && action !== "session") return json({ error: "method" }, 405);
 
   if (action === "session") {
