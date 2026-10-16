@@ -212,7 +212,8 @@ async function alertOnce(env, key, text) {
   if (channelOn) {
     ok = false;
     try {
-      const body = new URLSearchParams({ text: "@ai_pkm " + text, key: env.DORA_ALERT_TRELLO_KEY, token: env.DORA_ALERT_TRELLO_TOKEN });
+      const tk = env.DORA_ALERT_TRELLO_TOKEN;
+      const body = new URLSearchParams({ text: "@ai_pkm " + text, key: env.DORA_ALERT_TRELLO_KEY, token: tk });
       ok = (await fetch("https://api.trello.com/1/cards/" + env.DORA_ALERT_TRELLO_CARD + "/actions/comments", { method: "POST", body })).ok;
     } catch (e) {}
   }

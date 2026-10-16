@@ -17,7 +17,8 @@ async function tget(env, path, q = "") {
   return r.json();
 }
 async function tsend(env, method, path, params) {
-  const body = new URLSearchParams({ ...params, key: env.DORA_TRELLO_KEY, token: env.DORA_TRELLO_TOKEN });
+  const tk = env.DORA_TRELLO_TOKEN;
+  const body = new URLSearchParams({ ...params, key: env.DORA_TRELLO_KEY, token: tk });
   const r = await fetch(API + path, { method, body });
   if (!r.ok) throw new Error("Trello 寫入失敗 " + r.status);
   return r.json();
