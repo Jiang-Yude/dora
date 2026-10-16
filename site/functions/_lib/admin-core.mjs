@@ -7,6 +7,7 @@
 // 環境變數（只放伺服器端）：
 //   DORA_ENTRY_HASH        登入密碼的 PBKDF2 雜湊「pbkdf2-sha256$次數$鹽(base64)$雜湊(base64)」（Pages secret）。沒設＝入口關閉。
 //   DORA_ACTION_HASH       操作密碼的 PBKDF2 雜湊（同格式）。沒設＝操作關卡關閉（verify-action 一律不通過）。
+//   DORA_ADMIN_WRITE       設 "on" 才開 Trello 寫入（江江 10/16：先只要讀得到，不用操作；預設關）
 //   DORA_ADMIN_API_KEY     後台專用的 Claude API key（Pages secret，跟公開客服的 ANTHROPIC_API_KEY 分開）。沒設＝後台只回「尚未接上」。
 //   DORA_ADMIN_LIMITS      用量上限 JSON（美元），預設 {"daySoft":2,"monthSoft":30,"monthHard":50,"dayHard":5}
 //                          軟上限到了只通知不停；monthHard（江江定「50 鎂就自動停」）與 dayHard（防濫用保險，非江江要求，可拿掉）到了就停。
@@ -122,6 +123,7 @@ const SYSTEM = [
   "這一版後台只能對話：你沒有任何工具，不能發文、不能改檔案、不能部署、不能動任何帳號、不能操作 Trello。",
   "江江要你做這類動作時，先說明「後台尚未開動作」，再看能不能幫他想清楚、整理成步驟或草擬文字，讓他自己去做。",
   "用繁體中文，口氣自然簡潔，不用破折號。不確定的事直接說不確定，不要編。",
+  "畫面只顯示純文字：不要用 markdown（不要 # 標題、** 粗體、表格、程式碼框），用一句一行與空行分段，清單用「1.」「・」開頭。",
 ].join("\n");
 function cfg(env, name, dflt) { try { return { ...dflt, ...JSON.parse(env[name] || "{}") }; } catch (e) { return dflt; } }
 function pickModel(text) {
@@ -184,11 +186,13 @@ async function adminChat(env, text, history, actionOk) {
   while (turns.length && turns[0].role !== "user") turns.shift();
   turns.push({ role: "user", content: text });
   const trelloOn = !!(env.DORA_TRELLO_KEY && env.DORA_TRELLO_TOKEN && env.DORA_TRELLO_BOARD);
+  const writeOn = env.DORA_ADMIN_WRITE === "on";
+  if (!writeOn) actionOk = false;
   const tools = trelloOn ? [...READ_TOOLS, ...(actionOk ? WRITE_TOOLS : [])] : [];
   const system = SYSTEM + "\n" + (trelloOn
     ? (actionOk
       ? "你可以用 Trello 函式讀社群媒體發文看板，也可以提出寫入（開卡、改描述、留言、附圖網址、勾「跨家複查通過」）。寫入不會立刻執行，會先給江江看「即將做什麼」，他按確認才做。「江江放行」只有江江能勾，你不能勾也不能請求勾。刪卡、搬卡、改成員、改看板設定、發 Threads、部署網站都沒有開。"
-      : "你可以用 Trello 函式讀社群媒體發文看板（唯讀）。江江還沒過操作密碼，所以你不能改看板；他要你改，請他先按上方「操作驗證」。發 Threads、部署網站都沒有開。")
+      : (writeOn ? "你可以用 Trello 函式讀社群媒體發文看板（唯讀）。江江還沒過操作密碼，所以你不能改看板；他要你改，請他先按上方「操作驗證」。發 Threads、部署網站都沒有開。" : "你可以用 Trello 函式讀社群媒體發文看板（唯讀）。後台目前只開讀取，寫入功能還沒開：江江要你改看板時，說明「後台尚未開動作」，可以幫他整理要改什麼。發 Threads、部署網站都沒有開。被問到有哪些文章、排程、哪些還沒放行時，先呼叫看板總覽再回答，標出欄位、時間、平台與放行狀態。"))
     : "目前沒有接任何工具。");
   let inTok = 0, outTok = 0, usd = 0, reply = "", pending = [];
   for (let round = 0; round < 4; round++) {
@@ -291,7 +295,7 @@ export async function handleAdmin(context, action) {
   if (action === "session") {
     const exp = await sessionOk(env, request);
     const act = exp ? await gateOk(env, request, "action") : 0;
-    return json({ ok: !!exp, exp: exp || null, action: !!act, actionExp: act || null, actionGate: !!env.DORA_ACTION_HASH });
+    return json({ ok: !!exp, exp: exp || null, action: !!act, actionExp: act || null, actionGate: !!env.DORA_ACTION_HASH, writeEnabled: env.DORA_ADMIN_WRITE === "on" });
   }
   if (action === "login") return checkPass(env, request, "entry");
   if (action === "verify-action") {  // 第二道：先要有登入憑證；日後任何操作功能都要先檢查 gateOk(env, request, "action")
@@ -314,6 +318,7 @@ export async function handleAdmin(context, action) {
   }
 
   if (action === "confirm") {  // 江江按確認：要有登入憑證＋操作憑證，待確認的動作只能用一次
+    if (env.DORA_ADMIN_WRITE !== "on") return json({ ok: false, reply: "後台目前只開讀取，寫入還沒開" }, 403);
     if (!(await sessionOk(env, request))) return json({ ok: false, expired: true }, 401);
     if (!(await gateOk(env, request, "action"))) return json({ ok: false, needAction: true, reply: "要先過操作密碼才能執行" }, 403);
     let id = "", cancel = false;

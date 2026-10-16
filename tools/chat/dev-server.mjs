@@ -27,6 +27,7 @@ const env = {
   DORA_ADMIN_API_KEY: process.env.DORA_ADMIN_API_KEY || '',
   DORA_ADMIN_LIMITS: process.env.DORA_ADMIN_LIMITS || '',
   DORA_TRELLO_KEY: process.env.DORA_TRELLO_KEY || '', DORA_TRELLO_TOKEN: process.env.DORA_TRELLO_TOKEN || '', DORA_TRELLO_BOARD: process.env.DORA_TRELLO_BOARD || '',
+  DORA_ADMIN_WRITE: process.env.DORA_ADMIN_WRITE || '',
   DORA_ADMIN_TEST_SHIFT_MS: process.env.DORA_ADMIN_TEST_SHIFT_MS || '',  // 只給本機測試模擬隔天用
   DORA_LLM_EFFORT: process.env.DORA_LLM_EFFORT || '',
   ASSETS: { fetch: async (u) => serveFile(new URL(u).pathname) },

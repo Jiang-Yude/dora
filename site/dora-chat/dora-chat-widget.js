@@ -341,6 +341,7 @@
   function refreshAdminInfo() {
     fetch(ADMIN_ENDPOINT + 'session', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (d) {
       actionOk = !!(d && d.action);
+      adminBar.querySelector('.dcw-act-btn').style.display = d && d.writeEnabled ? '' : 'none';  // 寫入沒開就不出現操作驗證
       var b = adminBar.querySelector('.dcw-act-btn');
       b.textContent = actionOk ? '操作已驗證（到今晚 12 點）' : '操作驗證';
       b.disabled = actionOk;
@@ -370,7 +371,7 @@
   }
   function renderAdmin() {
     body.innerHTML = '';
-    renderMsg({ role: 'bot', text: '江江好 這裡是後台模式\n目前只能對話 還不能操作任何東西\n開頭寫「深思」會改用最強的模型' });
+    renderMsg({ role: 'bot', text: '江江好 這裡是後台模式\n可以問我發文看板上排了哪些文章、哪些還沒放行\n目前只能讀 還不能改看板' });
     adminHistory.forEach(renderMsg);
     sub.textContent = '江江專用';
     scrollBottom();
