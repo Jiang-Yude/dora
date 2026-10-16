@@ -619,6 +619,8 @@ def main():
         put_nav(page_file(n), "daily")
     if (SITE / "search" / "index.html").exists():
         put_nav(SITE / "search" / "index.html", "search")
+    if (SITE / "work" / "index.html").exists():  # 工作看板（江江 2026-10-16 加進導覽）
+        put_nav(SITE / "work" / "index.html", "work")
     for it in items:
         put_nav(it["file"], "daily")
     put_all_style(items)

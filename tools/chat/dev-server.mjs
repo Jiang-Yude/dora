@@ -15,12 +15,19 @@ const WT_SITE = path.resolve(HERE, '../../site');
 const SITE = path.resolve(process.argv[2] || path.join(os.homedir(), 'Developer/dora/site'));
 const PORT = Number(process.argv[3] || 8788);
 const { handleChat } = await import(pathToFileURL(path.join(WT_SITE, 'functions/_lib/chat-core.mjs')).href);
+const { handleAdmin } = await import(pathToFileURL(path.join(WT_SITE, 'functions/_lib/admin-core.mjs')).href);
 
 const env = {
   DORA_LLM_PROVIDER: process.env.DORA_LLM_PROVIDER || 'openai',
   DORA_LLM_BASE_URL: process.env.DORA_LLM_BASE_URL || 'http://127.0.0.1:18902/v1',
   DORA_LLM_MODEL: process.env.DORA_LLM_MODEL || '',
   ANTHROPIC_API_KEY: process.env.ANTHROPIC_API_KEY || '',
+  DORA_ENTRY_HASH: process.env.DORA_ENTRY_HASH || '',     // 後台兩道密碼的雜湊：本機啟動時從鑰匙圈或測試值帶入，不寫檔
+  DORA_ACTION_HASH: process.env.DORA_ACTION_HASH || '',
+  DORA_ADMIN_API_KEY: process.env.DORA_ADMIN_API_KEY || '',
+  DORA_ADMIN_LIMITS: process.env.DORA_ADMIN_LIMITS || '',
+  DORA_TRELLO_KEY: process.env.DORA_TRELLO_KEY || '', DORA_TRELLO_TOKEN: process.env.DORA_TRELLO_TOKEN || '', DORA_TRELLO_BOARD: process.env.DORA_TRELLO_BOARD || '',
+  DORA_ADMIN_TEST_SHIFT_MS: process.env.DORA_ADMIN_TEST_SHIFT_MS || '',  // 只給本機測試模擬隔天用
   DORA_LLM_EFFORT: process.env.DORA_LLM_EFFORT || '',
   ASSETS: { fetch: async (u) => serveFile(new URL(u).pathname) },
 };
@@ -58,9 +65,16 @@ http.createServer(async (req, res) => {
     try { out = await handleChat({ request, env, waitUntil: (p) => p }); }
     catch (e) { console.error('[dev] chat crash', e); out = new Response('{"error":"crash"}', { status: 500 }); }
     console.log('[dev] chat', out.status);
+  } else if (url.pathname.startsWith('/api/dora-admin/')) {
+    const chunks = [];
+    for await (const c of req) chunks.push(c);
+    const request = new Request(url, { method: req.method, headers: req.headers, body: req.method === 'POST' ? Buffer.concat(chunks) : undefined });
+    out = await handleAdmin({ request, env }, url.pathname.split('/').pop());
+    console.log('[dev] admin', url.pathname, out.status);
   } else {
     out = await serveFile(url.pathname);
   }
-  res.writeHead(out.status, Object.fromEntries(out.headers));
+  const hs = Object.fromEntries(out.headers); const sc = out.headers.getSetCookie ? out.headers.getSetCookie() : []; if (sc.length) hs['set-cookie'] = sc;
+  res.writeHead(out.status, hs);
   res.end(Buffer.from(await out.arrayBuffer()));
 }).listen(PORT, '127.0.0.1', () => console.log(`[dev] http://127.0.0.1:${PORT}/  站點=${SITE}  provider=${env.DORA_LLM_PROVIDER}`));

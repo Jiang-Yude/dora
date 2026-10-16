@@ -35,7 +35,9 @@
 
   /* 開場白與快捷鈕對齊 llms.txt 的朵拉開場（③招呼兩行照抄、④三個選單項） */
   var GREETING = '嗨嗨 我是朵拉\n你要找朵拉嗎\n想認識朵拉 看朵拉日報\n或想知道江江在做什麼 都可以問我';
-  var CHIPS = ['認識朵拉', '朵拉日報在講什麼？', '看看江江在做什麼', '想找江江本人'];
+  var CHIPS = ['認識朵拉', '朵拉日報在講什麼？', '看看江江在做什麼', '我是江江'];
+  var ADMIN_CHIP = '我是江江';   // 江江 2026-10-16：按了跳通行密碼，通過進後台模式（密碼只在伺服端核對）
+  var ADMIN_ENDPOINT = window.DORA_ADMIN_ENDPOINT || '/api/dora-admin/';
   var DEFAULT_SUB = 'AI 實習生';
 
   /* 來源圖示自己畫 SVG（不用 emoji）：日記＝筆記本、日報＝報紙、其他頁＝連結 */
@@ -195,7 +197,7 @@
       b.className = 'dcw-chip';
       b.type = 'button';
       b.textContent = q;
-      b.addEventListener('click', function () { send(q); });
+      b.addEventListener('click', function () { if (q === ADMIN_CHIP) openGate(); else send(q); });
       chipsBox.appendChild(b);
     });
   }
@@ -207,6 +209,7 @@
   }
 
   function renderAll() {
+    if (adminMode) { renderAdmin(); return; }
     body.innerHTML = '';
     renderMsg({ role: 'bot', text: GREETING });
     history.forEach(renderMsg);
@@ -243,6 +246,7 @@
   function send(text) {
     text = (text || '').trim();
     if (!text || busy) return;
+    if (adminMode) { adminSend(text); return; }
     if (text.length > MAX_INPUT) { showLimit(text.length); return; }
     showLimit(0);
 
@@ -271,6 +275,166 @@
     }
     if (IS_DEMO) setTimeout(function () { finish(fakeReply(text)); }, 900);
     else askDora(finish);
+  }
+
+
+  /* ── 我是江江：通行密碼與後台模式（只做入口；後台訊息走 /api/dora-admin/message，不接任何動作）──
+     密碼只送到伺服端核對；憑證是 httpOnly cookie，前端拿不到也不存 localStorage；後台對話只放記憶體。 */
+  var adminMode = false, adminHistory = [];
+  var gateStyle = document.createElement('style');
+  gateStyle.textContent =
+    '#dcw-root .dcw-gate{position:absolute;inset:0;z-index:5;display:flex;align-items:center;justify-content:center;background:rgba(47,60,69,.45);border-radius:inherit}' +
+    '#dcw-root .dcw-gate-card{background:#fff;border-radius:16px;padding:22px 20px 18px;width:min(86%,300px);box-shadow:0 10px 30px rgba(0,0,0,.18);text-align:center}' +
+    '#dcw-root .dcw-gate-card h3{margin:0 0 6px;font-size:18px;color:#2f3c45}' +
+    '#dcw-root .dcw-gate-card p{margin:0 0 12px;font-size:14px;color:#6b7680}' +
+    '#dcw-root .dcw-gate-field{position:relative}' +
+    '#dcw-root .dcw-gate-input{width:100%;box-sizing:border-box;font-size:18px;padding:10px 12px;border:1.5px solid #c9d6e0;border-radius:10px;color:transparent;caret-color:transparent;text-shadow:none;outline:none;background:#f7f9fb}' +
+    '#dcw-root .dcw-gate-input::selection{background:transparent;color:transparent}' +
+    '#dcw-root .dcw-gate-input:focus{border-color:#4a6f98}' +
+    '#dcw-root .dcw-gate-mask{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;color:#9aa8b3;font-size:14px;letter-spacing:.1em}' +
+    '#dcw-root .dcw-gate-msg{min-height:20px;margin-top:8px;font-size:14px;color:#c0392b}' +
+    '#dcw-root .dcw-gate-btns{display:flex;gap:8px;justify-content:center;margin-top:10px}' +
+    '#dcw-root .dcw-gate-btns button{font-size:16px;padding:8px 16px;border-radius:999px;border:0;cursor:pointer}' +
+    '#dcw-root .dcw-gate-ok{background:#4a6f98;color:#fff}#dcw-root .dcw-gate-no{background:#eef2f5;color:#46545d}' +
+    '#dcw-root.dcw-admin .dcw-head{background:#2f3c45;color:#fff}' +
+    '#dcw-root.dcw-admin .dcw-head-title::after{content:"後台模式";display:inline-block;margin-left:8px;padding:1px 8px;border-radius:999px;background:#e8b54a;color:#2f3c45;font-size:12px;font-weight:700;vertical-align:middle}' +
+    '#dcw-root.dcw-admin .dcw-head-sub,#dcw-root.dcw-admin .dcw-icon-btn{color:#fff}' +
+    '#dcw-root.dcw-admin .dcw-chips{display:none}' +
+    '#dcw-root .dcw-admin-bar{display:none}#dcw-root.dcw-admin .dcw-admin-bar{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 12px;background:#fff6dd;color:#6b5320;font-size:13px}' +
+    '#dcw-root .dcw-pending{border:2px solid #e8b54a}#dcw-root .dcw-pending-text{margin:6px 0 10px;white-space:pre-wrap}#dcw-root .dcw-pending-btns button{border-radius:999px;padding:6px 14px;margin-right:6px}#dcw-root .dcw-p-ok{background:#4a6f98;color:#fff}#dcw-root .dcw-p-no{background:#eef2f5}#dcw-root .dcw-admin-warn{background:#ffe39a;color:#5a3d00}#dcw-root .dcw-admin-bar button[disabled]{background:#6f8269;cursor:default}#dcw-root .dcw-admin-bar button{border:0;background:#2f3c45;color:#fff;border-radius:999px;padding:4px 12px;font-size:13px;cursor:pointer}';
+  document.head.appendChild(gateStyle);
+  var adminBar = document.createElement('div');
+  adminBar.className = 'dcw-admin-bar';
+  adminBar.innerHTML = '<span class="dcw-admin-info">這裡是江江跟後台 AI 的對話 只能對話</span><span class="dcw-admin-btns"><button type="button" class="dcw-act-btn">操作驗證</button> <button type="button" class="dcw-log-btn">紀錄</button> <button type="button" class="dcw-out-btn">離開後台</button></span>';
+  root.querySelector('.dcw-panel').insertBefore(adminBar, root.querySelector('.dcw-body'));
+  adminBar.querySelector('.dcw-act-btn').addEventListener('click', function () { showGate('action'); });
+  adminBar.querySelector('.dcw-log-btn').addEventListener('click', function () {
+    fetch(ADMIN_ENDPOINT + 'audit', { method: 'POST', credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (d) {
+      var items = (d && d.items) || [];
+      var m = { role: 'bot', text: items.length ? '最近的 Trello 寫入紀錄\n' + items.map(function (x) { return x.t.slice(5, 16) + ' ' + (x.ok ? '' : '（失敗）') + x.by + '｜' + x.detail; }).join('\n') : '還沒有任何 Trello 寫入紀錄' };
+      adminHistory.push(m); renderMsg(m); scrollBottom();
+    });
+  });
+  function renderPending(p) {
+    var el = document.createElement('div');
+    el.className = 'dcw-msg dcw-bot';
+    el.innerHTML = '<span class="dcw-msg-avatar"></span><div class="dcw-bubble dcw-pending"><b>即將做什麼</b><div class="dcw-pending-text"></div><div class="dcw-pending-btns"><button type="button" class="dcw-p-ok">確認執行</button> <button type="button" class="dcw-p-no">取消</button></div></div>';
+    el.querySelector('.dcw-pending-text').textContent = p.summary;
+    function go(cancel) {
+      el.querySelectorAll('button').forEach(function (b) { b.disabled = true; });
+      fetch(ADMIN_ENDPOINT + 'confirm', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ id: p.id, cancel: cancel }) })
+        .then(function (r) { return r.json(); }).then(function (d) {
+          if (d && d.needAction) { showGate('action'); el.querySelectorAll('button').forEach(function (b) { b.disabled = false; }); return; }
+          var m = { role: 'bot', text: (d && d.reply) || '沒有回應' }; adminHistory.push(m); renderMsg(m); scrollBottom();
+        }).catch(function () { var m = { role: 'bot', text: '連不到後台' }; adminHistory.push(m); renderMsg(m); });
+    }
+    el.querySelector('.dcw-p-ok').addEventListener('click', function () { go(false); });
+    el.querySelector('.dcw-p-no').addEventListener('click', function () { go(true); });
+    body.appendChild(el); scrollBottom();
+  }
+  adminBar.querySelector('.dcw-out-btn').addEventListener('click', function () {
+    fetch(ADMIN_ENDPOINT + 'logout', { method: 'POST', credentials: 'same-origin' }).catch(function () {});
+    setAdmin(false);
+  });
+  var visitorNote = root.querySelector('.dcw-note').textContent;
+  var actionOk = false;
+  function refreshAdminInfo() {
+    fetch(ADMIN_ENDPOINT + 'session', { credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (d) {
+      actionOk = !!(d && d.action);
+      var b = adminBar.querySelector('.dcw-act-btn');
+      b.textContent = actionOk ? '操作已驗證（到今晚 12 點）' : '操作驗證';
+      b.disabled = actionOk;
+    }).catch(function () {});
+    fetch(ADMIN_ENDPOINT + 'usage', { method: 'POST', credentials: 'same-origin' }).then(function (r) { return r.json(); }).then(function (d) {
+      if (!d || !d.usage) return;
+      var u = d.usage, L = u.limits || {};
+      var msg = '今日約 ' + Number(u.today || 0).toFixed(2) + ' 美元｜本月約 ' + Number(u.month || 0).toFixed(2) + ' 美元';
+      var warn = [];
+      if (u.month >= L.monthHard) warn.push('本月已達 ' + L.monthHard + ' 美元上限');
+      else if (u.month >= L.monthSoft) warn.push('本月已達 ' + L.monthSoft + ' 美元');
+      if (u.today >= L.dayHard) warn.push('今日已達 ' + L.dayHard + ' 美元安全上限');
+      else if (u.today >= L.daySoft) warn.push('今日已達 ' + L.daySoft + ' 美元');
+      var info = adminBar.querySelector('.dcw-admin-info');
+      info.textContent = (warn.length ? '⚠ ' + warn.join('／') + '｜' : '') + msg + (d.connected ? '' : '｜尚未接上 Claude');
+      adminBar.classList.toggle('dcw-admin-warn', warn.length > 0);
+    }).catch(function () {});
+  }
+  function setAdmin(on) {
+    adminMode = on;
+    root.classList.toggle('dcw-admin', on);
+    if (!on) adminHistory = [];
+    root.querySelector('.dcw-note').textContent = on ? '後台模式｜登入到今晚 12 點 過了要重新輸入' : visitorNote;
+    input.placeholder = on ? '跟後台 AI 說…（開頭寫「深思」會用最強的模型）' : '想問朵拉什麼…';
+    renderAll();
+    if (on) refreshAdminInfo();
+  }
+  function renderAdmin() {
+    body.innerHTML = '';
+    renderMsg({ role: 'bot', text: '江江好 這裡是後台模式\n目前只能對話 還不能操作任何東西\n開頭寫「深思」會改用最強的模型' });
+    adminHistory.forEach(renderMsg);
+    sub.textContent = '江江專用';
+    scrollBottom();
+  }
+  function adminSend(text) {
+    adminHistory.push({ role: 'user', text: text });
+    renderMsg(adminHistory[adminHistory.length - 1]);
+    input.value = '';
+    scrollBottom();
+    busy = true;
+    var typing = showTyping();
+    fetch(ADMIN_ENDPOINT + 'message', { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ text: text, history: adminHistory.slice(0, -1).slice(-12) }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        typing.remove(); busy = false;
+        if (d && d.expired) { adminHistory.push({ role: 'bot', text: '後台憑證過期了\n要再輸入一次通行密碼' }); renderMsg(adminHistory[adminHistory.length - 1]); setTimeout(function () { setAdmin(false); openGate(); }, 900); return; }
+        var meta = d && d.meta ? '\n\n（' + d.meta.model.replace('claude-', '') + '｜輸入 ' + d.meta.inTok + '／輸出 ' + d.meta.outTok + ' token｜約 ' + d.meta.usd.toFixed(4) + ' 美元）' : '';
+        var m = { role: 'bot', text: ((d && d.reply) || '後台這邊怪怪的 等一下再試') + meta };
+        refreshAdminInfo();
+        adminHistory.push(m); renderMsg(m); scrollBottom();
+        ((d && d.pending) || []).forEach(renderPending);
+      })
+      .catch(function () { typing.remove(); busy = false; var m = { role: 'bot', text: '連不到後台 等一下再試' }; adminHistory.push(m); renderMsg(m); });
+  }
+  function openGate() {
+    // 憑證還在（30 分鐘內）就直接進後台，不用再輸入
+    fetch(ADMIN_ENDPOINT + 'session', { credentials: 'same-origin' }).then(function (r) { return r.json(); })
+      .then(function (d) { if (d && d.ok) setAdmin(true); else showGate('entry'); })
+      .catch(function () { showGate('entry'); });
+  }
+  function showGate(kind) {
+    kind = kind === 'action' ? 'action' : 'entry';
+    var old = root.querySelector('.dcw-gate'); if (old) old.remove();
+    var g = document.createElement('div');
+    g.className = 'dcw-gate';
+    g.setAttribute('role', 'dialog');
+    g.setAttribute('aria-label', '通行密碼');
+    g.innerHTML = '<form class="dcw-gate-card" autocomplete="off"><h3>' + (kind === 'action' ? '操作驗證' : '我是江江') + '</h3><p>' + (kind === 'action' ? '請輸入操作密碼（一天一次）' : '請輸入登入密碼（一天一次）') + '</p>' +
+      '<div class="dcw-gate-field"><input class="dcw-gate-input" type="text" name="dcw-gate" aria-label="通行密碼" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false" maxlength="200" />' +
+      '<span class="dcw-gate-mask" aria-hidden="true">輸入的字不會顯示</span></div>' +
+      '<div class="dcw-gate-msg" aria-live="polite"></div>' +
+      '<div class="dcw-gate-btns"><button class="dcw-gate-no" type="button">取消</button><button class="dcw-gate-ok" type="submit">進入</button></div></form>';
+    root.querySelector('.dcw-panel').appendChild(g);
+    var f = g.querySelector('form'), pi = g.querySelector('.dcw-gate-input'), msg = g.querySelector('.dcw-gate-msg');
+    pi.focus();
+    g.querySelector('.dcw-gate-no').addEventListener('click', function () { g.remove(); input.focus(); });
+    f.addEventListener('submit', function (e) {
+      e.preventDefault();
+      var pass = pi.value; pi.value = '';
+      if (!pass) return;
+      msg.style.color = '#6b7680'; msg.textContent = '確認中…';
+      fetch(ADMIN_ENDPOINT + (kind === 'action' ? 'verify-action' : 'login'), { method: 'POST', credentials: 'same-origin', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pass: pass }) })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+          msg.style.color = '#c0392b';
+          if (d && d.ok) { g.remove(); if (kind === 'action') refreshAdminInfo(); else setAdmin(true); input.focus(); }
+          else if (d && d.expired) { g.remove(); setAdmin(false); showGate('entry'); }
+          else if (d && d.locked) msg.textContent = '錯太多次了 ' + Math.ceil((d.retryAfterSec || 900) / 60) + ' 分鐘後再試';
+          else if (d && d.error === 'closed') msg.textContent = '後台入口還沒開放';
+          else msg.textContent = '密碼不對' + (d && d.left ? ' 還可以試 ' + d.left + ' 次' : '');
+          pi.focus();
+        })
+        .catch(function () { msg.textContent = '連線失敗 等一下再試'; });
+    });
   }
 
   var panelEl = root.querySelector('.dcw-panel');
@@ -315,6 +479,7 @@
   root.querySelector('.dcw-close').addEventListener('click', function () { setOpen(false); });
   /* 重置＝回到剛進網頁的狀態：清空對話、回到開場白與快捷鈕 */
   root.querySelector('.dcw-clear').addEventListener('click', function () {
+    if (adminMode) { adminHistory = []; renderAdmin(); input.focus(); return; }
     gen += 1;
     history = [];
     saveHistory(history);
