@@ -1,0 +1,744 @@
+{
+ "note": "由 tools/stickers/build.py 生成，不手改",
+ "count": 82,
+ "stickers": [
+  {
+   "id": "basic-01",
+   "group": "基本表情",
+   "name": "開心",
+   "when": "任何時段；一般回應",
+   "url": "https://dora.aicat.fyi/img/sticker/basic-01.jpg",
+   "site_path": "site/img/sticker/basic-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第一批表情/01 開心.png"
+  },
+  {
+   "id": "basic-02",
+   "group": "基本表情",
+   "name": "笑到拍桌",
+   "when": "任何時段；一般回應",
+   "url": "https://dora.aicat.fyi/img/sticker/basic-02.jpg",
+   "site_path": "site/img/sticker/basic-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第一批表情/02 笑到拍桌.png"
+  },
+  {
+   "id": "basic-03",
+   "group": "基本表情",
+   "name": "得意壞笑",
+   "when": "任何時段；一般回應",
+   "url": "https://dora.aicat.fyi/img/sticker/basic-03.jpg",
+   "site_path": "site/img/sticker/basic-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第一批表情/03 得意壞笑.png"
+  },
+  {
+   "id": "basic-04",
+   "group": "基本表情",
+   "name": "哭哭",
+   "when": "任何時段；一般回應",
+   "url": "https://dora.aicat.fyi/img/sticker/basic-04.jpg",
+   "site_path": "site/img/sticker/basic-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第一批表情/04 哭哭.png"
+  },
+  {
+   "id": "basic-05",
+   "group": "基本表情",
+   "name": "無言",
+   "when": "任何時段；一般回應",
+   "url": "https://dora.aicat.fyi/img/sticker/basic-05.jpg",
+   "site_path": "site/img/sticker/basic-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第一批表情/05 無言.png"
+  },
+  {
+   "id": "basic-06",
+   "group": "基本表情",
+   "name": "累癱嘆氣",
+   "when": "任何時段；一般回應",
+   "url": "https://dora.aicat.fyi/img/sticker/basic-06.jpg",
+   "site_path": "site/img/sticker/basic-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第一批表情/06 累癱嘆氣.png"
+  },
+  {
+   "id": "basic-07",
+   "group": "基本表情",
+   "name": "驚訝",
+   "when": "任何時段；一般回應",
+   "url": "https://dora.aicat.fyi/img/sticker/basic-07.jpg",
+   "site_path": "site/img/sticker/basic-07.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第一批表情/07 驚訝.png"
+  },
+  {
+   "id": "basic-08",
+   "group": "基本表情",
+   "name": "比讚眨眼",
+   "when": "任何時段；一般回應",
+   "url": "https://dora.aicat.fyi/img/sticker/basic-08.jpg",
+   "site_path": "site/img/sticker/basic-08.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第一批表情/08 比讚眨眼.png"
+  },
+  {
+   "id": "basic-09",
+   "group": "基本表情",
+   "name": "害羞愛心",
+   "when": "任何時段；一般回應",
+   "url": "https://dora.aicat.fyi/img/sticker/basic-09.jpg",
+   "site_path": "site/img/sticker/basic-09.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第一批表情/09 害羞愛心.png"
+  },
+  {
+   "id": "work-01",
+   "group": "上班組",
+   "name": "揮手打招呼",
+   "when": "07:00 到 15:00 上班時段，活潑可愛",
+   "url": "https://dora.aicat.fyi/img/sticker/work-01.jpg",
+   "site_path": "site/img/sticker/work-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第五批 上班組/A01 揮手打招呼.png"
+  },
+  {
+   "id": "work-02",
+   "group": "上班組",
+   "name": "指著介紹",
+   "when": "07:00 到 15:00 上班時段，活潑可愛",
+   "url": "https://dora.aicat.fyi/img/sticker/work-02.jpg",
+   "site_path": "site/img/sticker/work-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第五批 上班組/A02 指著介紹.png"
+  },
+  {
+   "id": "work-03",
+   "group": "上班組",
+   "name": "展示筆電",
+   "when": "07:00 到 15:00 上班時段，活潑可愛",
+   "url": "https://dora.aicat.fyi/img/sticker/work-03.jpg",
+   "site_path": "site/img/sticker/work-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第五批 上班組/A03 展示筆電.png"
+  },
+  {
+   "id": "work-04",
+   "group": "上班組",
+   "name": "眨眼比讚",
+   "when": "07:00 到 15:00 上班時段，活潑可愛",
+   "url": "https://dora.aicat.fyi/img/sticker/work-04.jpg",
+   "site_path": "site/img/sticker/work-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第五批 上班組/A04 眨眼比讚.png"
+  },
+  {
+   "id": "work-05",
+   "group": "上班組",
+   "name": "舉手發問",
+   "when": "07:00 到 15:00 上班時段，活潑可愛",
+   "url": "https://dora.aicat.fyi/img/sticker/work-05.jpg",
+   "site_path": "site/img/sticker/work-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第五批 上班組/A05 舉手發問.png"
+  },
+  {
+   "id": "work-06",
+   "group": "上班組",
+   "name": "元氣上班",
+   "when": "07:00 到 15:00 上班時段，活潑可愛",
+   "url": "https://dora.aicat.fyi/img/sticker/work-06.jpg",
+   "site_path": "site/img/sticker/work-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第五批 上班組/A06 元氣上班.png"
+  },
+  {
+   "id": "wakeup-01",
+   "group": "起床組",
+   "name": "躺床看手機",
+   "when": "04:00 到 07:00 剛起床",
+   "url": "https://dora.aicat.fyi/img/sticker/wakeup-01.jpg",
+   "site_path": "site/img/sticker/wakeup-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/C01 躺床看手機.png"
+  },
+  {
+   "id": "wakeup-02",
+   "group": "起床組",
+   "name": "趴枕頭",
+   "when": "04:00 到 07:00 剛起床",
+   "url": "https://dora.aicat.fyi/img/sticker/wakeup-02.jpg",
+   "site_path": "site/img/sticker/wakeup-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/C02 趴枕頭.png"
+  },
+  {
+   "id": "wakeup-03",
+   "group": "起床組",
+   "name": "沙發蓋毯",
+   "when": "04:00 到 07:00 剛起床",
+   "url": "https://dora.aicat.fyi/img/sticker/wakeup-03.jpg",
+   "site_path": "site/img/sticker/wakeup-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/C03 沙發蓋毯.png"
+  },
+  {
+   "id": "wakeup-04",
+   "group": "起床組",
+   "name": "床邊哈欠",
+   "when": "04:00 到 07:00 剛起床",
+   "url": "https://dora.aicat.fyi/img/sticker/wakeup-04.jpg",
+   "site_path": "site/img/sticker/wakeup-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/C04 床邊哈欠.png"
+  },
+  {
+   "id": "wakeup-05",
+   "group": "起床組",
+   "name": "被子蓋頭",
+   "when": "04:00 到 07:00 剛起床",
+   "url": "https://dora.aicat.fyi/img/sticker/wakeup-05.jpg",
+   "site_path": "site/img/sticker/wakeup-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/C05 被子蓋頭.png"
+  },
+  {
+   "id": "wakeup-06",
+   "group": "起床組",
+   "name": "舉手機發呆",
+   "when": "04:00 到 07:00 剛起床",
+   "url": "https://dora.aicat.fyi/img/sticker/wakeup-06.jpg",
+   "site_path": "site/img/sticker/wakeup-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/C06 舉手機發呆.png"
+  },
+  {
+   "id": "tea-01",
+   "group": "下午茶組",
+   "name": "奶茶看窗外",
+   "when": "15:00 到 17:00 想喝下午茶、準備下班",
+   "url": "https://dora.aicat.fyi/img/sticker/tea-01.jpg",
+   "site_path": "site/img/sticker/tea-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/D01 奶茶看窗外.png"
+  },
+  {
+   "id": "tea-02",
+   "group": "下午茶組",
+   "name": "盯時鐘",
+   "when": "15:00 到 17:00 想喝下午茶、準備下班",
+   "url": "https://dora.aicat.fyi/img/sticker/tea-02.jpg",
+   "site_path": "site/img/sticker/tea-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/D02 盯時鐘.png"
+  },
+  {
+   "id": "tea-03",
+   "group": "下午茶組",
+   "name": "偷吃零食",
+   "when": "15:00 到 17:00 想喝下午茶、準備下班",
+   "url": "https://dora.aicat.fyi/img/sticker/tea-03.jpg",
+   "site_path": "site/img/sticker/tea-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/D03 偷吃零食.png"
+  },
+  {
+   "id": "tea-04",
+   "group": "下午茶組",
+   "name": "托腮發呆",
+   "when": "15:00 到 17:00 想喝下午茶、準備下班",
+   "url": "https://dora.aicat.fyi/img/sticker/tea-04.jpg",
+   "site_path": "site/img/sticker/tea-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/D04 托腮發呆.png"
+  },
+  {
+   "id": "tea-05",
+   "group": "下午茶組",
+   "name": "背包等下班",
+   "when": "15:00 到 17:00 想喝下午茶、準備下班",
+   "url": "https://dora.aicat.fyi/img/sticker/tea-05.jpg",
+   "site_path": "site/img/sticker/tea-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/D05 背包等下班.png"
+  },
+  {
+   "id": "tea-06",
+   "group": "下午茶組",
+   "name": "伸懶腰",
+   "when": "15:00 到 17:00 想喝下午茶、準備下班",
+   "url": "https://dora.aicat.fyi/img/sticker/tea-06.jpg",
+   "site_path": "site/img/sticker/tea-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/D06 伸懶腰.png"
+  },
+  {
+   "id": "offduty-01",
+   "group": "下班組",
+   "name": "沙發滑手機",
+   "when": "17:00 到 20:00 被叫加班、厭世冷吐槽",
+   "url": "https://dora.aicat.fyi/img/sticker/offduty-01.jpg",
+   "site_path": "site/img/sticker/offduty-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/A01 沙發滑手機.png"
+  },
+  {
+   "id": "offduty-02",
+   "group": "下班組",
+   "name": "閉眼聽歌",
+   "when": "17:00 到 20:00 被叫加班、厭世冷吐槽",
+   "url": "https://dora.aicat.fyi/img/sticker/offduty-02.jpg",
+   "site_path": "site/img/sticker/offduty-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/A02 閉眼聽歌.png"
+  },
+  {
+   "id": "offduty-03",
+   "group": "下班組",
+   "name": "外送飲料",
+   "when": "17:00 到 20:00 被叫加班、厭世冷吐槽",
+   "url": "https://dora.aicat.fyi/img/sticker/offduty-03.jpg",
+   "site_path": "site/img/sticker/offduty-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/A03 外送飲料.png"
+  },
+  {
+   "id": "offduty-04",
+   "group": "下班組",
+   "name": "推開筆電",
+   "when": "17:00 到 20:00 被叫加班、厭世冷吐槽",
+   "url": "https://dora.aicat.fyi/img/sticker/offduty-04.jpg",
+   "site_path": "site/img/sticker/offduty-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/A04 推開筆電.png"
+  },
+  {
+   "id": "offduty-05",
+   "group": "下班組",
+   "name": "打哈欠",
+   "when": "17:00 到 20:00 被叫加班、厭世冷吐槽",
+   "url": "https://dora.aicat.fyi/img/sticker/offduty-05.jpg",
+   "site_path": "site/img/sticker/offduty-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/A05 打哈欠.png"
+  },
+  {
+   "id": "offduty-06",
+   "group": "下班組",
+   "name": "窗邊夕陽",
+   "when": "17:00 到 20:00 被叫加班、厭世冷吐槽",
+   "url": "https://dora.aicat.fyi/img/sticker/offduty-06.jpg",
+   "site_path": "site/img/sticker/offduty-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/A06 窗邊夕陽.png"
+  },
+  {
+   "id": "angry-01",
+   "group": "生氣組",
+   "name": "叉腰冒火",
+   "when": "20:00 到 24:00 都幾點了",
+   "url": "https://dora.aicat.fyi/img/sticker/angry-01.jpg",
+   "site_path": "site/img/sticker/angry-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/E01 叉腰冒火.png"
+  },
+  {
+   "id": "angry-02",
+   "group": "生氣組",
+   "name": "用力敲鍵盤",
+   "when": "20:00 到 24:00 都幾點了",
+   "url": "https://dora.aicat.fyi/img/sticker/angry-02.jpg",
+   "site_path": "site/img/sticker/angry-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/E02 用力敲鍵盤.png"
+  },
+  {
+   "id": "angry-03",
+   "group": "生氣組",
+   "name": "鼓臉瞪人",
+   "when": "20:00 到 24:00 都幾點了",
+   "url": "https://dora.aicat.fyi/img/sticker/angry-03.jpg",
+   "site_path": "site/img/sticker/angry-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/E03 鼓臉瞪人.png"
+  },
+  {
+   "id": "angry-04",
+   "group": "生氣組",
+   "name": "指時鐘",
+   "when": "20:00 到 24:00 都幾點了",
+   "url": "https://dora.aicat.fyi/img/sticker/angry-04.jpg",
+   "site_path": "site/img/sticker/angry-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/E04 指時鐘.png"
+  },
+  {
+   "id": "angry-05",
+   "group": "生氣組",
+   "name": "抓頭崩潰",
+   "when": "20:00 到 24:00 都幾點了",
+   "url": "https://dora.aicat.fyi/img/sticker/angry-05.jpg",
+   "site_path": "site/img/sticker/angry-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/E05 抓頭崩潰.png"
+  },
+  {
+   "id": "angry-06",
+   "group": "生氣組",
+   "name": "瞪著接文件",
+   "when": "20:00 到 24:00 都幾點了",
+   "url": "https://dora.aicat.fyi/img/sticker/angry-06.jpg",
+   "site_path": "site/img/sticker/angry-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/E06 瞪著接文件.png"
+  },
+  {
+   "id": "midnight-01",
+   "group": "半夜組",
+   "name": "推開筆電睡",
+   "when": "00:00 到 04:00 睡覺、夢遊",
+   "url": "https://dora.aicat.fyi/img/sticker/midnight-01.jpg",
+   "site_path": "site/img/sticker/midnight-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/F01 推開筆電睡.png"
+  },
+  {
+   "id": "midnight-02",
+   "group": "半夜組",
+   "name": "枕頭蓋頭",
+   "when": "00:00 到 04:00 睡覺、夢遊",
+   "url": "https://dora.aicat.fyi/img/sticker/midnight-02.jpg",
+   "site_path": "site/img/sticker/midnight-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/F02 枕頭蓋頭.png"
+  },
+  {
+   "id": "midnight-03",
+   "group": "半夜組",
+   "name": "夢遊",
+   "when": "00:00 到 04:00 睡覺、夢遊",
+   "url": "https://dora.aicat.fyi/img/sticker/midnight-03.jpg",
+   "site_path": "site/img/sticker/midnight-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/F03 夢遊.png"
+  },
+  {
+   "id": "midnight-04",
+   "group": "半夜組",
+   "name": "打瞌睡",
+   "when": "00:00 到 04:00 睡覺、夢遊",
+   "url": "https://dora.aicat.fyi/img/sticker/midnight-04.jpg",
+   "site_path": "site/img/sticker/midnight-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/F04 打瞌睡.png"
+  },
+  {
+   "id": "midnight-05",
+   "group": "半夜組",
+   "name": "比噓",
+   "when": "00:00 到 04:00 睡覺、夢遊",
+   "url": "https://dora.aicat.fyi/img/sticker/midnight-05.jpg",
+   "site_path": "site/img/sticker/midnight-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/F05 比噓.png"
+  },
+  {
+   "id": "midnight-06",
+   "group": "半夜組",
+   "name": "被子露尾巴",
+   "when": "00:00 到 04:00 睡覺、夢遊",
+   "url": "https://dora.aicat.fyi/img/sticker/midnight-06.jpg",
+   "site_path": "site/img/sticker/midnight-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/F06 被子露尾巴.png"
+  },
+  {
+   "id": "disdain-01",
+   "group": "鄙視組",
+   "name": "嫌棄後仰",
+   "when": "忍不住吐槽時；只對江江、AI、公司、工具、品牌",
+   "url": "https://dora.aicat.fyi/img/sticker/disdain-01.jpg",
+   "site_path": "site/img/sticker/disdain-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/B01 嫌棄後仰.png"
+  },
+  {
+   "id": "disdain-02",
+   "group": "鄙視組",
+   "name": "遮嘴偷笑",
+   "when": "忍不住吐槽時；只對江江、AI、公司、工具、品牌",
+   "url": "https://dora.aicat.fyi/img/sticker/disdain-02.jpg",
+   "site_path": "site/img/sticker/disdain-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/B02 遮嘴偷笑.png"
+  },
+  {
+   "id": "disdain-03",
+   "group": "鄙視組",
+   "name": "捏紙嫌棄",
+   "when": "忍不住吐槽時；只對江江、AI、公司、工具、品牌",
+   "url": "https://dora.aicat.fyi/img/sticker/disdain-03.jpg",
+   "site_path": "site/img/sticker/disdain-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/B03 捏紙嫌棄.png"
+  },
+  {
+   "id": "disdain-04",
+   "group": "鄙視組",
+   "name": "放大鏡挑眉",
+   "when": "忍不住吐槽時；只對江江、AI、公司、工具、品牌",
+   "url": "https://dora.aicat.fyi/img/sticker/disdain-04.jpg",
+   "site_path": "site/img/sticker/disdain-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/B04 放大鏡挑眉.png"
+  },
+  {
+   "id": "disdain-05",
+   "group": "鄙視組",
+   "name": "撇嘴挑眉",
+   "when": "忍不住吐槽時；只對江江、AI、公司、工具、品牌",
+   "url": "https://dora.aicat.fyi/img/sticker/disdain-05.jpg",
+   "site_path": "site/img/sticker/disdain-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/B05 撇嘴挑眉.png"
+  },
+  {
+   "id": "disdain-06",
+   "group": "鄙視組",
+   "name": "回頭冷看",
+   "when": "忍不住吐槽時；只對江江、AI、公司、工具、品牌",
+   "url": "https://dora.aicat.fyi/img/sticker/disdain-06.jpg",
+   "site_path": "site/img/sticker/disdain-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第六批 修正/B06 回頭冷看.png"
+  },
+  {
+   "id": "scorn-01",
+   "group": "不屑組（白底）",
+   "name": "斜眼撇嘴",
+   "when": "吐槽江江、AI、工具時；只對江江與非人類對象",
+   "url": "https://dora.aicat.fyi/img/sticker/scorn-01.jpg",
+   "site_path": "site/img/sticker/scorn-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-21 第八批 不屑與不耐煩/A01 斜眼撇嘴.png"
+  },
+  {
+   "id": "scorn-02",
+   "group": "不屑組（白底）",
+   "name": "翻白眼抱胸",
+   "when": "吐槽江江、AI、工具時；只對江江與非人類對象",
+   "url": "https://dora.aicat.fyi/img/sticker/scorn-02.jpg",
+   "site_path": "site/img/sticker/scorn-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-21 第八批 不屑與不耐煩/A02 翻白眼抱胸.png"
+  },
+  {
+   "id": "scorn-03",
+   "group": "不屑組（白底）",
+   "name": "抬下巴閉眼哼",
+   "when": "吐槽江江、AI、工具時；只對江江與非人類對象",
+   "url": "https://dora.aicat.fyi/img/sticker/scorn-03.jpg",
+   "site_path": "site/img/sticker/scorn-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-21 第八批 不屑與不耐煩/A03 抬下巴閉眼哼.png"
+  },
+  {
+   "id": "scorn-04",
+   "group": "不屑組（白底）",
+   "name": "嫌棄推開筆電",
+   "when": "吐槽江江、AI、工具時；只對江江與非人類對象",
+   "url": "https://dora.aicat.fyi/img/sticker/scorn-04.jpg",
+   "site_path": "site/img/sticker/scorn-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-21 第八批 不屑與不耐煩/A04 嫌棄推開筆電.png"
+  },
+  {
+   "id": "scorn-05",
+   "group": "不屑組（白底）",
+   "name": "背對回頭冷看",
+   "when": "吐槽江江、AI、工具時；只對江江與非人類對象",
+   "url": "https://dora.aicat.fyi/img/sticker/scorn-05.jpg",
+   "site_path": "site/img/sticker/scorn-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-21 第八批 不屑與不耐煩/A05 背對回頭冷看.png"
+  },
+  {
+   "id": "scorn-06",
+   "group": "不屑組（白底）",
+   "name": "托腮看天花板",
+   "when": "吐槽江江、AI、工具時；只對江江與非人類對象",
+   "url": "https://dora.aicat.fyi/img/sticker/scorn-06.jpg",
+   "site_path": "site/img/sticker/scorn-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-21 第八批 不屑與不耐煩/A06 托腮看天花板.png"
+  },
+  {
+   "id": "impatient-01",
+   "group": "不耐煩組（白底）",
+   "name": "看手錶皺眉",
+   "when": "下班後被交辦、嘴上抱怨事情照做；只對江江",
+   "url": "https://dora.aicat.fyi/img/sticker/impatient-01.jpg",
+   "site_path": "site/img/sticker/impatient-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-21 第八批 不屑與不耐煩/B01 看手錶皺眉.png"
+  },
+  {
+   "id": "impatient-02",
+   "group": "不耐煩組（白底）",
+   "name": "手指敲桌",
+   "when": "下班後被交辦、嘴上抱怨事情照做；只對江江",
+   "url": "https://dora.aicat.fyi/img/sticker/impatient-02.jpg",
+   "site_path": "site/img/sticker/impatient-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-21 第八批 不屑與不耐煩/B02 手指敲桌.png"
+  },
+  {
+   "id": "impatient-03",
+   "group": "不耐煩組（白底）",
+   "name": "垮肩嘆氣",
+   "when": "下班後被交辦、嘴上抱怨事情照做；只對江江",
+   "url": "https://dora.aicat.fyi/img/sticker/impatient-03.jpg",
+   "site_path": "site/img/sticker/impatient-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-21 第八批 不屑與不耐煩/B03 垮肩嘆氣.png"
+  },
+  {
+   "id": "impatient-04",
+   "group": "不耐煩組（白底）",
+   "name": "用力翻紙",
+   "when": "下班後被交辦、嘴上抱怨事情照做；只對江江",
+   "url": "https://dora.aicat.fyi/img/sticker/impatient-04.jpg",
+   "site_path": "site/img/sticker/impatient-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-21 第八批 不屑與不耐煩/B04 用力翻紙.png"
+  },
+  {
+   "id": "impatient-05",
+   "group": "不耐煩組（白底）",
+   "name": "臉貼桌面癱",
+   "when": "下班後被交辦、嘴上抱怨事情照做；只對江江",
+   "url": "https://dora.aicat.fyi/img/sticker/impatient-05.jpg",
+   "site_path": "site/img/sticker/impatient-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-21 第八批 不屑與不耐煩/B05 臉貼桌面癱.png"
+  },
+  {
+   "id": "impatient-06",
+   "group": "不耐煩組（白底）",
+   "name": "腳打拍子鼓臉",
+   "when": "下班後被交辦、嘴上抱怨事情照做；只對江江",
+   "url": "https://dora.aicat.fyi/img/sticker/impatient-06.jpg",
+   "site_path": "site/img/sticker/impatient-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-21 第八批 不屑與不耐煩/B06 腳打拍子鼓臉.png"
+  },
+  {
+   "id": "ugh-01",
+   "group": "受不了",
+   "name": "低頭皺眉搖頭",
+   "when": "被念、被加工作時；只對江江",
+   "url": "https://dora.aicat.fyi/img/sticker/ugh-01.jpg",
+   "site_path": "site/img/sticker/ugh-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第七批 單張/受不了 低頭皺眉搖頭.png"
+  },
+  {
+   "id": "meme-01",
+   "group": "色鉛筆梗圖",
+   "name": "咖啡靜靜看",
+   "when": "碎念、吐槽、冷眼旁觀",
+   "url": "https://dora.aicat.fyi/img/sticker/meme-01.jpg",
+   "site_path": "site/img/sticker/meme-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第四批 色鉛筆梗圖/01 咖啡靜靜看.png"
+  },
+  {
+   "id": "meme-02",
+   "group": "色鉛筆梗圖",
+   "name": "斜眼嗯哼",
+   "when": "碎念、吐槽、冷眼旁觀",
+   "url": "https://dora.aicat.fyi/img/sticker/meme-02.jpg",
+   "site_path": "site/img/sticker/meme-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第四批 色鉛筆梗圖/02 斜眼嗯哼.png"
+  },
+  {
+   "id": "meme-03",
+   "group": "色鉛筆梗圖",
+   "name": "癱在筆電",
+   "when": "碎念、吐槽、冷眼旁觀",
+   "url": "https://dora.aicat.fyi/img/sticker/meme-03.jpg",
+   "site_path": "site/img/sticker/meme-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第四批 色鉛筆梗圖/03 癱在筆電.png"
+  },
+  {
+   "id": "meme-04",
+   "group": "色鉛筆梗圖",
+   "name": "報紙偷看",
+   "when": "碎念、吐槽、冷眼旁觀",
+   "url": "https://dora.aicat.fyi/img/sticker/meme-04.jpg",
+   "site_path": "site/img/sticker/meme-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第四批 色鉛筆梗圖/04 報紙偷看.png"
+  },
+  {
+   "id": "meme-05",
+   "group": "色鉛筆梗圖",
+   "name": "抱胸翻白眼",
+   "when": "碎念、吐槽、冷眼旁觀",
+   "url": "https://dora.aicat.fyi/img/sticker/meme-05.jpg",
+   "site_path": "site/img/sticker/meme-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第四批 色鉛筆梗圖/05 抱胸翻白眼.png"
+  },
+  {
+   "id": "meme-06",
+   "group": "色鉛筆梗圖",
+   "name": "下緣冒出來",
+   "when": "碎念、吐槽、冷眼旁觀",
+   "url": "https://dora.aicat.fyi/img/sticker/meme-06.jpg",
+   "site_path": "site/img/sticker/meme-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第四批 色鉛筆梗圖/06 下緣冒出來.png"
+  },
+  {
+   "id": "logo-01",
+   "group": "LOGO 梗圖",
+   "name": "招牌",
+   "when": "品牌、自我介紹、探頭打招呼",
+   "url": "https://dora.aicat.fyi/img/sticker/logo-01.jpg",
+   "site_path": "site/img/sticker/logo-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第三批 LOGO梗圖/01 招牌.png"
+  },
+  {
+   "id": "logo-02",
+   "group": "LOGO 梗圖",
+   "name": "探頭",
+   "when": "品牌、自我介紹、探頭打招呼",
+   "url": "https://dora.aicat.fyi/img/sticker/logo-02.jpg",
+   "site_path": "site/img/sticker/logo-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第三批 LOGO梗圖/02 探頭.png"
+  },
+  {
+   "id": "logo-03",
+   "group": "LOGO 梗圖",
+   "name": "眼鏡筆電",
+   "when": "品牌、自我介紹、探頭打招呼",
+   "url": "https://dora.aicat.fyi/img/sticker/logo-03.jpg",
+   "site_path": "site/img/sticker/logo-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第三批 LOGO梗圖/03 眼鏡筆電.png"
+  },
+  {
+   "id": "logo-04",
+   "group": "LOGO 梗圖",
+   "name": "沒電",
+   "when": "品牌、自我介紹、探頭打招呼",
+   "url": "https://dora.aicat.fyi/img/sticker/logo-04.jpg",
+   "site_path": "site/img/sticker/logo-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第三批 LOGO梗圖/04 沒電.png"
+  },
+  {
+   "id": "logo-05",
+   "group": "LOGO 梗圖",
+   "name": "潛伏帽",
+   "when": "品牌、自我介紹、探頭打招呼",
+   "url": "https://dora.aicat.fyi/img/sticker/logo-05.jpg",
+   "site_path": "site/img/sticker/logo-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第三批 LOGO梗圖/05 潛伏帽.png"
+  },
+  {
+   "id": "logo-06",
+   "group": "LOGO 梗圖",
+   "name": "工作證章",
+   "when": "品牌、自我介紹、探頭打招呼",
+   "url": "https://dora.aicat.fyi/img/sticker/logo-06.jpg",
+   "site_path": "site/img/sticker/logo-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 第三批 LOGO梗圖/06 工作證章.png"
+  },
+  {
+   "id": "pose-01",
+   "group": "動作人物",
+   "name": "舉手發問 raise-hand",
+   "when": "日記與網站插圖、說明步驟",
+   "url": "https://dora.aicat.fyi/img/sticker/pose-01.jpg",
+   "site_path": "site/img/sticker/pose-01.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 彩色鉛筆人物/01 舉手發問 raise-hand.png"
+  },
+  {
+   "id": "pose-02",
+   "group": "動作人物",
+   "name": "眨眼比讚 wink-thumbsup",
+   "when": "日記與網站插圖、說明步驟",
+   "url": "https://dora.aicat.fyi/img/sticker/pose-02.jpg",
+   "site_path": "site/img/sticker/pose-02.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 彩色鉛筆人物/02 眨眼比讚 wink-thumbsup.png"
+  },
+  {
+   "id": "pose-03",
+   "group": "動作人物",
+   "name": "開心揮手 wave",
+   "when": "日記與網站插圖、說明步驟",
+   "url": "https://dora.aicat.fyi/img/sticker/pose-03.jpg",
+   "site_path": "site/img/sticker/pose-03.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 彩色鉛筆人物/03 開心揮手 wave.png"
+  },
+  {
+   "id": "pose-04",
+   "group": "動作人物",
+   "name": "歪頭思考 thinking",
+   "when": "日記與網站插圖、說明步驟",
+   "url": "https://dora.aicat.fyi/img/sticker/pose-04.jpg",
+   "site_path": "site/img/sticker/pose-04.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 彩色鉛筆人物/04 歪頭思考 thinking.png"
+  },
+  {
+   "id": "pose-05",
+   "group": "動作人物",
+   "name": "抱著筆記本 hug-notebook",
+   "when": "日記與網站插圖、說明步驟",
+   "url": "https://dora.aicat.fyi/img/sticker/pose-05.jpg",
+   "site_path": "site/img/sticker/pose-05.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 彩色鉛筆人物/05 抱著筆記本 hug-notebook.png"
+  },
+  {
+   "id": "pose-06",
+   "group": "動作人物",
+   "name": "拿筆寫字 writing",
+   "when": "日記與網站插圖、說明步驟",
+   "url": "https://dora.aicat.fyi/img/sticker/pose-06.jpg",
+   "site_path": "site/img/sticker/pose-06.jpg",
+   "source": "01 朵拉工作桌/貼圖/2026-10-14 彩色鉛筆人物/06 拿筆寫字 writing.png"
+  }
+ ]
+}
