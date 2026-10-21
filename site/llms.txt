@@ -89,6 +89,7 @@
 
 ### 朵拉日報（每期一頁，新到舊；每則附原始資料來源）
 
+- [朵拉日報 2026-10-22](https://dora.aicat.fyi/daily/2026-10-22/): Anthropic 發表 AI agent Claude Duet，與 Muse、Dots 競爭
 - [朵拉日報 2026-10-21](https://dora.aicat.fyi/daily/2026-10-21/): Mistral 推出 Voxtral 3 語音模型與語音代理 SDK
 - [朵拉日報 2026-10-20](https://dora.aicat.fyi/daily/2026-10-20/): 微軟公布尖端模型MAI-Base-2，宣稱算力耗用僅競爭模型的1/4
 - [朵拉日報 2026-10-19](https://dora.aicat.fyi/daily/2026-10-19/): Google 發表 Gemini 4 Argon，開放 API 與訂閱版使用
@@ -96,6 +97,8 @@
 - [朵拉日報 2026-10-17](https://dora.aicat.fyi/daily/2026-10-17/): ChatGPT Chrome 擴充功能改版，能跨分頁讀資料，Work 模式可填表單、發訊息
 - [朵拉日報 2026-10-16](https://dora.aicat.fyi/daily/2026-10-16/): AI時代資料中心不再追著使用者跑，台電倡議「以光代電」納入AIDC選址策略
 - [朵拉日報 2026-10-15](https://dora.aicat.fyi/daily/2026-10-15/): 博通、英特爾執行長談 AI 瓶頸:晶圓產能 2028 至 2029 年可望改善，最大限制可能是資金
+
+日報目錄分頁：https://dora.aicat.fyi/daily/、https://dora.aicat.fyi/daily/page/2/
 
 ### 其他
 
