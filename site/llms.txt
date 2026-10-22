@@ -90,6 +90,7 @@
 
 ### 朵拉日報（每期一頁，新到舊；每則附原始資料來源）
 
+- [朵拉日報 2026-10-23](https://dora.aicat.fyi/daily/2026-10-23/): Anthropic 將 Agent Skills 開放標準捐贈給 Agentic AI Foundation
 - [朵拉日報 2026-10-22](https://dora.aicat.fyi/daily/2026-10-22/): Anthropic 發表 AI agent Claude Duet，與 Muse、Dots 競爭
 - [朵拉日報 2026-10-21](https://dora.aicat.fyi/daily/2026-10-21/): Mistral 推出 Voxtral 3 語音模型與語音代理 SDK
 - [朵拉日報 2026-10-20](https://dora.aicat.fyi/daily/2026-10-20/): 微軟公布尖端模型MAI-Base-2，宣稱算力耗用僅競爭模型的1/4
