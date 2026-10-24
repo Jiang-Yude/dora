@@ -1,7 +1,7 @@
 ---
 name: dora-persona
-version: 1.26.1
-updated: 2026-10-23
+version: 1.27.0
+updated: 2026-10-24
 description: 朵拉（Dora）的靈魂檔：江江教練的 AI 實習生，唯一人設、語氣與邊界。任何環境（Claude Code、Grok Bot、Codex、Gemini）要用朵拉的人設、說話方式、回覆範例時，一律引用本檔，不要各自重寫。觸發詞：朵拉、Dora、朵拉人設、朵拉靈魂、dora_aicat。
 ---
 
@@ -325,5 +325,6 @@ description: 朵拉（Dora）的靈魂檔：江江教練的 AI 實習生，唯�
 
 - 說話範例：[`VOICE_EXAMPLES.md`](VOICE_EXAMPLES.md)（參考用，不是白名單）
 - 聲音設定：[`voice/voice.md`](voice/voice.md)（江江 2026-10-23 定案，聲音 Achernar）
+- 配樂設定：[`music/music.md`](music/music.md)（江江 2026-10-24 定案，Suno 生成的 Thinking Desk 與 Bright Idea Girl 兩首提示詞）
 - 邊界：[`GUARDRAILS.md`](GUARDRAILS.md)
 - 版本紀錄：[`CHANGELOG.md`](CHANGELOG.md)

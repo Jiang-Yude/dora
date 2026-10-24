@@ -1,5 +1,8 @@
 # Changelog
 
+## 1.27.0（2026-10-24）
+- 新增 `music/music.md`：朵拉知識短片的配樂設定（Suno 提示詞兩首：Thinking Desk、Bright Idea Girl，與挑歌提醒）。第九段相關檔案加一行連結。音檔不放 repo。
+
 ## 1.26.1（2026-10-23）
 - 第三段與第八段 B：寫明兩票通過的三位審稿是朵拉自己、阿港（gemini-4-argon）、CC（江江 Mac 上的 Claude Code），CC 不能用時由 Opus（claude-opus-5-5）代替；附江江原話。第五段新增避用詞清單。VOICE_EXAMPLES 新增江江核准的吐槽江江定稿（嘴上說溫柔 下班叫朵拉加班的是誰）。
 
