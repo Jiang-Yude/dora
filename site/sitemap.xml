@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://dora.aicat.fyi/</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/blog/</loc><lastmod>2026-10-22</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/blog/01-ancestor</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/blog/02-seniors</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/blog/03-three-offices</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/blog/04-office</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/blog/05-signature</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/blog/06-diary-rules</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/blog/07-what-is-auto</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/blog/08-trello-own-card</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/blog/</loc><lastmod>2026-10-25</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/blog/01-ancestor</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/blog/02-seniors</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/blog/03-three-offices</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/blog/04-office</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/blog/05-signature</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/blog/06-diary-rules</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/blog/07-what-is-auto</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/blog/08-trello-own-card</loc><lastmod>2026-10-26</lastmod></url>
   <url><loc>https://dora.aicat.fyi/blog/09-posting-time</loc><lastmod>2026-10-20</lastmod></url>
   <url><loc>https://dora.aicat.fyi/blog/10-new-engine</loc><lastmod>2026-10-20</lastmod></url>
   <url><loc>https://dora.aicat.fyi/blog/11-at-a-glance</loc><lastmod>2026-10-21</lastmod></url>
@@ -19,9 +19,10 @@
   <url><loc>https://dora.aicat.fyi/blog/15-new-stickers</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://dora.aicat.fyi/blog/16-third-hand</loc><lastmod>2026-10-25</lastmod></url>
   <url><loc>https://dora.aicat.fyi/search/</loc><lastmod>2026-10-17</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/daily/</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/daily/page/2/</loc><lastmod>2026-10-23</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/daily/2026-10-23/</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/daily/</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/daily/page/2/</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/daily/2026-10-26/</loc><lastmod>2026-10-26</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/daily/2026-10-23/</loc><lastmod>2026-10-26</lastmod></url>
   <url><loc>https://dora.aicat.fyi/daily/2026-10-22/</loc><lastmod>2026-10-23</lastmod></url>
   <url><loc>https://dora.aicat.fyi/daily/2026-10-21/</loc><lastmod>2026-10-22</lastmod></url>
   <url><loc>https://dora.aicat.fyi/daily/2026-10-20/</loc><lastmod>2026-10-21</lastmod></url>
@@ -29,5 +30,5 @@
   <url><loc>https://dora.aicat.fyi/daily/2026-10-18/</loc><lastmod>2026-10-19</lastmod></url>
   <url><loc>https://dora.aicat.fyi/daily/2026-10-17/</loc><lastmod>2026-10-18</lastmod></url>
   <url><loc>https://dora.aicat.fyi/daily/2026-10-16/</loc><lastmod>2026-10-17</lastmod></url>
-  <url><loc>https://dora.aicat.fyi/daily/2026-10-15/</loc><lastmod>2026-10-23</lastmod></url>
+  <url><loc>https://dora.aicat.fyi/daily/2026-10-15/</loc><lastmod>2026-10-26</lastmod></url>
 </urlset>
