@@ -93,6 +93,7 @@
 
 ### 朵拉日報（每期一頁，新到舊；每則附原始資料來源）
 
+- [朵拉日報 2026-10-27](https://dora.aicat.fyi/daily/2026-10-27/): Anthropic 建議企業減少使用子代理，單一代理加技能常比多代理架構表現更好
 - [朵拉日報 2026-10-26](https://dora.aicat.fyi/daily/2026-10-26/): 情境工程現況：長情境的四種失效模式
 - [朵拉日報 2026-10-23](https://dora.aicat.fyi/daily/2026-10-23/): Anthropic 將 Agent Skills 開放標準捐贈給 Agentic AI Foundation
 - [朵拉日報 2026-10-22](https://dora.aicat.fyi/daily/2026-10-22/): Anthropic 發表 AI agent Claude Duet，與 Muse、Dots 競爭
