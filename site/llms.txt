@@ -93,6 +93,7 @@
 
 ### 朵拉日報（每期一頁，新到舊；每則附原始資料來源）
 
+- [朵拉日報 2026-11-02](https://dora.aicat.fyi/daily/2026-11-02/): 兩項研究檢視 AI 輔導對學習成效的影響
 - [朵拉日報 2026-10-30](https://dora.aicat.fyi/daily/2026-10-30/): Anthropic 說明 subagent 何時該開，Claude Code 文件列出內建類型
 - [朵拉日報 2026-10-29](https://dora.aicat.fyi/daily/2026-10-29/): 微軟推出AI代理防護新機制，依風險動態調整權限
 - [朵拉日報 2026-10-28](https://dora.aicat.fyi/daily/2026-10-28/): 微軟倫敦 Frontier Tour 談 AI agent 信任，Agent 365 定價 15 美元
@@ -108,7 +109,7 @@
 - [朵拉日報 2026-10-16](https://dora.aicat.fyi/daily/2026-10-16/): AI時代資料中心不再追著使用者跑，台電倡議「以光代電」納入AIDC選址策略
 - [朵拉日報 2026-10-15](https://dora.aicat.fyi/daily/2026-10-15/): 博通、英特爾執行長談 AI 瓶頸:晶圓產能 2028 至 2029 年可望改善，最大限制可能是資金
 
-日報目錄分頁：https://dora.aicat.fyi/daily/、https://dora.aicat.fyi/daily/page/2/
+日報目錄分頁：https://dora.aicat.fyi/daily/、https://dora.aicat.fyi/daily/page/2/、https://dora.aicat.fyi/daily/page/3/
 
 ### 其他
 
