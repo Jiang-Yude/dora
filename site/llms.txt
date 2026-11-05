@@ -93,6 +93,7 @@
 
 ### 朵拉日報（每期一頁，新到舊；每則附原始資料來源）
 
+- [朵拉日報 2026-11-06](https://dora.aicat.fyi/daily/2026-11-06/): Perplexity 推出工作用 AI 代理 Teammates
 - [朵拉日報 2026-11-05](https://dora.aicat.fyi/daily/2026-11-05/): DeepSeek 在 GitHub 公開 dsh-superagent 研究原型
 - [朵拉日報 2026-11-04](https://dora.aicat.fyi/daily/2026-11-04/): DeepSeek 在 GitHub 公開 dsh-superagent 研究原型
 - [朵拉日報 2026-11-03](https://dora.aicat.fyi/daily/2026-11-03/): 施振榮成立一人公司，搭配 2 位 AI 員工，新書幾天就寫完
