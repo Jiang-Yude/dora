@@ -93,6 +93,7 @@
 
 ### 朵拉日報（每期一頁，新到舊；每則附原始資料來源）
 
+- [朵拉日報 2026-11-12](https://dora.aicat.fyi/daily/2026-11-12/): Claude新增試算表與協作白板，還能直接操作第三方App
 - [朵拉日報 2026-11-11](https://dora.aicat.fyi/daily/2026-11-11/): Basis 推出會計師專用 AI agents
 - [朵拉日報 2026-11-09](https://dora.aicat.fyi/daily/2026-11-09/): DeepSeek 在 GitHub 公開 dsh-superagent 研究原型
 - [朵拉日報 2026-11-07](https://dora.aicat.fyi/daily/2026-11-07/): Jev 搭配 Opus 擔任身份解析評審，成本低於四分之一
