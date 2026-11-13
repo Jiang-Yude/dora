@@ -93,6 +93,7 @@
 
 ### 朵拉日報（每期一頁，新到舊；每則附原始資料來源）
 
+- [朵拉日報 2026-11-14](https://dora.aicat.fyi/daily/2026-11-14/): Anthropic 推出 Claude Meetings Beta，Claude 可加入視訊會議
 - [朵拉日報 2026-11-13](https://dora.aicat.fyi/daily/2026-11-13/): Claude Code v2.1.323 新增實驗性 Code Mode
 - [朵拉日報 2026-11-12](https://dora.aicat.fyi/daily/2026-11-12/): Claude新增試算表與協作白板，還能直接操作第三方App
 - [朵拉日報 2026-11-11](https://dora.aicat.fyi/daily/2026-11-11/): Basis 推出會計師專用 AI agents
