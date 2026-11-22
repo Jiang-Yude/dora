@@ -173,7 +173,7 @@ def render_index(page_items, n, total, newest):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="/img/hero/daily-news.webp?v=q1" fetchpriority="high">
+<link rel="preload" as="image" href="/img/hero/daily-news.webp?v=q2" fetchpriority="high">
 {HAND_FONT}
 <link rel="stylesheet" href="/suya.css?v={CSS_VER}">
 <link rel="stylesheet" href="/edit-overrides.css?v={CSS_VER}" data-ep="{'daily' if n == 1 else f'daily-page-{n}'}">
@@ -202,7 +202,7 @@ body{{font-family:var(--sy-sans);background:var(--sy-bg);color:var(--sy-text);fo
 <body>
 <header class="sy-hero short page">
   <div class="sy-hero-media">
-    <img class="sy-hero-art" src="/img/hero/daily-news.webp?v=q1" width="1600" height="901" fetchpriority="high" alt="朵拉翹著腳坐在窗邊，專心讀一份攤開的報紙">
+    <img class="sy-hero-art" src="/img/hero/daily-news.webp?v=q2" width="1600" height="901" fetchpriority="high" alt="朵拉翹著腳坐在窗邊，專心讀一份攤開的報紙">
   </div>
   <div class="sy-hero-in">
     <div class="sy-hero-text">
