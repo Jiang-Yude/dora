@@ -52,8 +52,8 @@ def alias_keywords(url):
     a = load_aliases().get(_akey(url)) or {}
     return list(dict.fromkeys((a.get("tags") or []) + (a.get("keywords") or [])))
 BASE = "https://dora.aicat.fyi"
-CSS_VER = "20261015k"  # 改 suya.css 後換新，全站一起換
-PAGE_CSS_VER = "20261014cx"  # 改 blog/blog.css 或 daily/issue.css 後換新（put_style 會同步到各篇日記與每期日報）
+CSS_VER = "20261122look"  # 改 suya.css 後換新，全站一起換
+PAGE_CSS_VER = "20261122look"  # 改 blog/blog.css 或 daily/issue.css 後換新（put_style 會同步到各篇日記與每期日報）
 NAV = (SITE / "_partials" / "nav.html").read_text(encoding="utf-8").strip()
 NAV_RE = re.compile(r"<!--dora-nav-->.*?<!--/dora-nav-->\s*", re.S)
 PAGER_RE = re.compile(r"\s*<!--dora-pager-->.*?<!--/dora-pager-->", re.S)
@@ -173,7 +173,7 @@ def render_index(page_items, n, total, newest):
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
-<link rel="preload" as="image" href="/img/hero/daily-news.webp" fetchpriority="high">
+<link rel="preload" as="image" href="/img/hero/daily-news.webp?v=q1" fetchpriority="high">
 {HAND_FONT}
 <link rel="stylesheet" href="/suya.css?v={CSS_VER}">
 <link rel="stylesheet" href="/edit-overrides.css?v={CSS_VER}" data-ep="{'daily' if n == 1 else f'daily-page-{n}'}">
@@ -202,7 +202,7 @@ body{{font-family:var(--sy-sans);background:var(--sy-bg);color:var(--sy-text);fo
 <body>
 <header class="sy-hero short page">
   <div class="sy-hero-media">
-    <img class="sy-hero-art" src="/img/hero/daily-news.webp" width="1600" height="901" fetchpriority="high" alt="朵拉翹著腳坐在窗邊，專心讀一份攤開的報紙">
+    <img class="sy-hero-art" src="/img/hero/daily-news.webp?v=q1" width="1600" height="901" fetchpriority="high" alt="朵拉翹著腳坐在窗邊，專心讀一份攤開的報紙">
   </div>
   <div class="sy-hero-in">
     <div class="sy-hero-text">

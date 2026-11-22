@@ -19,8 +19,10 @@ header>*{grid-column:1;min-width:0}
 header::after{
   content:"";grid-column:2;grid-row:1/4;align-self:end;margin-bottom:-26px;
   width:clamp(250px,34vw,380px);aspect-ratio:519/464;
-  background:url("/img/daily/dora-glasses-cutout.webp?v=1") center bottom/contain no-repeat;
+  background:url("/img/daily/dora-glasses-cutout.webp?v=2") center bottom/contain no-repeat;
 }
+html[data-look=classic] header::after{background-image:url("/img/classic/daily/dora-glasses-cutout.webp")}
+
 .date{
   display:inline-block;background:none;border:0;border-radius:0;padding:0 0 4px;transform:rotate(-1.5deg);
   font-family:"LXGW WenKai TC","Kaiti TC","BiauKai",var(--sy-serif);font-weight:400;font-size:21px;letter-spacing:.06em;color:var(--sy-pencil-text,#4a6f98);
