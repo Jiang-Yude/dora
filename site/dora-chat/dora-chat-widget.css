@@ -48,7 +48,7 @@
 #dcw-root .dcw-head-avatar,
 #dcw-root .dcw-msg-avatar {
   border-radius: 50%;
-  background: var(--dcw-bg-soft) url("/dora-chat/dora-face.webp") center / cover no-repeat;
+  background: var(--dcw-bg-soft) url("/dora-chat/dora-face-q.webp") center / cover no-repeat;
   flex: none;
 }
 /* 頭像比膠囊大、往左上凸出（江江 2026-10-14：臉要特寫、圓圈要大過膠囊） */

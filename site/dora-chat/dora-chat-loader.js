@@ -13,7 +13,7 @@
     window.__dcwFull = true;
     window.__dcwOpenOnLoad = !!open;
     var s = document.createElement('script');
-    s.src = base + 'dora-chat-widget.js';
+    s.src = base + 'dora-chat-widget.js?v=q1';
     s.onerror = function () {  // 完整版載不到：退回小按鈕，可再按一次
       window.__dcwFull = false; wasOpen = false; s.remove();
       var t = document.querySelector('#dcw-lite .t');
@@ -32,7 +32,7 @@
       '#dcw-lite{position:fixed;right:24px;bottom:24px;z-index:99990;font-family:"Noto Sans TC",system-ui,-apple-system,"PingFang TC",sans-serif}' +
       '#dcw-lite button{position:relative;display:flex;align-items:center;min-height:48px;padding:5px 16px 5px 82px;background:#fffefa;border:1.5px solid #a9c2df;border-radius:999px;box-shadow:0 6px 18px rgba(47,60,69,.14);cursor:pointer;font:inherit;transition:transform .2s ease}' +
       '#dcw-lite button:hover{transform:translateY(-2px)}' +
-      '#dcw-lite .a{position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:80px;height:80px;border-radius:50%;border:3px solid #fff;box-shadow:0 4px 14px rgba(47,60,69,.22);background:#eaf1f4 url("' + base + 'dora-face.webp") center/cover no-repeat}' +
+      '#dcw-lite .a{position:absolute;left:-10px;top:50%;transform:translateY(-50%);width:80px;height:80px;border-radius:50%;border:3px solid #fff;box-shadow:0 4px 14px rgba(47,60,69,.22);background:#eaf1f4 url("' + base + 'dora-face-q.webp") center/cover no-repeat}' +
       '#dcw-lite .t{font-size:19px;font-weight:600;color:#46545d;white-space:nowrap}' +
       '@media (max-width:520px){#dcw-lite{right:16px;bottom:16px}}';
     var st = document.createElement('style');
@@ -47,7 +47,7 @@
     btn.addEventListener('click', function () { btn.querySelector('.t').textContent = '朵拉來了…'; loadFull(true); });
     // 滑鼠移上去或手指碰到就先預抓，按下去幾乎不用等
     btn.addEventListener('pointerenter', function () {
-      var l = document.createElement('link'); l.rel = 'prefetch'; l.href = base + 'dora-chat-widget.js'; document.head.appendChild(l);
+      var l = document.createElement('link'); l.rel = 'prefetch'; l.href = base + 'dora-chat-widget.js?v=q1'; document.head.appendChild(l);
     }, { once: true });
   }
 

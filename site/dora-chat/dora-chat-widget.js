@@ -24,7 +24,7 @@
 
   var css = document.createElement('link');
   css.rel = 'stylesheet';
-  css.href = base + 'dora-chat-widget.css';
+  css.href = base + 'dora-chat-widget.css?v=q1';
   document.head.appendChild(css);
   /* 換頁不閃：CSS 到了才現身，載入失敗或超過 1.5 秒也照樣現身 */
   var cssReady = false, pendingShow = null;
