@@ -28,6 +28,7 @@
   background-position:0 calc(var(--w) * 208 / 192 * var(--row) * -1);
   animation:sy-play calc(var(--speed) * var(--n)) steps(var(--n)) infinite;
 }
+html[data-look=classic] #dcw-lite .a,html[data-look=classic] #dcw-root .dcw-launcher-avatar,html[data-look=classic] #dcw-root .dcw-head-avatar,html[data-look=classic] #dcw-root .dcw-msg-avatar{background-image:url("/img/classic/dora-chat/dora-face.webp")!important}
 html[data-look=classic] .sprite{background-image:url("/img/classic/dora-sprite.webp")}
 @keyframes sy-play{to{background-position-x:calc(var(--w) * var(--n) * -1)}}
 .sprite.idle{--row:0;--n:6;--speed:.22s}

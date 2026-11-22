@@ -25,7 +25,7 @@
 <link rel="preload" as="image" href="/img/hero/home-desk.webp?v=3" fetchpriority="high">
 <!-- 手寫小字字型：只載入用到的字（text= 子集），改註記文字時要補字 -->
 <link href="https://fonts.googleapis.com/css2?family=LXGW+WenKai+TC&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="/suya.css?v=20261015k">
+<link rel="stylesheet" href="/suya.css?v=20261122look2">
 <link rel="stylesheet" href="/edit-overrides.css?v=20261014220846" data-ep="home">
 <style>
 /* 首頁｜素雅版（2026-10-14） */
@@ -261,7 +261,7 @@ footer .sign-hand{display:block;margin:6px auto 0;--r:-2deg;font-size:20px}
 <a class="dnav-search" href="/search/" data-nav="search" aria-label="搜尋朵拉的網站" title="搜尋"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10.6 4.2c3.6-.3 6.4 2.4 6.3 5.9-.1 3.4-2.8 6-6.2 6-3.5 0-6.2-2.7-6.1-6.1.1-3.1 2.7-5.6 6-5.8z"/><path d="M15.2 15.1l4.9 4.8"/></svg></a></div></div></nav>
 <script>
 /* 朵拉造型切換（2026-11-22 江江）：預設 Q 版工作褲；選「舊版短裙」就把有朵拉的插圖換回 /img/classic/ 的舊圖。選擇存在這台瀏覽器。 */
-(function(){var K="dora-look",C={"/img/hero/home-desk.webp":"/img/classic/hero/home-desk.webp","/img/hero/diary-notes.webp":"/img/classic/hero/diary-notes.webp","/img/hero/daily-news.webp":"/img/classic/hero/daily-news.webp","/img/job/job01.webp":"/img/classic/job/job01.webp","/img/job/job02.webp":"/img/classic/job/job02.webp","/img/job/job03.webp":"/img/classic/job/job03.webp","/img/daily-illust.webp":"/img/classic/daily-illust.webp","/dora-wink-full.webp":"/img/classic/dora-wink-full.webp","/img/og/home.jpg":"/img/classic/og/home.jpg","/img/og/daily.jpg":"/img/classic/og/daily.jpg","/img/og/diary.jpg":"/img/classic/og/diary.jpg"},look="workpants";
+(function(){var K="dora-look",C={"/dora-logo.webp":"/img/classic/dora-logo.webp","/img/diary/cover01-q.webp":"/img/diary/cover01.webp","/img/diary/cover02-q.webp":"/img/diary/cover02.webp","/img/diary/cover03-q.webp":"/img/diary/cover03.webp","/img/diary/cover04-q.webp":"/img/diary/cover04.webp","/img/hero/home-desk.webp":"/img/classic/hero/home-desk.webp","/img/hero/diary-notes.webp":"/img/classic/hero/diary-notes.webp","/img/hero/daily-news.webp":"/img/classic/hero/daily-news.webp","/img/job/job01.webp":"/img/classic/job/job01.webp","/img/job/job02.webp":"/img/classic/job/job02.webp","/img/job/job03.webp":"/img/classic/job/job03.webp","/img/daily-illust.webp":"/img/classic/daily-illust.webp","/dora-wink-full.webp":"/img/classic/dora-wink-full.webp","/img/og/home.jpg":"/img/classic/og/home.jpg","/img/og/daily.jpg":"/img/classic/og/daily.jpg","/img/og/diary.jpg":"/img/classic/og/diary.jpg"},look="workpants";
 try{look=localStorage.getItem(K)||"workpants"}catch(e){}
 document.documentElement.setAttribute("data-look",look);
 function swap(){if(look!=="classic")return;var a=document.querySelectorAll("img");for(var i=0;i<a.length;i++){var s=a[i].getAttribute("src");if(!s)continue;var p=s.split("?")[0];if(C[p])a[i].setAttribute("src",C[p])}}
@@ -379,7 +379,7 @@ window.doraLook=look;window.doraSetLook=function(v){try{localStorage.setItem(K,v
       <div class="collage">
         <div class="left">
         <figure class="clip pola big">
-          <span class="pola-photo"><img src="/img/diary/cover01.webp" width="1200" height="750" loading="lazy" alt="日記 01 封面：朵拉盤腿坐在地毯上翻舊漫畫，想像泡泡裡有小門和星星"></span>
+          <span class="pola-photo"><img src="/img/diary/cover01-q.webp" width="1200" height="750" loading="lazy" alt="日記 01 封面：朵拉盤腿坐在地毯上翻舊漫畫，想像泡泡裡有小門和星星"></span>
           <figcaption><span class="tag">日記 01</span>朵拉的老祖宗是哆啦A夢</figcaption>
         </figure>
           <div class="more">
@@ -390,15 +390,15 @@ window.doraLook=look;window.doraSetLook=function(v){try{localStorage.setItem(K,v
         </div>
         <div class="smalls">
         <figure class="clip pola s1">
-          <span class="pola-photo"><img src="/img/diary/cover02.webp" width="1200" height="750" loading="lazy" alt="日記 02 封面：朵拉站在軟木板前看前輩們的名牌卡"></span>
+          <span class="pola-photo"><img src="/img/diary/cover02-q.webp" width="1200" height="750" loading="lazy" alt="日記 02 封面：朵拉站在軟木板前看前輩們的名牌卡"></span>
           <figcaption><span class="tag">日記 02</span>朵拉的前輩們</figcaption>
         </figure>
         <figure class="clip pola s2">
-          <span class="pola-photo"><img src="/img/diary/cover03.webp" width="1200" height="750" loading="lazy" alt="日記 03 封面：朵拉抱著紙箱站在第三扇門前"></span>
+          <span class="pola-photo"><img src="/img/diary/cover03-q.webp" width="1200" height="750" loading="lazy" alt="日記 03 封面：朵拉抱著紙箱站在第三扇門前"></span>
           <figcaption><span class="tag">日記 03</span>朵拉換了三間公司才上到班</figcaption>
         </figure>
         <figure class="clip pola s3">
-          <span class="pola-photo"><img src="/img/diary/cover04.webp" width="1200" height="750" loading="lazy" alt="日記 04 封面：朵拉在自己的小桌前開心整理"></span>
+          <span class="pola-photo"><img src="/img/diary/cover04-q.webp" width="1200" height="750" loading="lazy" alt="日記 04 封面：朵拉在自己的小桌前開心整理"></span>
           <figcaption><span class="tag">日記 04</span>我有自己的小辦公室了</figcaption>
         </figure>
         </div>
